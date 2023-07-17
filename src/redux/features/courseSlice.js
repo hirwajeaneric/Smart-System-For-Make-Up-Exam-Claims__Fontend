@@ -12,8 +12,13 @@ export const getCoursesForTeacher = createAsyncThunk(
     'manure/getCoursesForTeacher',
     async (filter, thunkAPI) => {
         try {
-            const { lecturerId } = filter;
-            const response = await axios.get(serverUrl+`/api/v1/ssmec/course/findByLecturerId?lecturerId=${lecturerId}`);
+            const { lecturerId, token } = filter;
+            const config = {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            }
+            const response = await axios.get(serverUrl+`/api/v1/ssmec/course/findByLecturerId?lecturerId=${lecturerId}`, config);
             response.data.courses.forEach(element => {
                 element.id = element._id;
                 delete element._id;
