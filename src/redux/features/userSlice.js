@@ -3,35 +3,22 @@ import axios from "axios";
 const serverUrl = import.meta.env.VITE_REACT_APP_SERVERURL;
 
 const initialState = {
-    allMccEmployees: [],
-    employeesOfSelectedMcc: [],
-    employeesOfSelectedDistrict: [],
-    allVeterinaries: [],
-    veterinariesForSelectedDistrict:[],
-    allRegisteredFarmers: [],
-    farmersForSelectedMcc: [],
-    farmersForSelectedDistrict: [],
-    numberOfAllMccEmployees: 0,
-    numberOfEmployeesOfSelectedMcc: 0,
-    numberOfEmployeesOfSelectedDistrict: 0,
-    numberOfAllVeterinaries: 0,
-    numberOfVeterinariesForSelectedDistrict:0,
-    numberOfAllRegisteredFarmers: 0,
-    numberOfFarmersForSelectedMcc: 0,
-    numberOfFarmersForSelectedDistrict: 0, 
+    teachers: [],
+    students: [],
+    numberOfTeachers: 0,
+    numberOfStudents: 0, 
     isLoading: false,
 }
 
-export const getAllMccEmployees = createAsyncThunk(
-    'milk/getAllMccEmployees',
+export const getAllUsers = createAsyncThunk(
+    'milk/getAllUsers',
     async (thunkAPI) => {
         try {
-            const response = await axios.get(serverUrl+`/api/v1/mmpas/user/list`);
+            const response = await axios.get(serverUrl+`/api/v1/ssmec/user/list`);
             response.data.users.forEach(element => {
                 element.id = element._id;
                 delete element._id;
                 delete element.__v;
-                element.joinDate = new Date(element.joinDate).toLocaleString();
             });
             return response.data.users;
         } catch (error) {
@@ -40,104 +27,23 @@ export const getAllMccEmployees = createAsyncThunk(
     }
 );
 
-export const getEmployeesForMcc = createAsyncThunk(
-    'milk/getEmployeesForMcc',
-    async (filter, thunkAPI) => {
-        const { mccId } = filter;
-        try { 
-            const response = await axios.get(serverUrl+`/api/v1/mmpas/user/findByMcc=${mccId}`);
-            response.data.users.forEach(element => {
-                element.id = element._id;
-                delete element._id;
-                delete element.__v;
-                element.joinDate = new Date(element.joinDate).toLocaleString();
-            });
-            return response.data.users;
-        } catch (error) {
-            return thunkAPI.rejectWithValue('Something went wrong!!');
-        }
-    }
-);
-
-export const getEmployeesInDistrict = createAsyncThunk(
-    'milk/getEmployeesInDistrict',
-    async (filter, thunkAPI) => {
-        const { district } = filter;
-        try { 
-            const response = await axios.get(serverUrl+`/api/v1/mmpas/user/findByDistrict=${district}`);
-            response.data.users.forEach(element => {
-                element.id = element._id;
-                delete element._id;
-                delete element.__v;
-                element.joinDate = new Date(element.joinDate).toLocaleString();
-            });
-            return response.data.users;
-        } catch (error) {
-            return thunkAPI.rejectWithValue('Something went wrong!!');
-        }
-    }
-);
-
-export const getVeterinaries = createAsyncThunk(
-    'milk/getVeterinaries',
-    async (thunkAPI) => {
-        try { 
-            const response = await axios.get(serverUrl+`/api/v1/mmpas/user/findByUserRole=veterinary}`);
-            response.data.users.forEach(element => {
-                element.id = element._id;
-                delete element._id;
-                delete element.__v;
-                element.joinDate = new Date(element.joinDate).toLocaleString();
-            });
-            return response.data.users;
-        } catch (error) {
-            return thunkAPI.rejectWithValue('Something went wrong!!');
-        }
-    }
-);
-
-const milkProduction = createSlice({
+const userSlice = createSlice({
     name: 'user',
     initialState,
     extraReducers: {
-        [getAllMccEmployees.pending] : (state) => {
+        [getAllUsers.pending] : (state) => {
             state.isLoading = true;
         },
-        [getAllMccEmployees.fulfilled] : (state, action) => {
+        [getAllUsers.fulfilled] : (state, action) => {
+            state.isLoading = false;
+            state.teachers = action.payload.filter(user => user.role === 'Teacher');
+            state.numberOfTeachers = state.teachers.length
+        },
+        [getAllUsers.rejected] : (state) => {
             state.isLoading = false;
         },
-        [getAllMccEmployees.rejected] : (state) => {
-            state.isLoading = false;
-        },
-        [getEmployeesForMcc.pending] : (state) => {
-            state.isLoading = true;
-        },
-        [getEmployeesForMcc.fulfilled] : (state, action) => {
-            state.isLoading = false;
-        },
-        [getEmployeesForMcc.rejected] : (state) => {
-            state.isLoading = false;
-        },
-        [getEmployeesInDistrict.pending] : (state) => {
-            state.isLoading = true;
-        },
-        [getEmployeesInDistrict.fulfilled] : (state, action) => {
-            state.isLoading = false;
-        },
-        [getEmployeesInDistrict.rejected] : (state) => {
-            state.isLoading = false;
-        },
-        [getVeterinaries.pending] : (state) => {
-            state.isLoading = true;
-        },
-        [getVeterinaries.fulfilled] : (state, action) => {
-            state.isLoading = false;
-        },
-        [getVeterinaries.rejected] : (state) => {
-            state.isLoading = false;
-        }
     }
 });
 
-export const { } = milkProduction.actions;
-export default milkProduction.reducer;
+export const { } = userSlice.actions;
+export default userSlice.reducer;
