@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom"
-import { FormElement, HeaderOne, HorizontallyFlexSpaceBetweenContainer, VerticallyFlexGapContainer, VerticallyFlexGapForm, VerticallyFlexSpaceBetweenContainer } from "../../../components/styles/GenericStyles"
+import { FormElement, HeaderOne, HeaderTwo, HorizontallyFlexSpaceBetweenContainer, VerticallyFlexGapContainer, VerticallyFlexGapForm, VerticallyFlexSpaceBetweenContainer } from "../../../components/styles/GenericStyles"
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
 const serverUrl = import.meta.env.VITE_REACT_APP_SERVERURL;
@@ -27,7 +27,7 @@ const Signin = () => {
           setIsProcessing(false);
           setCookie('AuthToken', response.data.user.token);
           setCookie('UserData', JSON.stringify(response.data.user));
-          window.location.replace('/rab/');
+          window.location.replace('/');
         }
       }, 3000)
     })
@@ -41,32 +41,20 @@ const Signin = () => {
   };
 
   return (
-    <HorizontallyFlexSpaceBetweenContainer style={{ justifyContent: 'center', alignItems: 'center' }}>
+    <HorizontallyFlexSpaceBetweenContainer style={{ justifyContent: 'center', alignItems: 'center', paddingTop: '20px' }}>
       <Helmet>
-        <title>Admin Login</title>
-        <meta name="description" content={`Login to your account.`} /> 
+        <title>Student - Login</title>
+        <meta name="description" content={`Login as a student.`} /> 
       </Helmet>
-      <AuthenticationFormContainer style={{ position: 'relative', boxShadow: 'rgba(0, 0, 0, 0.05) 0 6px 24px,   rgba(0, 0, 0, 0.08) 0 5px 12px 1px' }}>
 
-        <VerticallyFlexSpaceBetweenContainer className="left" style={{ position: 'absolute', left: '0', top: '0', bottom: '0', background: "#339966", height: '100%', gap: '50px', color: 'white' }}>
-          <VerticallyFlexGapContainer style={{ gap: '30px', textAlign:'center', color:'white' }}>
-            <img src="/RAB_Logo2.png" alt="RAB Rwanda logo" style={{ width: '40%', border: '2px solid white', borderRadius: '50%', background:'white' }}/>
-            <h1 style={{ fontWeight: '900' }}>Welcome to MMPAS</h1>
-          </VerticallyFlexGapContainer>
-          <VerticallyFlexGapContainer style={{ gap: '30px',color:'white' }}>
-            <div style={{ textAlign:'center' }}>
-              <p style={{ lineHeight:'2rem' }}>Don't have an account?</p>
-              <Link style={{ color: 'white', textAlign: 'center' }} to={'/rab/auth/signup'}>Get started</Link>
-            </div>
-            <p>&copy; All rights reserved. MMPAS 2023</p>
-          </VerticallyFlexGapContainer>
-        </VerticallyFlexSpaceBetweenContainer>
+      <AuthenticationFormContainer style={{ borderBottom: '6px solid blue', gap: '30px', position: 'relative', boxShadow: 'rgba(0, 0, 0, 0.05) 0 6px 24px, rgba(0, 0, 0, 0.08) 0 5px 12px 1px' }}>
+        <VerticallyFlexGapContainer style={{ gap: '10px' }}>
+          <img style={{ width: '90%' }} src="/ssmec-logo-2.png" alt="" />
+          <span style={{ color: 'black', fontWeight: '600' }}>Student</span>
+          <HeaderTwo style={{ fontWeight: '600', color: '#476b6b' }}>Sign In to the Platform </HeaderTwo>
+        </VerticallyFlexGapContainer>
 
-        <VerticallyFlexGapForm className="right" style={{ position: 'absolute', right: '0', top: '0', bottom: '0' }} onSubmit={handleSubmit(onSubmit)}>
-          <div>
-            <span>RAB&nbsp;Admin</span>
-            <HeaderOne>Sign In</HeaderOne>
-          </div>
+        <VerticallyFlexGapForm style={{ gap: '20px'}} onSubmit={handleSubmit(onSubmit)}>
           <FormElement style={{ color: 'gray' }}>
             <label htmlFor="email">Email address</label>
             <input 
@@ -94,15 +82,17 @@ const Signin = () => {
               <p role="alert">Password is required</p>
             )}
           </FormElement>
-          <Link style={{ color: 'blue' }} to={'/rab/auth/forgot-password'}>Forgot Password?</Link>
           <FormElement>
             {isProcessing 
               ? <Button disabled variant="contained" color="primary" size="small">PROCESSING...</Button> 
               : <Button variant="contained" color="primary" size="small" type="submit">Log in</Button>
             }
           </FormElement>
+          <HorizontallyFlexSpaceBetweenContainer>
+            <Link style={{ color: 'blue', textDecoration: 'none', fontSize:'90%', }} to={'/student/auth/signup'}>Create account</Link>
+            <Link style={{ color: 'blue', textDecoration: 'none', fontSize:'90%', color: 'gray' }} to={'/student/auth/forgot-password'}>Forgot Password?</Link>
+          </HorizontallyFlexSpaceBetweenContainer>
         </VerticallyFlexGapForm>
-        
       </AuthenticationFormContainer>
     </HorizontallyFlexSpaceBetweenContainer>
   )

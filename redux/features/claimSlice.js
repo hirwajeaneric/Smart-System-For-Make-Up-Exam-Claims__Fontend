@@ -47,7 +47,7 @@ export const getCourseClaims = createAsyncThunk(
 export const getDepartmentClaims = createAsyncThunk(
     'claim/getDepartmentClaims',
     async (filter, thunkAPI) => {
-        const { department } = filter;
+        const { token, department } = filter;
         try {
             const config = {
                 headers: {
@@ -64,7 +64,8 @@ export const getDepartmentClaims = createAsyncThunk(
 
 export const getAccountantClaims = createAsyncThunk(
     'claim/getAccountantClaims',
-    async (thunkAPI) => {
+    async (filter, thunkAPI) => {
+        const { token } = filter;
         try {
             const config = {
                 headers: {
@@ -100,6 +101,7 @@ export const getDeanOfStudentsClaims = createAsyncThunk(
 export const getRegistrationOfficeClaims = createAsyncThunk(
     'claim/getRegistrationOfficeClaims',
     async (filter, thunkAPI) => {
+        const { token } = filter;
         try {
             const config = {
                 headers: {
@@ -117,7 +119,7 @@ export const getRegistrationOfficeClaims = createAsyncThunk(
 export const getExaminationOfficeClaims = createAsyncThunk(
     'claim/getExaminationOfficeClaims',
     async (filter, thunkAPI) => {
-        const { department } = filter;
+        const { token } = filter;
         try {
             const config = {
                 headers: {

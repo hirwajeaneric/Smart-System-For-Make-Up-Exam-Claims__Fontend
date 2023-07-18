@@ -6,13 +6,14 @@ const serverUrl = import.meta.env.VITE_REACT_APP_SERVERURL;
 import ResponseComponent from './components/ResponseComponent';
 
 // PAGES 
-// RAB //////////////////////////////////////////////////////////////////////////////////////////////
+// STUDENT //////////////////////////////////////////////////////////////////////////////////////////////
 import StudentAuth from './pages/student/auth/Auth';
 import StudentSignin from './pages/student/auth/Signin';
 import StudentSignup from './pages/student/auth/Signup';
 import StudentForgotPassword from './pages/student/auth/ForgotPassword';
 import StudentResetPassword from './pages/student/auth/ResetPassword';
 import StudentDashboardMain from './pages/student/DashboardMain';
+import CompleteAccount from './pages/student/CompleteAccount';
 import StudentStats from './pages/student/Stats';
 import StudentSettings from './pages/student/Settings';
 import StudentDeclareAbsence from './pages/student/DeclareAbsence';
@@ -34,7 +35,6 @@ import TeacherAssignedCourses from './pages/teacher/AssignedCourses';
 import TeacherAssignedCourseDetails from './pages/teacher/AssignedCourseDetails';
 import TeacherClaimDetails from './pages/teacher/ClaimDetails';
 import TeacherClaims from './pages/teacher/Claims';
-import TeacherReportPreview from './pages/teacher/ReportPreview';
 
 
 // HOD //////////////////////////////////////////////////////////////////////////////////////////////
@@ -79,7 +79,7 @@ import AccountantDashboardMain from './pages/accountant/DashboardMain';
 import AccountantStats from './pages/accountant/Stats';
 import AccountantSettings from './pages/accountant/Settings';
 import AccountantClaimDetails from './pages/accountant/ClaimDetails';
-import AccountantClaims from './pages/accountant/claims';
+import AccountantClaims from './pages/accountant/Claims';
 import AccountantReportPreview from './pages/accountant/ReportPreview';
 
 
@@ -109,9 +109,10 @@ import ExaminationSettings from './pages/examinationOfficer/Settings';
 import ExaminationClaimDetails from './pages/examinationOfficer/ClaimDetails';
 import ExaminationClaims from './pages/examinationOfficer/Claims';
 import ExaminationReportPreview from './pages/examinationOfficer/ReportPreview';
-import { getCourseClaims, getStudentClaims } from './redux/features/claimSlice';
+import { getAccountantClaims, getDeanOfStudentsClaims, getDepartmentClaims, getExaminationOfficeClaims, getRegistrationOfficeClaims, getStudentClaims } from './redux/features/claimSlice';
 import { getStudentRegistration } from './redux/features/registrationSlice';
 import { getCoursesForTeacher } from './redux/features/courseSlice';
+import { getAllUsers } from './redux/features/userSlice';
 
 
 
@@ -149,23 +150,29 @@ function App() {
   useEffect(() => {  
     if (student && student !== undefined) {
       // Load student claims
-      getStudentClaims(student.registrationNumber);
+      dispatch(getStudentClaims(student.registrationNumber));
       // Load registration information if the student is registered
-      getStudentRegistration(student.registrationNumber);
+      dispatch(getStudentRegistration(student.registrationNumber));
     } else if (teacher && teacher !== undefined) {
       // Load all courses assigned to him/her
-      getCoursesForTeacher(teacher.id, teaToken)
+      dispatch(getCoursesForTeacher(teacher.id, teaToken));
     } else if (headOfDepartment && headOfDepartment !== undefined) {
       // Load list of lecturers
+      dispatch(getAllUsers());
       // Load list of teacher approved claims
+      dispatch(getDepartmentClaims(hodToken, headOfDepartment.department));
     } else if (accountant && accountant !== undefined) {
       // Load list of claims for students who have paid
+      dispatch(getAccountantClaims(accToken));
     } else if (deanOfStudents && deanOfStudents !== undefined) {
       // Load list of claims approved by the accounting office
+      dispatch(getDeanOfStudentsClaims(dosToken));
     } else if (registrationOfficer && registrationOfficer !== undefined) {
       // Load list of claims approved by the dean of students
+      dispatch(getRegistrationOfficeClaims(regToken));
     } else if (examinationOfficer && examinationOfficer !== undefined) {
       // Load list of claims approved by the registration office
+      dispatch(getExaminationOfficeClaims(exoToken));
     }
   },[dispatch]);
 
@@ -185,7 +192,8 @@ function App() {
             <Route path='forgot-password' element={<StudentForgotPassword />} />
             <Route path='reset-password/:token/:userId' element={<StudentResetPassword />} />
           </Route>
-          <Route path='/student/' element={stdToken ? <StudentDashboardMain /> : <Navigate replace to={'/student/auth/signin'} />}>
+          <Route path='/student/complete-account' element={<CompleteAccount />} />
+          <Route path='/student/:registrationNumber' element={stdToken ? <StudentDashboardMain /> : <Navigate replace to={'/student/auth/signin'} />}>
             <Route path='home' element={<StudentStats />} />
             <Route path='declare' element={<StudentDeclareAbsence />} />
             <Route path='claims' element={<StudentMyClaims />} />
@@ -208,7 +216,6 @@ function App() {
             <Route path='courses/:courseId' element={<TeacherAssignedCourseDetails />} />
             <Route path='claims' element={<TeacherClaims />} />
             <Route path='claims/:claimId' element={<TeacherClaimDetails />} />
-            <Route path='report-preview' element={<TeacherReportPreview />} />
             <Route path='settings' element={<TeacherSettings />} />
           </Route>
 
@@ -220,7 +227,7 @@ function App() {
             <Route path='forgot-password' element={<HODForgotPassword />} />
             <Route path='reset-password/:token/:userId' element={<HODResetPassword />} />
           </Route>
-          <Route path='/hod/:code/' element={hodToken ? <HODDashboardMain /> : <Navigate replace to={'/hod/auth/signin'} />}>
+          <Route path='/hod/:department/' element={hodToken ? <HODDashboardMain /> : <Navigate replace to={'/hod/auth/signin'} />}>
             <Route path='home' element={<HODStats />} />
             <Route path='claims' element={<HODClaims />} />
             <Route path='claims/:claimId' element={<HODClaimDetails />} />
