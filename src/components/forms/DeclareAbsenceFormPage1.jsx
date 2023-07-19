@@ -24,38 +24,14 @@ export default function DeclareAbsenceFormPage1() {
     }
 
     const onSubmit = data => {
-        if (data.password !== data.confirmPassword) {
-          setResponseMessage({message:'Passwords do not match', severity: 'warning'});
-          setOpen(true);
-          return;
-        } else {
+        setFormData({
+            ...formData,
+            name: data.name,
+            phone: data.phone,
+            email: data.email,
             
-          data.consultantId = user.id;
-          data.consultantName = user.fullName;
-          data.consultantEmail = user.email;
-
-          setIsProcessing(true);
-    
-          axios.post(serverUrl+'/api/v1/cpta/project/add', data)
-          .then(response => {
-            setTimeout(() => {
-              if (response.status === 201) {
-                setIsProcessing(false);
-                setResponseMessage({ message: response.data.message, severity: 'success' });
-                setOpen(true);
-                dispatch(getAllProjects(user.id));
-              }
-            }, 3000)
-          })
-          .catch(error => {
-            if (error.response && error.response.status >= 400 && error.response.status <= 500) {
-              setIsProcessing(false);
-              setResponseMessage({ message: error.response.data.msg, severity:'error'})
-              setOpen(true);
-            }
-          })
-        }
-      };
+        });
+    };
 
     return (
         <VerticallyFlexGapForm onSubmit={handleSubmit(onSubmit)} style={{ gap: '20px', backgroundColor: 'white', padding: '20px', borderRadius: '5px', boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.1)' }}>
@@ -207,13 +183,9 @@ export default function DeclareAbsenceFormPage1() {
                     </FormElement>
                 </HorizontallyFlexGapContainer>
 
-                <FormElement style={{ flexDirection: 'row', gap: '70%' }}>
-                    {isProcessing 
-                    ? <Button disabled variant="contained" color="primary" size="small">PROCESSING...</Button> 
-                    : <Button variant="contained" color="primary" size="medium" type="submit">SUBMIT</Button>
-                    }
-                    <Button variant="contained" color="secondary" size="medium" type="button" onClick={() => {window.location.reload()}}>Cancel</Button>
-                </FormElement>
+                <HorizontallyFlexGapContainer style={{ justifyContent: 'flex-end' }}> 
+                    <Button variant="contained" color="primary" size="medium" type="button" onClick={() => { }}>Next</Button>
+                </HorizontallyFlexGapContainer>
             </VerticallyFlexGapContainer>
         </VerticallyFlexGapForm>
     )

@@ -5,6 +5,7 @@ import { HeaderTwo, HorizontallyFlexSpaceBetweenContainer, VerticallyFlexGapCont
 
 const DeclareAbsence = () => {
   const [page, setPage] = useState(1);
+  
 
   return (
     <VerticallyFlexGapContainer style={{ gap: '20px' }}>
@@ -15,8 +16,8 @@ const DeclareAbsence = () => {
       <HorizontallyFlexSpaceBetweenContainer>
         <HeaderTwo>Declare absense</HeaderTwo>
       </HorizontallyFlexSpaceBetweenContainer>
-      {page===1 && <DeclareAbsenceForm />}
-      {page===2 && <DeclareAbsenceForm />}
+      {page===1 && <DeclareAbsenceForm setPage={setPage} />}
+      {page===2 && <DeclareAbsenceForm setPage={setPage} />}
     </VerticallyFlexGapContainer>
   )
 }
