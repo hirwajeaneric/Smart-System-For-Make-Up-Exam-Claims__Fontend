@@ -133,7 +133,7 @@ export const HorizontallyFlexGapContainer = styled.div`
     width: 100%;
     display: flex;
     flex-direction: row;
-    align-items: center;
+    align-items: center;    
     flex-wrap: nowrap;
 
     div.left {
@@ -315,7 +315,7 @@ export const FormElement = styled.div`
 
     input, textarea, select, option {
         width: 100%;
-        padding: 12px 12px;
+        padding: 10px 10px;
         border: 1px solid #b3cccc;
         border-radius: 3px;
         font-size: 100%;

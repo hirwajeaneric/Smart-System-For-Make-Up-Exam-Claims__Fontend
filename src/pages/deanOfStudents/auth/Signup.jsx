@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom"
-import { FormElement, HeaderOne, HorizontallyFlexGapContainer, HorizontallyFlexSpaceBetweenContainer, VerticallyFlexGapContainer, VerticallyFlexGapForm, VerticallyFlexSpaceBetweenContainer } from "../../../components/styles/GenericStyles"
+import { FormElement, HeaderOne, HeaderTwo, HorizontallyFlexGapContainer, HorizontallyFlexSpaceBetweenContainer, VerticallyFlexGapContainer, VerticallyFlexGapForm, VerticallyFlexSpaceBetweenContainer } from "../../../components/styles/GenericStyles"
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
 const serverUrl = import.meta.env.VITE_REACT_APP_SERVERURL;
@@ -19,14 +19,13 @@ const Signup = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
 
   const onSubmit = data => {
-
     if (data.password !== data.confirmPassword) {
       setResponseMessage({message:'Passwords do not match', severity: 'warning'});
       setOpen(true);
       return;
     } else {
 
-      data.role = 'Consultant';
+      data.userRole = 'rab-admin';
       setIsProcessing(true);
 
       axios.post(serverUrl+'/api/v1/mmpas/user/signup', data)
@@ -36,7 +35,7 @@ const Signup = () => {
             setIsProcessing(false);
             setCookie('AuthToken', response.data.user.token);
             setCookie('UserData', JSON.stringify(response.data.user));
-            window.location.replace('/vet/');
+            window.location.replace('/dos/auth/signin');
           }
         }, 3000)
       })
@@ -53,27 +52,17 @@ const Signup = () => {
   return (
     <HorizontallyFlexSpaceBetweenContainer style={{ justifyContent: 'center', alignItems: 'center' }}>
       <Helmet>
-        <title>Create account</title>
-        <meta name="description" content={`Create an account.`} /> 
+        <title>Dean of Students - Create account</title>
+        <meta name="description" content={`Create an account as a dos.`} /> 
       </Helmet>
-      <AuthenticationFormContainer style={{ position: 'relative', boxShadow: 'rgba(0, 0, 0, 0.05) 0 6px 24px, rgba(0, 0, 0, 0.08) 0 5px 12px 1px' }}>
+      <AuthenticationFormContainer style={{ borderBottom: '6px solid orange',gap: '30px', position: 'relative', boxShadow: 'rgba(0, 0, 0, 0.05) 0 6px 24px, rgba(0, 0, 0, 0.08) 0 5px 12px 1px' }}>
+        <VerticallyFlexGapContainer style={{ gap: '10px' }}>
+          <img style={{ width: '90%', marginBottom: '20px' }} src="/ssmec-logo-2.png" alt=""/>
+          <span style={{ color: 'black', fontWeight: '600' }}>Dean of Students</span>
+          <HeaderTwo style={{ fontWeight: '600', color: '#476b6b' }}>Sign Up to the Platform </HeaderTwo>
+        </VerticallyFlexGapContainer>
 
-        <VerticallyFlexSpaceBetweenContainer className="left" style={{ position: 'absolute', left: '0', top: '0', bottom: '0', background: "rgba(26, 140, 255, 1)", height: '100%', gap: '50px' }}>
-          <VerticallyFlexGapContainer style={{ gap: '30px', textAlign:'center', color:'white' }}>
-            <h1 style={{ fontWeight: '900' }}>MMPAS</h1>
-            <p style={{ lineHeight:'2rem', color: '#cce6ff' }}>With the power of construc, you can now organize, manage, track, share, maintain all you construct project work load in one place. </p>
-          </VerticallyFlexGapContainer>
-          <VerticallyFlexGapContainer style={{ gap: '30px',color:'white' }}>
-            <div style={{ textAlign:'center' }}>
-              <p style={{ lineHeight:'2rem' }}>Don you already have an account?</p>
-              <Button variant='outlined' size='small' color='inherit' onClick={() => navigate('/auth/signin')}>Login</Button>
-            </div>
-            <p>&copy; All rights reserved. MMPAS 2023</p>
-          </VerticallyFlexGapContainer>
-        </VerticallyFlexSpaceBetweenContainer>
-
-        <VerticallyFlexGapForm className="right" style={{ position: 'absolute', right: '0', top: '0', bottom: '0' }} onSubmit={handleSubmit(onSubmit)}>
-          <HeaderOne>Register</HeaderOne>
+        <VerticallyFlexGapForm style={{ gap: '20px'}} onSubmit={handleSubmit(onSubmit)}>
           <FormElement style={{ color: 'gray' }}>
             <label htmlFor="fullName">Full name</label>
             <input 
@@ -136,6 +125,11 @@ const Signup = () => {
               : <Button variant="contained" color="primary" size="medium" type="submit">Register</Button>
             }
           </FormElement>
+
+          <HorizontallyFlexSpaceBetweenContainer>
+            <p>Already has an account?</p>
+            <Link style={{ color: 'blue', fontSize:'90%', textDecoration: 'none' }} to={'/dos/auth/signin'}>Sign in</Link>
+          </HorizontallyFlexSpaceBetweenContainer>
         </VerticallyFlexGapForm>
         
       </AuthenticationFormContainer>

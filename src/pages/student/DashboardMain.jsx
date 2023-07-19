@@ -1,5 +1,5 @@
 import { Link, Outlet, useNavigate } from "react-router-dom";
-import { DashboardInnerContainer, DashboardMainContainer, SideBarMenuItem, SideBarMenueContainer, SideNavigationBar, TopNavigationBar } from "../../components/styles/DashboardStructureStyles"
+import { DashboardInnerContainer, DashboardMainContainer, SideBarMenuItem, SideBarMenueContainer, SideNavigationBar, TopNavigationBar, SecondaryMenue } from "../../components/styles/DashboardStructureStyles"
 import { HorizontallyFlexGapContainer, VerticallyFlexGapContainer, VerticallyFlexSpaceBetweenContainer } from "../../components/styles/GenericStyles"
 import { MdHome, MdMenu, MdNotifications } from 'react-icons/md';
 import { AiFillBuild } from 'react-icons/ai';
@@ -28,44 +28,35 @@ const DashboardMain = () => {
         setAnchorEl(null);
     };
 
-    // const user = cookies.UserData;      
-    const user = {
-        fullName: 'Impuhwe Stella',
-        userRole: 'rab-admin',
-        email: 'impuhwe@gmail.com'
-    }
+    const user = cookies.student;      
 
     const signout = () => {
-        removeCookie('AuthToken');
-        removeCookie('UserData');
-        navigate('/rab/auth/signin')
+        removeCookie('stdToken');
+        removeCookie('student');
+        navigate('/student/auth/signin');
     }
 
-    const { isLoading: loadingManure, manureProductionOnCountryLevel, amountOfManureProductionOnCountryLevel } = useSelector(state => state.manure);
-    const { isLoading: loadingMilk, milkProductionOnCountryLevel, amountOfMilkProductionOnCountryLevel } = useSelector(state => state.milk);
-    const { isLoading: loadingMccs, allMCCs, numberOfAllMCCs } = useSelector(state => state.mcc);
-    const { isLoading: loadingUsers, allMccEmployees, numberOfAllMccEmployees } = useSelector(state => state.user);
-    
+    // Load student claims
+    // dispatch(getStudentClaims(student.registrationNumber));
+    // Load registration information if the student is registered
+    // dispatch(getStudentRegistration(student.registrationNumber));  
 
     return (
-        <VerticallyFlexSpaceBetweenContainer style={{ backgroundColor: '#e0ebeb' }}>
+        <VerticallyFlexSpaceBetweenContainer>
             <TopNavigationBar>
-                <div className="left">
-                    <MdMenu style={{ cursor: 'pointer' }} onClick={() => setFullSize(!fullSize)}/>
-                    <Link to='/'>MMPAs</Link>
-                </div>    
+                <Link to={`/student/${user.registrationNumber}/`}><img src="/ssmec-logo-2.2.png" alt="" /></Link>  
                 <div className="right">
-                    <MdNotifications style={{ fontSize: '150%', color: 'gray'}} />
+                    {/* <MdNotifications style={{ fontSize: '150%', color: 'gray'}} /> */}
                     <Tooltip title="Account settings">
                         <IconButton
                             onClick={handleClick}
                             size="small"
-                            sx={{ ml: 2, background: 'white' }}
+                            sx={{ ml: 2, background: '#0063ab' }}
                             aria-controls={open ? 'account-menu' : undefined}
                             aria-haspopup="true"
                             aria-expanded={open ? 'true' : undefined}
                         >
-                            <Avatar sx={{ width: 32, height: 32, background: 'black' }}>{getSimpleCapitalizedChars(user.fullName)}</Avatar>
+                            <Avatar sx={{ width: 32, height: 32 }}>{getSimpleCapitalizedChars(user.fullName)}</Avatar>
                         </IconButton>
                     </Tooltip>
                 </div>
@@ -136,86 +127,20 @@ const DashboardMain = () => {
             </TopNavigationBar> 
 
 
-            <HorizontallyFlexGapContainer style={{ position: 'relative' }}>
-                
-                <SideNavigationBar style={{ width: fullSize ? '5%' : '20%' }}>
-                    <SideBarMenueContainer>
-                        <SideBarMenuItem to={''}>
-                            <MdHome style={{ width: fullSize ? '100%' : '20%'}}/>
-                            <div style={{ width: fullSize ? '0%' : '80%'}} className="nav-data">
-                                {!fullSize && <span className="text">Home</span>}
-                            </div>
-                        </SideBarMenuItem>
-                        <SideBarMenuItem to={'projects'}>
-                            <AiFillBuild style={{ width: fullSize ? '100%' : '20%'}}/>
-                            <div style={{ width: fullSize ? '0%' : '80%'}} className="nav-data">
-                            {!fullSize && <>
-                                <span className="text">Projects</span>
-                                <span className="number">{numberOfProjects}</span>
-                                </>
-                            }
-                            </div>
-                        </SideBarMenuItem>
-                        { 
-                            listOfConsultantsProjects.map((project, index) => {
-                                return (<SideBarMenuItem key={index} onClick={()=>{window.location.replace(`/${project.code}`)}} to={`/${project.code}`} style={{ fontSize:'90%' }}>
-                                    <MdHome style={{ width: fullSize ? '100%' : '20%', color: "transparent"}}/>
-                                    <div style={{ width: fullSize ? '0%' : '80%'}} className="nav-data">
-                                        {!fullSize && 
-                                            <>
-                                                <span className="text">{project.name}</span>
-                                                <span className="number">{project.progress} %</span>
-                                            </>    
-                                        }
-                                    </div>
-                                </SideBarMenuItem>)
-                            }) 
-                        }
-                        {
-                            listOfOwnerProjects.map((project, index) => {
-                                return (<SideBarMenuItem key={index} onClick={()=>{window.location.replace(`/${project.code}`)}} to={`/${project.code}`} style={{ fontSize:'90%' }}>
-                                    <MdHome style={{ width: fullSize ? '100%' : '20%', color: "transparent"}}/>
-                                    <div style={{ width: fullSize ? '0%' : '80%'}} className="nav-data">
-                                        {!fullSize && 
-                                            <>
-                                                <span className="text">{project.name}</span>
-                                                <span className="number">{project.progress} %</span>
-                                            </>    
-                                        }
-                                    </div>
-                                </SideBarMenuItem>)
-                            }) 
-                        }
-                        {/* <SideBarMenuItem to={'resources'}>
-                            <PiToolboxFill style={{ width: fullSize ? '100%' : '20%'}}/>
-                            <div style={{ width: fullSize ? '0%' : '80%'}} className="nav-data">
-                            {!fullSize && <><span className="text">Resources</span></>}
-                            </div>
-                        </SideBarMenuItem> */}
-                        {/* <SideBarMenuItem to={'report'}>
-                            <BiSolidReport />
-                            <div className="nav-data">
-                                <span className="text">Reports</span>
-                            </div>
-                        </SideBarMenuItem> */}
-                        <SideBarMenuItem to={'settings'}>
-                            <TiUser style={{ width: fullSize ? '100%' : '20%'}}/>
-                            <div style={{ width: fullSize ? '0%' : '80%'}} className="nav-data">
-                            {!fullSize && <span className="text">My account</span>}
-                            </div>
-                        </SideBarMenuItem>                    
-                    </SideBarMenueContainer>
-                </SideNavigationBar>
-                
-
-
-                <DashboardMainContainer  style={{ width: fullSize ? '95%' : '80%' }}>
+            <VerticallyFlexGapContainer style={{ position: 'relative' }}>
+                <SecondaryMenue>
+                    <Link to={'home'}>Home</Link>
+                    <Link to={'declare'}>Declare absence</Link>
+                    <Link to={'claims'}>My claims</Link>
+                    <Link to={'settings'}>My account</Link>
+                </SecondaryMenue>
+                <DashboardMainContainer>
                     <DashboardInnerContainer>
                         <Outlet />
                     </DashboardInnerContainer>
                 </DashboardMainContainer>
 
-            </HorizontallyFlexGapContainer>
+            </VerticallyFlexGapContainer>
         </VerticallyFlexSpaceBetweenContainer>
     )
 }

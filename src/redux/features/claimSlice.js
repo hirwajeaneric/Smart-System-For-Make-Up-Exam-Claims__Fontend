@@ -7,7 +7,7 @@ const initialState = {
     courseClaims: [],
     hodClaims: [],
     accountantClaims: [],
-    dosClaims: [],
+    deanOfStudentsClaims: [],
     registrationOfficeClaims: [],
     examinationOfficerClaims: [],
     isLoading: false,
@@ -44,17 +44,17 @@ export const getCourseClaims = createAsyncThunk(
     }
 );
 
-export const getHodClaims = createAsyncThunk(
-    'claim/getHodClaims',
+export const getDepartmentClaims = createAsyncThunk(
+    'claim/getDepartmentClaims',
     async (filter, thunkAPI) => {
-        const { department } = filter;
+        const { token, department } = filter;
         try {
             const config = {
                 headers: {
                     'Authorization' : `Bearer ${token}`
                 }
             }
-            const response = await axios.get(serverUrl+`/api/v1/ssmec/claim/findByDepartment?department=${department}`, config);
+            const response = await axios.get(serverUrl+`/api/v1/ssmec/claim/findByLecturerSignature?department=${department}`, config);
             return response.data.claims;
         } catch (error) {
             return thunkAPI.rejectWithValue('Something went wrong!!');
@@ -65,9 +65,14 @@ export const getHodClaims = createAsyncThunk(
 export const getAccountantClaims = createAsyncThunk(
     'claim/getAccountantClaims',
     async (filter, thunkAPI) => {
-        const { registrationNumber } = filter;
+        const { token } = filter;
         try {
-            const response = await axios.get(serverUrl+`/api/v1/ssmec/claim/findByRegistrationNumber?registrationNumber=${registrationNumber}`);
+            const config = {
+                headers: {
+                    'Authorization' : `Bearer ${token}`
+                }
+            }
+            const response = await axios.get(serverUrl+`/api/v1/ssmec/claim/findByPaid`, config);
             return response.data.claims;
         } catch (error) {
             return thunkAPI.rejectWithValue('Something went wrong!!');
@@ -78,14 +83,14 @@ export const getAccountantClaims = createAsyncThunk(
 export const getDeanOfStudentsClaims = createAsyncThunk(
     'claim/getDeanOfStudentsClaims',
     async (filter, thunkAPI) => {
-        const { token, courseCode } = filter;
+        const { token } = filter;
         try {
             const config = {
                 headers: {
                     'Authorization' : `Bearer ${token}`
                 }
             }
-            const response = await axios.get(serverUrl+`/api/v1/ssmec/claim/findByCourse?courseCode=${courseCode}`, config);
+            const response = await axios.get(serverUrl+`/api/v1/ssmec/claim/findByAccountantSignature`, config);
             return response.data.claims;
         } catch (error) {
             return thunkAPI.rejectWithValue('Something went wrong!!');
@@ -96,14 +101,14 @@ export const getDeanOfStudentsClaims = createAsyncThunk(
 export const getRegistrationOfficeClaims = createAsyncThunk(
     'claim/getRegistrationOfficeClaims',
     async (filter, thunkAPI) => {
-        const { department } = filter;
+        const { token } = filter;
         try {
             const config = {
                 headers: {
                     'Authorization' : `Bearer ${token}`
                 }
             }
-            const response = await axios.get(serverUrl+`/api/v1/ssmec/claim/findByDepartment?department=${department}`, config);
+            const response = await axios.get(serverUrl+`/api/v1/ssmec/claim/findByDeanOfStudentSignature`, config);
             return response.data.claims;
         } catch (error) {
             return thunkAPI.rejectWithValue('Something went wrong!!');
@@ -114,21 +119,20 @@ export const getRegistrationOfficeClaims = createAsyncThunk(
 export const getExaminationOfficeClaims = createAsyncThunk(
     'claim/getExaminationOfficeClaims',
     async (filter, thunkAPI) => {
-        const { department } = filter;
+        const { token } = filter;
         try {
             const config = {
                 headers: {
                     'Authorization' : `Bearer ${token}`
                 }
             }
-            const response = await axios.get(serverUrl+`/api/v1/ssmec/claim/findByDepartment?department=${department}`, config);
+            const response = await axios.get(serverUrl+`/api/v1/ssmec/claim/findByRegistrationOfficerSignature`, config);
             return response.data.claims;
         } catch (error) {
             return thunkAPI.rejectWithValue('Something went wrong!!');
         }
     }
 );
-
 
 
 const claimSlice = createSlice({
@@ -155,14 +159,54 @@ const claimSlice = createSlice({
         [getCourseClaims.rejected] : (state) => {
             state.isLoading = false;
         },
-        [getHodClaims.pending] : (state) => {
+        [getDepartmentClaims.pending] : (state) => {
             state.isLoading = true;
         },
-        [getHodClaims.fulfilled] : (state, action) => {
+        [getDepartmentClaims.fulfilled] : (state, action) => {
             state.isLoading = false;
             state.hodClaims = action.payload;
         },
-        [getHodClaims.rejected] : (state) => {
+        [getDepartmentClaims.rejected] : (state) => {
+            state.isLoading = false;
+        },
+        [getAccountantClaims.pending] : (state) => {
+            state.isLoading = true;
+        },
+        [getAccountantClaims.fulfilled] : (state, action) => {
+            state.isLoading = false;
+            state.accountantClaims = action.payload;
+        },
+        [getAccountantClaims.rejected] : (state) => {
+            state.isLoading = false;
+        },
+        [getDeanOfStudentsClaims.pending] : (state) => {
+            state.isLoading = true;
+        },
+        [getDeanOfStudentsClaims.fulfilled] : (state, action) => {
+            state.isLoading = false;
+            state.deanOfStudentsClaims = action.payload;
+        },
+        [getDeanOfStudentsClaims.rejected] : (state) => {
+            state.isLoading = false;
+        },
+        [getRegistrationOfficeClaims.pending] : (state) => {
+            state.isLoading = true;
+        },
+        [getRegistrationOfficeClaims.fulfilled] : (state, action) => {
+            state.isLoading = false;
+            state.registrationOfficeClaims = action.payload;
+        },
+        [getRegistrationOfficeClaims.rejected] : (state) => {
+            state.isLoading = false;
+        },
+        [getExaminationOfficeClaims.pending] : (state) => {
+            state.isLoading = true;
+        },
+        [getExaminationOfficeClaims.fulfilled] : (state, action) => {
+            state.isLoading = false;
+            state.examinationOfficerClaims = action.payload;
+        },
+        [getExaminationOfficeClaims.rejected] : (state) => {
             state.isLoading = false;
         },
     }
