@@ -2,7 +2,6 @@ import { ArrowBack } from '@mui/icons-material'
 import { Button } from '@mui/material'
 import axios from 'axios'
 import React, { useContext, useState } from 'react'
-import { useCookies } from 'react-cookie'
 import { Helmet } from 'react-helmet-async'
 import { Link } from 'react-router-dom'
 const serverUrl = import.meta.env.VITE_REACT_APP_SERVERURL;
@@ -12,7 +11,6 @@ import { CenterFlexedContainer, FormElement, HeaderOne, HorizontallyFlexGapConta
 import { AUCAFacultiesAndDepartments } from '../../utils/AUCAFacultiesAndDepartments'
 
 const CompleteAccount = () => {
-  const [ cookies, setCookie, removeCookie ] = useCookies(null);
   const { setOpen, setResponseMessage } = useContext(GeneralContext);
   const [isProcessing, setIsProcessing] = useState(false);
   var [formData, setFormData] = useState({});  
@@ -49,8 +47,8 @@ const CompleteAccount = () => {
     .then(response => {
       if (response.status === 201) {
         setIsProcessing(false);
-        setCookie('stdToken', response.data.user.token);
-        setCookie('student', JSON.stringify(response.data.user));
+        ('stdToken', response.data.user.token);
+        localStorage.setItem('student', JSON.stringify(response.data.user));
         setResponseMessage({ message: 'Account created', severity:'success'})
         setOpen(true);
         setTimeout(() => {

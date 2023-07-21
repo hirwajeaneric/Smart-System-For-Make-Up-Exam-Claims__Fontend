@@ -24,11 +24,9 @@ const Signin = () => {
     .then(response => {
       if (response.status === 200) {
         setIsProcessing(false);
-        setCookie('stdToken', response.data.user.token);
-        setCookie('student', JSON.stringify(response.data.user));
-        setTimeout(() => {
-          window.location.replace(`/student/${response.data.user.registrationNumber}`);
-        }, 2000)
+        localStorage.setItem('stdToken', response.data.user.token);
+        localStorage.setItem('student', JSON.stringify(response.data.user));
+        window.location.replace(`/student/${response.data.user.registrationNumber}`);
       }
     })
     .catch(error => {

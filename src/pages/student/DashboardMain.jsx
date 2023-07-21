@@ -9,14 +9,12 @@ import Avatar from "@mui/material/Avatar";
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { Divider, IconButton, ListItemIcon, Tooltip } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Logout, PersonAdd, Settings } from "@mui/icons-material";
-import { useCookies } from "react-cookie";
 import { useSelector } from "react-redux";
 import { getSimpleCapitalizedChars } from "../../utils/HelperFunctions";
 
 const DashboardMain = () => {
-    const [ cookies, setCookie, removeCookie ] = useCookies(null);
     const [anchorEl, setAnchorEl] = useState(null);
     const navigate = useNavigate();
     const open = Boolean(anchorEl);
@@ -26,12 +24,15 @@ const DashboardMain = () => {
     const handleClose = () => {
         setAnchorEl(null);
     };
+    const [user, setUser] = useState({});
 
-    const user = cookies.student;      
+    useEffect(() => {
+        setUser(JSON.parse(localStorage.getItem('student')));
+    },[]);      
 
     const signout = () => {
-        removeCookie('stdToken');
-        removeCookie('student');
+        localStorage.removeItem('stdToken');
+        localStorage.removeItem('student');
         navigate('/student/auth/signin');
     }
 
@@ -55,7 +56,7 @@ const DashboardMain = () => {
                             aria-haspopup="true"
                             aria-expanded={open ? 'true' : undefined}
                         >
-                            <Avatar sx={{ width: 32, height: 32 }}>{getSimpleCapitalizedChars(user.fullName)}</Avatar>
+                            <Avatar sx={{ width: 32, height: 32 }}>{getSimpleCapitalizedChars(JSON.parse(localStorage.getItem('student')).fullName)}</Avatar>
                         </IconButton>
                     </Tooltip>
                 </div>
@@ -95,7 +96,7 @@ const DashboardMain = () => {
                     anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
                 >
                     <MenuItem onClick={handleClose} style={{ display:'flex', flexDirection:'row', alignItems:'flex-start' }}>
-                    <Avatar sx={{ width: 32, height: 32 }}>{getSimpleCapitalizedChars(user.fullName)}</Avatar>
+                    <Avatar sx={{ width: 32, height: 32 }}>{getSimpleCapitalizedChars(JSON.parse(localStorage.getItem('student')).fullName)}</Avatar>
                         <VerticallyFlexGapContainer style={{ justifyContent:'flex-start', alignItems:'flex-start', gap: '5px' }}>
                             <p>{user.fullName}</p>
                             <p style={{ color: 'blue', fontWeight:'700', fontSize:'90%' }}>{user.role}</p>
@@ -131,7 +132,7 @@ const DashboardMain = () => {
                     <Link to={'home'}>Home</Link>
                     <Link to={'declare'}>Declare absence</Link>
                     <Link to={'claims'}>My claims</Link>
-                    <Link to={'settings'}>My account</Link>
+                    <Link to={'settings'}>{user.fullName}</Link>
                 </SecondaryMenue>
                 <DashboardMainContainer>
                     <DashboardInnerContainer>

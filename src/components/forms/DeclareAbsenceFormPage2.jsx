@@ -1,260 +1,313 @@
 import { Button } from "@mui/material";
-import { useContext, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useContext, useEffect, useState } from "react";
 import { GeneralContext } from "../../App";
 import { FormElement, HeaderTwo, HorizontallyFlexGapContainer, HorizontallyFlexSpaceBetweenContainer, VerticallyFlexGapContainer, VerticallyFlexGapForm } from "../styles/GenericStyles";
 const serverUrl = import.meta.env.VITE_REACT_APP_SERVERURL;
-import { useCookies } from "react-cookie";
 import axios from "axios";
 import { useDispatch } from "react-redux";
-import { AUCAFacultiesAndDepartments } from "../../utils/AUCAFacultiesAndDepartments";
+import { useNavigate } from "react-router-dom";
+import { getStudentClaims } from "../../redux/features/claimSlice";
 
 export default function DeclareAbsenceFormPage2() {
-    const [isProcessing, setIsProcessing] = useState(false);
-    const { register, handleSubmit, formState: { errors } } = useForm();
-    const { setOpen, setResponseMessage } = useContext(GeneralContext);
-    const [ cookies, setCookie, removeCookie ] = useCookies(null);
-    const user = cookies.UserData;
+    const { 
+        setOpen, 
+        setResponseMessage, 
+        declarationFormData, 
+        setDeclarationFormData, 
+        declarationFormErrors, 
+        setDeclarationFormErrors, 
+        proofOfTuitionPayment, 
+        setProofOfTuitionPayment, 
+        numberOfCourses, 
+        setNumberOfCourses,
+        courseOne,
+        setCourseOne,
+        courseTwo,
+        setCourseTwo,
+        courseThree,
+        setCourseThree
+    } = useContext(GeneralContext);
+    const navigate = useNavigate();
     const dispatch = useDispatch();
-    var [formData, setFormData] = useState({});  
-    const [formDataErrors, setFormDataErrors] = useState({});
+    const [isProcessing, setIsProcessing] = useState(false);
+    const [user, setUser] = useState({});
 
+
+
+    // FETCH USER DATA ****************************************************************************
+    useEffect(() => {
+        setUser(JSON.parse(localStorage.getItem('student')));
+    },[]);  
+
+
+
+    // INPUT FORM HANDLES *************************************************************************
     const handleFormInput = ({ target: input}) => {
-        setFormData({...formData, [input.name]: input.value });
+        setDeclarationFormData({...declarationFormData, [input.name]: input.value });
+        setDeclarationFormErrors({});
     }
 
-    const onSubmit = data => {
-        if (data.password !== data.confirmPassword) {
-          setResponseMessage({message:'Passwords do not match', severity: 'warning'});
-          setOpen(true);
-          return;
-        } else {
-            
-          data.consultantId = user.id;
-          data.consultantName = user.fullName;
-          data.consultantEmail = user.email;
+    const handleNumberOfCourses = ({ target: input}) => {
+        setNumberOfCourses(input.value);
+    }
 
-          setIsProcessing(true);
-    
-          axios.post(serverUrl+'/api/v1/cpta/project/add', data)
-          .then(response => {
-            setTimeout(() => {
-              if (response.status === 201) {
-                setIsProcessing(false);
-                setResponseMessage({ message: response.data.message, severity: 'success' });
-                setOpen(true);
-                dispatch(getAllProjects(user.id));
-              }
-            }, 3000)
-          })
-          .catch(error => {
-            if (error.response && error.response.status >= 400 && error.response.status <= 500) {
-              setIsProcessing(false);
-              setResponseMessage({ message: error.response.data.msg, severity:'error'})
-              setOpen(true);
-            }
-          })
+    const handleCourseOne = ({ target: input}) => {
+        setCourseOne({...courseOne, [input.name]:input.value});
+    }
+
+    const handleCourseTwo = ({ target: input}) => {
+        setCourseTwo({...courseTwo, [input.name]:input.value});
+    }
+
+    const handleCourseThree = ({ target: input}) => {
+        setCourseThree({...courseThree, [input.name]:input.value});
+    }
+
+    const handleFormFileInput = (e) => {
+        setProofOfTuitionPayment(e.target.files[0]);
+    } 
+
+    const nextStep = () => {
+        navigate(`/student/${user.registrationNumber}/declare/step1`);
+    };
+
+
+
+    // SUBMITTION OF DECLARATION FORM ****************************************************************
+    const submitDeclaration = (e) => {
+        e.preventDefault();
+
+        const config = {
+            headers: { "Content-Type":"multipart/form-data" }
         }
-      };
+
+        if (!proofOfTuitionPayment) {
+            setDeclarationFormErrors({...declarationFormErrors, proofOfTuitionPayment: 'Required'});
+            return;
+        } else {
+            var courses = [];
+        if (numberOfCourses === 1) {
+            courses.push(courseOne);
+        } else if (numberOfCourses === 2) {
+            courses.push(courseTwo);
+        } else {
+            courses.push(courseThree);
+        }
+            declarationFormData.courses = courses;
+            
+
+            console.log(declarationFormData);
+
+            // setIsProcessing(true);
+            // axios.post(serverUrl+'/api/v1/ssmec/claim/add', data, config)
+            // .then(response => {
+            // if (response.status === 201) {
+            //     setIsProcessing(false);
+            //     setResponseMessage({ message: response.data.message, severity:'success' })
+            //     setOpen(true);
+            //     dispatch(getStudentClaims({ registrationNumber: response.data.claim.registrationNumber }));
+            //     setTimeout(() => {
+            //     window.location.replace(`/student/${response.data.claim.registrationNumber}/claims`);
+            //     }, 2000);
+            // }
+            // })
+            // .catch(error => {
+            // if (error.response && error.response.status >= 400 && error.response.status <= 500) {
+            //     setIsProcessing(false);
+            //     setResponseMessage({ message: error.response.data.msg, severity:'error'})
+            //     setOpen(true);
+            // }
+            // })
+        }        
+    }
+
 
     return (
-        <VerticallyFlexGapForm onSubmit={handleSubmit(onSubmit)} style={{ gap: '20px', backgroundColor: 'white', padding: '20px', borderRadius: '5px', boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.1)' }}>
+        <VerticallyFlexGapForm onSubmit={submitDeclaration} style={{ gap: '20px', backgroundColor: 'white', padding: '20px', borderRadius: '5px', boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.1)' }}>
             
             <VerticallyFlexGapContainer style={{ gap: '10px', borderBottom: '1px solid #b3d9ff', paddingBottom: '15px', width: '100%', alignItems: 'flex-start'}}>
-                <HeaderTwo style={{ fontWeight: '600' }}>Step 1</HeaderTwo>
-                <p style={{ textAlign:'left' }}>Basic information.</p>
+                <HeaderTwo style={{ fontWeight: '600' }}>Step 2</HeaderTwo>
+                <p style={{ textAlign:'left' }}>Courses.</p>
             </VerticallyFlexGapContainer>
             
 
-            <VerticallyFlexGapContainer style={{ gap: '15px' }}>
-                <HorizontallyFlexGapContainer style={{ gap: '20px' }}>
+            <HorizontallyFlexGapContainer style={{ alignItems: 'flex-start', gap: '15px' }}>
+                <VerticallyFlexGapContainer style={{ gap: '20px' }}>
+                    <FormElement style={{ color: 'gray' }}>
+                        <label htmlFor="proofOfTuitionPayment">Registration form *</label>
+                        <input 
+                            style={{padding: '7px'}}
+                            type="file" 
+                            id="proofOfTuitionPayment"
+                            value={proofOfTuitionPayment || ''}
+                            name='proofOfTuitionPayment'
+                            onChange={handleFormFileInput}
+                        />
+                        {declarationFormErrors.proofOfTuitionPayment && (<p>Required</p>)}
+                    </FormElement>
+                    <FormElement style={{ color: 'gray' }}>
+                        <label htmlFor="numberOfCourses">Number of courses *</label>
+                        <select 
+                            id='numberOfCourses'
+                            name='numberOfCourses'
+                            onChange={handleNumberOfCourses}
+                        >
+                            <option value={0}>Choose number</option>
+                            <option value={1}>One</option>
+                            <option value={2}>Two</option>
+                            <option value={3}>Three</option>
+                        </select>
+                        {declarationFormErrors.numberOfCourses && (<p>{declarationFormErrors.numberOfCourses}</p>)}
+                    </FormElement>
+                    <FormElement style={{ color: 'gray' }}>
+                        <label htmlFor="reason">Reason of absense *</label>
+                        <textarea 
+                            type="text" 
+                            id="reason"
+                            rows={3}
+                            placeholder="Reason of absense" 
+                            value={declarationFormData.reason || ''}
+                            name='reason'
+                            onChange={handleFormInput}
+                        >
+                        </textarea>
+                        {declarationFormErrors.reason && (
+                            <p>Required</p>
+                        )}
+                    </FormElement>
+                </VerticallyFlexGapContainer>
+
+                {/* First course  */}
+                <VerticallyFlexGapContainer style={{ gap: '20px' }}>
+                    <h3 style={{ width: '100%', textAlign: 'left', color: 'gray' }}>Course 1</h3>
                     <FormElement style={{ color: 'gray' }}>
                         <label htmlFor="fullName">Name *</label>
                         <input 
                             type="text" 
-                            id="name"
-                            placeholder="Project name" 
-                            {...register("name", 
-                            {required: true})} 
-                            aria-invalid={errors.name ? "true" : "false"}
+                            id="courseName"
+                            placeholder="Course name" 
+                            value={courseOne.courseName || ''}
+                            name='courseName'
+                            onChange={handleCourseOne}
                         />
-                        {errors.name?.type === "required" && (
-                        <p role="alert">Project name is required</p>
-                        )}
+                        {declarationFormErrors.courseName && (<p>Required</p>)}
                     </FormElement>
                     <FormElement style={{ color: 'gray' }}>
-                        <label htmlFor="registrationNumber">Registration Number *</label>
-                        <input 
-                            type="number" 
-                            id="registrationNumber"
-                            placeholder="Registration number" 
-                            {...register("registrationNumber", 
-                            {required: true})} 
-                            aria-invalid={errors.registrationNumber ? "true" : "false"}
-                        />
-                        {errors.name?.type === "required" && (
-                        <p role="alert">Registration number is required</p>
-                        )}
-                    </FormElement>
-                    <FormElement style={{ color: 'gray' }}>
-                        <label htmlFor="email">Email address *</label>
-                        <input 
-                            type="email" 
-                            id="email"
-                            placeholder="email" 
-                            {...register("email", 
-                            {required: true})} 
-                            aria-invalid={errors.email ? "true" : "false"}
-                        />
-                        {errors.email?.type === "required" && (
-                        <p role="alert">Email is required</p>
-                        )}
-                    </FormElement>
-                </HorizontallyFlexGapContainer>
-
-                <HorizontallyFlexGapContainer style={{ gap: '20px' }}>
-                    <FormElement style={{ color: 'gray' }}>
-                        <label htmlFor="phone">Phone number *</label>
+                        <label htmlFor="courseCode">Code *</label>
                         <input 
                             type="text" 
-                            id="phone"
-                            placeholder="Phone number" 
-                            {...register("phone", 
-                            {required: true})} 
-                            aria-invalid={errors.phone ? "true" : "false"}
+                            id="courseCode"
+                            placeholder="Course Code" 
+                            value={courseOne.courseCode || ''}
+                            name='courseCode'
+                            onChange={handleCourseOne}
                         />
-                        {errors.phone?.type === "required" && (
-                            <p role="alert">Phone number is required</p>
-                        )}
+                        {declarationFormErrors.courseCode && (<p>Required</p>)}
                     </FormElement>
                     <FormElement style={{ color: 'gray' }}>
-                        <label htmlFor="faculty">Faculty *</label>
-                        <select id='faculty' name='faculty' onChange={handleFormInput}>
-                            <option value="">Select faculty</option>
-                            <option value="Information Technology">Information Technology</option>
-                            <option value="Business Administration">Business Administration</option>
-                            <option value="Theology">Theology</option>
-                            <option value="Education">Education</option>
-                            <option value="Health Sciences">Health Sciences</option>
+                        <label htmlFor="group">Group *</label>
+                        <select id='group' name='group' onChange={handleCourseOne}>
+                            <option value="">Select group</option>
+                            <option value="A">A</option>
+                            <option value="B">B</option>
+                            <option value="C">C</option>
+                            <option value="D">D</option>
+                            <option value="E">E</option>
                         </select>
-                        {errors.faculty && <p>Faculty is required</p>}
+                        {declarationFormErrors.group && <p>{declarationFormErrors.group}</p>}
                     </FormElement>
+                </VerticallyFlexGapContainer>
+
+                {/* Second course  */}
+                {(numberOfCourses === '2' || numberOfCourses === '3') && <VerticallyFlexGapContainer style={{ gap: '20px' }}>
+                <h3 style={{ width: '100%', textAlign: 'left', color: 'gray' }}>Course 2</h3>
                     <FormElement style={{ color: 'gray' }}>
-                        <label htmlFor="department">Department *</label>
-                        <select id='department' name='department' onChange={handleFormInput}>
-                            <option value="">Select department</option>
-                            { formData.faculty === 'Information Technology' && 
-                                AUCAFacultiesAndDepartments['Information Technology'].map((element, index) => {
-                                return (
-                                    <option key={index} value={element}>{element}</option>
-                                );
-                                })
-                            }
-                            { formData.faculty === 'Business Administration' && 
-                                AUCAFacultiesAndDepartments['Business Administration'].map((element, index) => {
-                                return (
-                                    <option key={index} value={element}>{element}</option>
-                                );
-                                })
-                            }
-                            { formData.faculty === 'Theology' && <option value={'Theology'}>Theology</option>
-                            }
-                            { formData.faculty === 'Education' && 
-                                AUCAFacultiesAndDepartments['Education'].map((element, index) => {
-                                return (
-                                    <option key={index} value={element}>{element}</option>
-                                );
-                                })
-                            }
-                            { formData.faculty === 'Health Sciences' && 
-                                AUCAFacultiesAndDepartments['Health Sciences'].map((element, index) => {
-                                return (
-                                    <option key={index} value={element}>{element}</option>
-                                );
-                                })
-                            }
-                        </select>
-                        {errors.department && <p>Faculty is required</p>}
-                    </FormElement>
-                </HorizontallyFlexGapContainer>
-                <HorizontallyFlexGapContainer style={{ gap: '20px' }}>
-                    <FormElement style={{ color: 'gray' }}>
-                        <label htmlFor="academicYear">Academic year *</label>
+                        <label htmlFor="fullName">Name *</label>
                         <input 
                             type="text" 
-                            id="academicYear"
-                            placeholder="academicYear" 
-                            {...register("academicYear", 
-                            {required: true})} 
-                            aria-invalid={errors.academicYear ? "true" : "false"}
+                            id="courseName"
+                            placeholder="Course name" 
+                            value={courseTwo.courseName || ''}
+                            name='courseName'
+                            onChange={handleCourseTwo}
                         />
-                        {errors.academicYear?.type === "required" && (
-                            <p role="alert">Academic yaer is required</p>
-                        )}
+                        {declarationFormErrors.courseName2 && (<p>Required</p>)}
                     </FormElement>
                     <FormElement style={{ color: 'gray' }}>
-                        <label htmlFor="semester">Semester *</label>
-                        <select 
-                            {...register("semester", { required: true })}
-                            aria-invalid={errors.semester ? "true" : "false"}
-                        >
-                            <option value="">Choose semester</option>
-                            <option value={'1'}>One</option>
-                            <option value={'2'}>Two</option>
-                            <option value={'3'}>Three</option>
-                        </select>
-                        {errors.semester?.type === "required" && (
-                            <p role="alert">Semester must be provided</p>
-                        )}
+                        <label htmlFor="courseCode">Code *</label>
+                        <input 
+                            type="text" 
+                            id="courseCode"
+                            placeholder="Course Code" 
+                            value={courseTwo.courseCode || ''}
+                            name='courseCode'
+                            onChange={handleCourseTwo}
+                        />
+                        {declarationFormErrors.courseCode2 && (<p>Required</p>)}
                     </FormElement>
                     <FormElement style={{ color: 'gray' }}>
-                        <label htmlFor="department">Department *</label>
-                        <select id='department' name='department' onChange={handleFormInput}>
-                            <option value="">Select department</option>
-                            { formData.faculty === 'Information Technology' && 
-                                AUCAFacultiesAndDepartments['Information Technology'].map((element, index) => {
-                                return (
-                                    <option key={index} value={element}>{element}</option>
-                                );
-                                })
-                            }
-                            { formData.faculty === 'Business Administration' && 
-                                AUCAFacultiesAndDepartments['Business Administration'].map((element, index) => {
-                                return (
-                                    <option key={index} value={element}>{element}</option>
-                                );
-                                })
-                            }
-                            { formData.faculty === 'Theology' && <option value={'Theology'}>Theology</option>
-                            }
-                            { formData.faculty === 'Education' && 
-                                AUCAFacultiesAndDepartments['Education'].map((element, index) => {
-                                return (
-                                    <option key={index} value={element}>{element}</option>
-                                );
-                                })
-                            }
-                            { formData.faculty === 'Health Sciences' && 
-                                AUCAFacultiesAndDepartments['Health Sciences'].map((element, index) => {
-                                return (
-                                    <option key={index} value={element}>{element}</option>
-                                );
-                                })
-                            }
+                        <label htmlFor="group">Group *</label>
+                        <select id='group' name='group' onChange={handleCourseTwo}>
+                            <option value="">Select group</option>
+                            <option value="A">A</option>
+                            <option value="B">B</option>
+                            <option value="C">C</option>
+                            <option value="D">D</option>
+                            <option value="E">E</option>
                         </select>
-                        {errors.department && <p>Faculty is required</p>}
+                        {declarationFormErrors.group2 && <p>{declarationFormErrors.group2}</p>}
                     </FormElement>
-                </HorizontallyFlexGapContainer>
-                
+                </VerticallyFlexGapContainer>}
 
-                <FormElement style={{ flexDirection: 'row', gap: '70%' }}>
-                    {isProcessing 
+                {/* Third course  */}
+                {(numberOfCourses === '3') && <VerticallyFlexGapContainer style={{ gap: '20px' }}>
+                <h3 style={{ width: '100%', textAlign: 'left', color: 'gray' }}>Course 3</h3>
+                    <FormElement style={{ color: 'gray' }}>
+                        <label htmlFor="fullName">Name *</label>
+                        <input 
+                            type="text" 
+                            id="courseName"
+                            placeholder="Course name" 
+                            value={courseThree.courseName || ''}
+                            name='courseName'
+                            onChange={handleCourseThree}
+                        />
+                        {declarationFormErrors.courseName3 && (<p>Required</p>)}
+                    </FormElement>
+                    <FormElement style={{ color: 'gray' }}>
+                        <label htmlFor="courseCode">Code *</label>
+                        <input 
+                            type="text" 
+                            id="courseCode"
+                            placeholder="Course Code" 
+                            value={courseThree.courseCode || ''}
+                            name='courseCode'
+                            onChange={handleCourseThree}
+                        />
+                        {declarationFormErrors.courseCode3 && (<p>Required</p>)}
+                    </FormElement>
+                    <FormElement style={{ color: 'gray' }}>
+                        <label htmlFor="group">Group *</label>
+                        <select id='group' name='group' onChange={handleCourseThree}>
+                            <option value="">Select group</option>
+                            <option value="A">A</option>
+                            <option value="B">B</option>
+                            <option value="C">C</option>
+                            <option value="D">D</option>
+                            <option value="E">E</option>
+                        </select>
+                        {declarationFormErrors.group3 && <p>{declarationFormErrors.group3}</p>}
+                    </FormElement>
+                </VerticallyFlexGapContainer>}
+            </HorizontallyFlexGapContainer>
+
+            <HorizontallyFlexSpaceBetweenContainer style={{ }}> 
+                <Button variant="contained" color="primary" size="medium" type="button" onClick={() => nextStep()}>Previous</Button>
+                {isProcessing 
                     ? <Button disabled variant="contained" color="primary" size="small">PROCESSING...</Button> 
-                    : <Button variant="contained" color="primary" size="medium" type="submit">SUBMIT</Button>
-                    }
-                    <Button variant="contained" color="secondary" size="medium" type="button" onClick={() => {window.location.reload()}}>Cancel</Button>
-                </FormElement>
-            </VerticallyFlexGapContainer>
+                    : <Button variant="contained" color="success" size="medium" type="submit">Submit</Button>
+                }
+            </HorizontallyFlexSpaceBetweenContainer>
         </VerticallyFlexGapForm>
     )
 }

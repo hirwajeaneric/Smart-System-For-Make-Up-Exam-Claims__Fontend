@@ -113,9 +113,9 @@ import { getAccountantClaims, getDeanOfStudentsClaims, getDepartmentClaims, getE
 import { getStudentRegistration } from './redux/features/registrationSlice';
 import { getCoursesForTeacher } from './redux/features/courseSlice';
 import { getAllUsers } from './redux/features/userSlice';
-import HodCompleteAccount from './pages/hod/HodCompleteAccount';
 
-
+import DeclareAbsenceFormPage1 from './components/forms/DeclareAbsenceFormPage1';
+import DeclareAbsenceFormPage2 from './components/forms/DeclareAbsenceFormPage2';
 
 export const GeneralContext = createContext();
 
@@ -123,24 +123,51 @@ function App() {
   const dispatch = useDispatch();
   const [ open, setOpen ] = useState(false);
   const [ responseMessage, setResponseMessage ] = useState({ message: '', severity: ''});
-  const [ cookies, setCookie, removeCookie ] = useCookies(null);
   
-  const stdToken = cookies.stdToken;
-  const teaToken = cookies.teaToken;
-  const hodToken = cookies.hodToken;
-  const accToken = cookies.accToken;
-  const dosToken = cookies.dosToken;
-  const regToken = cookies.regToken;
-  const exoToken = cookies.exoToken;
-  
-  const student = cookies.StdData;
-  const teacher = cookies.TeaData;
-  const headOfDepartment = cookies.HodData;
-  const accountant = cookies.AccData;
-  const deanOfStudents = cookies.DosData;
-  const registrationOfficer = cookies.RegData;
-  const examinationOfficer = cookies.ExoData;
+  var stdToken = '';
+  var teaToken = '';
+  var hodToken = '';
+  var accToken = '';
+  var dosToken = '';
+  var regToken = '';
+  var exoToken = '';
 
+  var student = '';
+  var teacher = '';
+  var headOfDepartment = '';
+  var accountant = '';
+  var deanOfStudents = '';
+  var registrationOfficer = '';
+  var examinationOfficer = '';
+
+  useEffect(() => {
+    stdToken = localStorage.getItem('StdToken');
+    teaToken = localStorage.getItem('TeaToken');
+    hodToken = localStorage.getItem('HodToken');
+    accToken = localStorage.getItem('AccToken');
+    dosToken = localStorage.getItem('DosToken');
+    regToken = localStorage.getItem('RegToken');
+    exoToken = localStorage.getItem('ExoToken');
+
+    student = localStorage.getItem('StdData');
+    teacher = localStorage.getItem('TeaData');
+    headOfDepartment = localStorage.getItem('HodData');
+    accountant = localStorage.getItem('AccData');
+    deanOfStudents = localStorage.getItem('DosData');
+    registrationOfficer = localStorage.getItem('RegData');
+    examinationOfficer = localStorage.getItem('ExoData');
+  },[])
+
+  const [declarationFormData, setDeclarationFormData] = useState({});
+  const [courses, setCourses] = useState([]);
+  const [courseErrors, setCourseErrors] = useState({});
+  const [proofOfTuitionPayment, setProofOfTuitionPayment] = useState('');
+  const [numberOfCourses, setNumberOfCourses] = useState(0);
+  const [declarationFormErrors, setDeclarationFormErrors] = useState({});
+  const [courseOne, setCourseOne] = useState({});
+  const [courseTwo, setCourseTwo] = useState({});
+  const [courseThree, setCourseThree] = useState({});
+  
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
       return;
@@ -180,11 +207,23 @@ function App() {
   return (
     <GeneralContext.Provider 
       value={{
-        open,
         setOpen,
-        handleClose,
         responseMessage, 
-        setResponseMessage, 
+        setResponseMessage,
+        declarationFormData,
+        setDeclarationFormData,
+        declarationFormErrors,
+        setDeclarationFormErrors,
+        proofOfTuitionPayment, 
+        setProofOfTuitionPayment, 
+        numberOfCourses, 
+        setNumberOfCourses,
+        courseOne,
+        setCourseOne,
+        courseTwo,
+        setCourseTwo,
+        courseThree,
+        setCourseThree
       }}>
       <BrowserRouter>
         <Routes>
@@ -197,10 +236,13 @@ function App() {
             <Route path='reset-password/:token/:userId' element={<StudentResetPassword />} />
           </Route>
           <Route path='/student/complete-account' element={<CompleteAccount />} />
-          <Route path='/student/:registrationNumber' element={stdToken ? <StudentDashboardMain /> : <Navigate replace to={'/student/auth/signin'} />}>
-            <Route path='' element={<StudentStats />} />
+          <Route path='/student/:registrationNumber' element={localStorage.getItem('stdToken') ? <StudentDashboardMain /> : <Navigate replace to={'/student/auth/signin'} />}>
             <Route path='home' element={<StudentStats />} />
-            <Route path='declare' element={<StudentDeclareAbsence />} />
+            <Route path='declare' element={<StudentDeclareAbsence />}>
+              <Route path='' element={<DeclareAbsenceFormPage1 />} />
+              <Route path='step1' element={<DeclareAbsenceFormPage1 />} />
+              <Route path='step2' element={<DeclareAbsenceFormPage2 />} />
+            </Route>
             <Route path='claims' element={<StudentMyClaims />} />
             <Route path='claims/:claimId' element={<StudentClaimDetails />} />
             <Route path='success' element={<StudentSuccessPage />} />
@@ -232,7 +274,6 @@ function App() {
             <Route path='forgot-password' element={<HODForgotPassword />} />
             <Route path='reset-password/:token/:userId' element={<HODResetPassword />} />
           </Route>
-          <Route path='/hod/complete-account' element={<HodCompleteAccount />} />
           <Route path='/hod/:department/' element={hodToken ? <HODDashboardMain /> : <Navigate replace to={'/hod/auth/signin'} />}>
             <Route path='home' element={<HODStats />} />
             <Route path='claims' element={<HODClaims />} />

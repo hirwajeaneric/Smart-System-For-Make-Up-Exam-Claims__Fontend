@@ -1,40 +1,71 @@
 import { Button } from "@mui/material";
-import { useContext, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useContext, useEffect, useState } from "react";
 import { GeneralContext } from "../../App";
-import { FormElement, HeaderTwo, HorizontallyFlexGapContainer, HorizontallyFlexSpaceBetweenContainer, VerticallyFlexGapContainer, VerticallyFlexGapForm } from "../styles/GenericStyles";
-const serverUrl = import.meta.env.VITE_REACT_APP_SERVERURL;
-import { useCookies } from "react-cookie";
-import axios from "axios";
-import { useDispatch } from "react-redux";
+import { FormElement, HeaderTwo, HorizontallyFlexGapContainer, VerticallyFlexGapContainer, VerticallyFlexGapForm } from "../styles/GenericStyles";
 import { AUCAFacultiesAndDepartments } from "../../utils/AUCAFacultiesAndDepartments";
+import { useNavigate } from "react-router-dom";
 
 export default function DeclareAbsenceFormPage1() {
-    const [isProcessing, setIsProcessing] = useState(false);
-    const { register, handleSubmit, formState: { errors } } = useForm();
-    const { setOpen, setResponseMessage } = useContext(GeneralContext);
-    const [ cookies, setCookie, removeCookie ] = useCookies(null);
-    const user = cookies.UserData;
-    const dispatch = useDispatch();
-    var [formData, setFormData] = useState({});  
-    const [formDataErrors, setFormDataErrors] = useState({});
+    const { declarationFormData, setDeclarationFormData, declarationFormErrors, setDeclarationFormErrors } = useContext(GeneralContext);
+    const navigate = useNavigate();
+    
+    const [user, setUser] = useState({});
+
+    useEffect(() => {
+        var localUser = JSON.parse(localStorage.getItem('student'));
+        setUser(localUser);
+        setDeclarationFormData({
+            ...declarationFormData, 
+            fullName: localUser.fullName,
+            registrationNumber: localUser.registrationNumber,
+            email: localUser.email,
+            phone: localUser.phone
+        })
+    },[]);  
 
     const handleFormInput = ({ target: input}) => {
-        setFormData({...formData, [input.name]: input.value });
+        setDeclarationFormData({...declarationFormData, [input.name]: input.value });
+        setDeclarationFormErrors({});
     }
 
-    const onSubmit = data => {
-        setFormData({
-            ...formData,
-            name: data.name,
-            phone: data.phone,
-            email: data.email,
-            
-        });
+    const nextStep = () => {
+        if (!declarationFormData.fullName) {
+            setDeclarationFormErrors({...declarationFormErrors, fullName: 'Required'});
+            return;
+        }
+        if (!declarationFormData.registrationNumber) {
+            setDeclarationFormErrors({...declarationFormErrors, registrationNumber: 'Required'})
+            return;
+        }
+        if (!declarationFormData.email) {
+            setDeclarationFormErrors({...declarationFormErrors, email: 'Required'})
+            return;
+        } 
+        if (!declarationFormData.phone) {
+            setDeclarationFormErrors({...declarationFormErrors, phone: 'Required'})
+            return;
+        }
+        if (!declarationFormData.faculty) {
+            setDeclarationFormErrors({...declarationFormErrors, faculty: 'Required'});
+            return;
+        }
+        if (!declarationFormData.department) {
+            setDeclarationFormErrors({...declarationFormErrors, department: 'Required'})
+            return;
+        }
+        if (!declarationFormData.academicYear) {
+            setDeclarationFormErrors({...declarationFormErrors, academicYear: 'Required'})
+            return;
+        } 
+        if (!declarationFormData.semester) {
+            setDeclarationFormErrors({...declarationFormErrors, semester: 'Required'})
+            return;
+        }
+        navigate(`/student/${user.registrationNumber}/declare/step2`);
     };
 
     return (
-        <VerticallyFlexGapForm onSubmit={handleSubmit(onSubmit)} style={{ gap: '20px', backgroundColor: 'white', padding: '20px', borderRadius: '5px', boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.1)' }}>
+        <VerticallyFlexGapForm style={{ gap: '20px', backgroundColor: 'white', padding: '20px', borderRadius: '5px', boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.1)' }}>
             
             <VerticallyFlexGapContainer style={{ gap: '10px', borderBottom: '1px solid #b3d9ff', paddingBottom: '15px', width: '100%', alignItems: 'flex-start'}}>
                 <HeaderTwo style={{ fontWeight: '600' }}>Step 1</HeaderTwo>
@@ -49,14 +80,12 @@ export default function DeclareAbsenceFormPage1() {
                         <input 
                             type="text" 
                             id="name"
-                            placeholder="Project name" 
-                            {...register("name", 
-                            {required: true})} 
-                            aria-invalid={errors.name ? "true" : "false"}
+                            placeholder="Full name" 
+                            value={declarationFormData.fullName || ''}
+                            name='fullName'
+                            onChange={handleFormInput}
                         />
-                        {errors.name?.type === "required" && (
-                        <p role="alert">Project name is required</p>
-                        )}
+                        {declarationFormErrors.fullName && (<p>{declarationFormErrors.fullName}</p>)}
                     </FormElement>
                     <FormElement style={{ color: 'gray' }}>
                         <label htmlFor="registrationNumber">Registration Number *</label>
@@ -64,13 +93,11 @@ export default function DeclareAbsenceFormPage1() {
                             type="number" 
                             id="registrationNumber"
                             placeholder="Registration number" 
-                            {...register("registrationNumber", 
-                            {required: true})} 
-                            aria-invalid={errors.registrationNumber ? "true" : "false"}
+                            value={declarationFormData.registrationNumber || ''}
+                            name='registrationNumber'
+                            onChange={handleFormInput}
                         />
-                        {errors.name?.type === "required" && (
-                        <p role="alert">Registration number is required</p>
-                        )}
+                        {declarationFormErrors.registrationNumber && (<p>{declarationFormErrors.registrationNumber}</p>)}
                     </FormElement>
                     <FormElement style={{ color: 'gray' }}>
                         <label htmlFor="email">Email address *</label>
@@ -78,13 +105,11 @@ export default function DeclareAbsenceFormPage1() {
                             type="email" 
                             id="email"
                             placeholder="email" 
-                            {...register("email", 
-                            {required: true})} 
-                            aria-invalid={errors.email ? "true" : "false"}
+                            value={declarationFormData.email || ''}
+                            name='email'
+                            onChange={handleFormInput}
                         />
-                        {errors.email?.type === "required" && (
-                        <p role="alert">Email is required</p>
-                        )}
+                        {declarationFormErrors.email && <p>{declarationFormErrors.email}</p>}
                     </FormElement>
                     <FormElement style={{ color: 'gray' }}>
                         <label htmlFor="phone">Phone number *</label>
@@ -92,13 +117,11 @@ export default function DeclareAbsenceFormPage1() {
                             type="text" 
                             id="phone"
                             placeholder="Phone number" 
-                            {...register("phone", 
-                            {required: true})} 
-                            aria-invalid={errors.phone ? "true" : "false"}
+                            value={declarationFormData.phone || ''}
+                            name='phone'
+                            onChange={handleFormInput}
                         />
-                        {errors.phone?.type === "required" && (
-                            <p role="alert">Phone number is required</p>
-                        )}
+                        {declarationFormErrors.phone && (<p>{declarationFormErrors.phone}</p>)}
                     </FormElement>
                 </HorizontallyFlexGapContainer>
 
@@ -113,36 +136,36 @@ export default function DeclareAbsenceFormPage1() {
                             <option value="Education">Education</option>
                             <option value="Health Sciences">Health Sciences</option>
                         </select>
-                        {errors.faculty && <p>Faculty is required</p>}
+                        {declarationFormErrors.faculty && <p>{declarationFormErrors.faculty}</p>}
                     </FormElement>
                     <FormElement style={{ color: 'gray' }}>
                         <label htmlFor="department">Department *</label>
                         <select id='department' name='department' onChange={handleFormInput}>
                             <option value="">Select department</option>
-                            { formData.faculty === 'Information Technology' && 
+                            { declarationFormData.faculty === 'Information Technology' && 
                                 AUCAFacultiesAndDepartments['Information Technology'].map((element, index) => {
                                 return (
                                     <option key={index} value={element}>{element}</option>
                                 );
                                 })
                             }
-                            { formData.faculty === 'Business Administration' && 
+                            { declarationFormData.faculty === 'Business Administration' && 
                                 AUCAFacultiesAndDepartments['Business Administration'].map((element, index) => {
                                 return (
                                     <option key={index} value={element}>{element}</option>
                                 );
                                 })
                             }
-                            { formData.faculty === 'Theology' && <option value={'Theology'}>Theology</option>
+                            { declarationFormData.faculty === 'Theology' && <option value={'Theology'}>Theology</option>
                             }
-                            { formData.faculty === 'Education' && 
+                            { declarationFormData.faculty === 'Education' && 
                                 AUCAFacultiesAndDepartments['Education'].map((element, index) => {
                                 return (
                                     <option key={index} value={element}>{element}</option>
                                 );
                                 })
                             }
-                            { formData.faculty === 'Health Sciences' && 
+                            { declarationFormData.faculty === 'Health Sciences' && 
                                 AUCAFacultiesAndDepartments['Health Sciences'].map((element, index) => {
                                 return (
                                     <option key={index} value={element}>{element}</option>
@@ -150,41 +173,42 @@ export default function DeclareAbsenceFormPage1() {
                                 })
                             }
                         </select>
-                        {errors.department && <p>Faculty is required</p>}
+                        {declarationFormErrors.department && <p>{declarationFormErrors.department}</p>}
                     </FormElement>
                     <FormElement style={{ color: 'gray' }}>
                         <label htmlFor="academicYear">Academic year *</label>
                         <input 
                             type="text" 
                             id="academicYear"
-                            placeholder="academicYear" 
-                            {...register("academicYear", 
-                            {required: true})} 
-                            aria-invalid={errors.academicYear ? "true" : "false"}
+                            placeholder="Academic year" 
+                            value={declarationFormData.academicYear || ''}
+                            name='academicYear'
+                            onChange={handleFormInput}
                         />
-                        {errors.academicYear?.type === "required" && (
-                            <p role="alert">Academic yaer is required</p>
+                        {declarationFormErrors.academicYear && (
+                            <p>{declarationFormErrors.academicYear}</p>
                         )}
                     </FormElement>
                     <FormElement style={{ color: 'gray' }}>
                         <label htmlFor="semester">Semester *</label>
                         <select 
-                            {...register("semester", { required: true })}
-                            aria-invalid={errors.semester ? "true" : "false"}
+                            id='semester'
+                            name='semester'
+                            onChange={handleFormInput}
                         >
                             <option value="">Choose semester</option>
                             <option value={'1'}>One</option>
                             <option value={'2'}>Two</option>
                             <option value={'3'}>Three</option>
                         </select>
-                        {errors.semester?.type === "required" && (
-                            <p role="alert">Semester must be provided</p>
+                        {declarationFormErrors.semester && (
+                            <p>{declarationFormErrors.semester}</p>
                         )}
                     </FormElement>
                 </HorizontallyFlexGapContainer>
 
                 <HorizontallyFlexGapContainer style={{ justifyContent: 'flex-end' }}> 
-                    <Button variant="contained" color="primary" size="medium" type="button" onClick={() => { }}>Next</Button>
+                    <Button variant="contained" color="primary" size="medium" type="button" onClick={() => nextStep()}>Next</Button>
                 </HorizontallyFlexGapContainer>
             </VerticallyFlexGapContainer>
         </VerticallyFlexGapForm>

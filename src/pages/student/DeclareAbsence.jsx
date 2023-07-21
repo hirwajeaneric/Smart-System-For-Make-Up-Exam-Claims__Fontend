@@ -1,23 +1,19 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Helmet } from 'react-helmet-async';
-import DeclareAbsenceForm from '../../components/forms/DeclareAbsenceFormPage1'
-import { HeaderTwo, HorizontallyFlexSpaceBetweenContainer, VerticallyFlexGapContainer } from '../../components/styles/GenericStyles'
+import { Outlet } from 'react-router-dom';
+import { HeaderTwo, HorizontallyFlexSpaceBetweenContainer, VerticallyFlexGapContainer } from '../../components/styles/GenericStyles';
 
 const DeclareAbsence = () => {
-  const [page, setPage] = useState(1);
-  
-
   return (
     <VerticallyFlexGapContainer style={{ gap: '20px' }}>
       <Helmet>
         <title>Declare Absence</title>
         <meta name="description" content={`Declare absence in exam.`} /> 
       </Helmet>
-      <HorizontallyFlexSpaceBetweenContainer>
-        <HeaderTwo>Declare absense</HeaderTwo>
-      </HorizontallyFlexSpaceBetweenContainer>
-      {page===1 && <DeclareAbsenceForm setPage={setPage} />}
-      {page===2 && <DeclareAbsenceForm setPage={setPage} />}
+      <VerticallyFlexGapContainer style={{ gap: '20px' }}>
+        <HeaderTwo style={{ width: '100%', textAlign: 'left' }}>Declare absense</HeaderTwo>
+        <Outlet />
+      </VerticallyFlexGapContainer>
     </VerticallyFlexGapContainer>
   )
 }
