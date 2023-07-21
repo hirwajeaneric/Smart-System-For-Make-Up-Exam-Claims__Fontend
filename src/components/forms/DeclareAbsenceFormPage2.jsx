@@ -86,38 +86,45 @@ export default function DeclareAbsenceFormPage2() {
             return;
         } else {
             var courses = [];
-        if (numberOfCourses === 1) {
+        if (numberOfCourses === '1') {
             courses.push(courseOne);
-        } else if (numberOfCourses === 2) {
+            courseOne.reason = declarationFormData.reason;
+        } else if (numberOfCourses === '2') {
+            courseOne.reason = declarationFormData.reason;
+            courseTwo.reason = declarationFormData.reason;
+            courses.push(courseOne);
             courses.push(courseTwo);
         } else {
+            courses.push(courseOne);
+            courses.push(courseTwo);
             courses.push(courseThree);
         }
-            declarationFormData.courses = courses;
-            
 
-            console.log(declarationFormData);
+        declarationFormData.courses = courses;
+        declarationFormData.proofOfTuitionPayment = proofOfTuitionPayment;
 
-            // setIsProcessing(true);
-            // axios.post(serverUrl+'/api/v1/ssmec/claim/add', data, config)
-            // .then(response => {
-            // if (response.status === 201) {
-            //     setIsProcessing(false);
-            //     setResponseMessage({ message: response.data.message, severity:'success' })
-            //     setOpen(true);
-            //     dispatch(getStudentClaims({ registrationNumber: response.data.claim.registrationNumber }));
-            //     setTimeout(() => {
-            //     window.location.replace(`/student/${response.data.claim.registrationNumber}/claims`);
-            //     }, 2000);
-            // }
-            // })
-            // .catch(error => {
-            // if (error.response && error.response.status >= 400 && error.response.status <= 500) {
-            //     setIsProcessing(false);
-            //     setResponseMessage({ message: error.response.data.msg, severity:'error'})
-            //     setOpen(true);
-            // }
-            // })
+        console.log(declarationFormData);
+
+        setIsProcessing(true);
+        axios.post(serverUrl+'/api/v1/ssmec/claim/add', declarationFormData, config)
+        .then(response => {
+        if (response.status === 201) {
+            setIsProcessing(false);
+            setResponseMessage({ message: response.data.message, severity:'success' })
+            setOpen(true);
+            dispatch(getStudentClaims({ registrationNumber: response.data.claim.registrationNumber }));
+            setTimeout(() => {
+            window.location.replace(`/student/${response.data.claim.registrationNumber}/claims`);
+            }, 2000);
+        }
+        })
+        .catch(error => {
+        if (error.response && error.response.status >= 400 && error.response.status <= 500) {
+            setIsProcessing(false);
+            setResponseMessage({ message: error.response.data.msg, severity:'error'})
+            setOpen(true);
+        }
+        })
         }        
     }
 
@@ -139,7 +146,6 @@ export default function DeclareAbsenceFormPage2() {
                             style={{padding: '7px'}}
                             type="file" 
                             id="proofOfTuitionPayment"
-                            value={proofOfTuitionPayment || ''}
                             name='proofOfTuitionPayment'
                             onChange={handleFormFileInput}
                         />

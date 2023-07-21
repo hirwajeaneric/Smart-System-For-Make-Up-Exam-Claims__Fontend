@@ -9,7 +9,7 @@ const initialState = {
 }
 
 export const getCoursesForTeacher = createAsyncThunk(
-    'manure/getCoursesForTeacher',
+    'course/getCoursesForTeacher',
     async (filter, thunkAPI) => {
         try {
             const { lecturerId, token } = filter;

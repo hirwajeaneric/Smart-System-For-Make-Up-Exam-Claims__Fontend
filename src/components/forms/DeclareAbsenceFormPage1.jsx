@@ -12,7 +12,7 @@ export default function DeclareAbsenceFormPage1() {
     const [user, setUser] = useState({});
 
     useEffect(() => {
-        var localUser = JSON.parse(localStorage.getItem('student'));
+        var localUser = JSON.parse(localStorage.getItem('stdData'));
         setUser(localUser);
         setDeclarationFormData({
             ...declarationFormData, 

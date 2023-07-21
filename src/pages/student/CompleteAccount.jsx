@@ -48,7 +48,7 @@ const CompleteAccount = () => {
       if (response.status === 201) {
         setIsProcessing(false);
         ('stdToken', response.data.user.token);
-        localStorage.setItem('student', JSON.stringify(response.data.user));
+        localStorage.setItem('stdData', JSON.stringify(response.data.user));
         setResponseMessage({ message: 'Account created', severity:'success'})
         setOpen(true);
         setTimeout(() => {

@@ -1,7 +1,6 @@
 import { Link, useNavigate } from "react-router-dom"
 import { FormElement, HeaderTwo, HorizontallyFlexGapContainer, HorizontallyFlexSpaceBetweenContainer, VerticallyFlexGapContainer, VerticallyFlexGapForm } from "../../../components/styles/GenericStyles"
 import { useForm } from 'react-hook-form';
-import { useCookies } from 'react-cookie';
 import { GeneralContext } from "../../../App";
 import { Button } from "@mui/material";
 import { useContext, useState } from "react";
@@ -10,7 +9,6 @@ import { Helmet } from "react-helmet-async";
 
 const Signup = () => {
   const navigate = useNavigate();
-  const [ cookies, setCookie, removeCookie ] = useCookies(null);
   const { setOpen, setResponseMessage } = useContext(GeneralContext);
     
   const [isProcessing, setIsProcessing] = useState(false);

@@ -1,9 +1,8 @@
 import { Link } from "react-router-dom"
-import { FormElement, HeaderOne, HeaderTwo, HorizontallyFlexSpaceBetweenContainer, VerticallyFlexGapContainer, VerticallyFlexGapForm, VerticallyFlexSpaceBetweenContainer } from "../../../components/styles/GenericStyles"
+import { FormElement, HeaderTwo, HorizontallyFlexSpaceBetweenContainer, VerticallyFlexGapContainer, VerticallyFlexGapForm, VerticallyFlexSpaceBetweenContainer } from "../../../components/styles/GenericStyles"
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
 const serverUrl = import.meta.env.VITE_REACT_APP_SERVERURL;
-import { useCookies } from 'react-cookie';
 import { GeneralContext } from "../../../App";
 import { Button } from "@mui/material";
 import { useContext, useState } from "react";
@@ -11,7 +10,6 @@ import { AuthenticationFormContainer } from "../../../components/styles/Authenti
 import { Helmet } from "react-helmet-async";
 
 const Signin = () => {
-  const [ cookies, setCookie, removeCookie ] = useCookies(null);
   const { setOpen, setResponseMessage } = useContext(GeneralContext);
     
   const [isProcessing, setIsProcessing] = useState(false);
@@ -20,16 +18,14 @@ const Signin = () => {
   const onSubmit = data => {
     
     setIsProcessing(true);
-    axios.post(serverUrl+'/api/v1/mmpas/user/signin', data)
+    axios.post(serverUrl+'/api/v1/ssmec/user/signin', data)
     .then(response => {
-      setTimeout(() => {
-        if (response.status === 200) {
-          setIsProcessing(false);
-          setCookie('AuthToken', response.data.user.token);
-          setCookie('UserData', JSON.stringify(response.data.user));
-          window.location.replace(`/teacher/${response.data.user.fullName.split('').join('')}/home/`);
-        }
-      }, 3000)
+      if (response.status === 200) {
+        setIsProcessing(false);
+        localStorage.setItem('teaToken', response.data.user.token);
+        localStorage.setItem('teaData', JSON.stringify(response.data.user));
+        window.location.replace(`/teacher/${response.data.user.userName}`);
+      }
     })
     .catch(error => {
       if (error.response && error.response.status >= 400 && error.response.status <= 500) {

@@ -1,7 +1,7 @@
 import React from 'react'
 import { Helmet } from 'react-helmet-async';
 import { Outlet } from 'react-router-dom';
-import { HeaderTwo, HorizontallyFlexSpaceBetweenContainer, VerticallyFlexGapContainer } from '../../components/styles/GenericStyles';
+import { HeaderTwo, VerticallyFlexGapContainer } from '../../components/styles/GenericStyles';
 
 const DeclareAbsence = () => {
   return (

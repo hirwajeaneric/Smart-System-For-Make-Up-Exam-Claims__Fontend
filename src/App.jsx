@@ -1,8 +1,6 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { createContext, useEffect, useState } from 'react';
-import { useCookies } from 'react-cookie';
-const serverUrl = import.meta.env.VITE_REACT_APP_SERVERURL;
 import ResponseComponent from './components/ResponseComponent';
 
 // PAGES 
@@ -109,14 +107,21 @@ import ExaminationSettings from './pages/examinationOfficer/Settings';
 import ExaminationClaimDetails from './pages/examinationOfficer/ClaimDetails';
 import ExaminationClaims from './pages/examinationOfficer/Claims';
 import ExaminationReportPreview from './pages/examinationOfficer/ReportPreview';
+
+
+// REDUX REDUCERS ///////////////////////////////////////////////////////////////////////////////////////////////////
 import { getAccountantClaims, getDeanOfStudentsClaims, getDepartmentClaims, getExaminationOfficeClaims, getRegistrationOfficeClaims, getStudentClaims } from './redux/features/claimSlice';
 import { getStudentRegistration } from './redux/features/registrationSlice';
 import { getCoursesForTeacher } from './redux/features/courseSlice';
 import { getAllUsers } from './redux/features/userSlice';
 
+
+// FORMS AS PAGES /////////////////////////////////////////////////////////////////////////////////////////////////
 import DeclareAbsenceFormPage1 from './components/forms/DeclareAbsenceFormPage1';
 import DeclareAbsenceFormPage2 from './components/forms/DeclareAbsenceFormPage2';
 
+
+// CREATING CONTEXT ///////////////////////////////////////////////////////////////////////////////////////////////////
 export const GeneralContext = createContext();
 
 function App() {
@@ -140,27 +145,7 @@ function App() {
   var registrationOfficer = '';
   var examinationOfficer = '';
 
-  useEffect(() => {
-    stdToken = localStorage.getItem('StdToken');
-    teaToken = localStorage.getItem('TeaToken');
-    hodToken = localStorage.getItem('HodToken');
-    accToken = localStorage.getItem('AccToken');
-    dosToken = localStorage.getItem('DosToken');
-    regToken = localStorage.getItem('RegToken');
-    exoToken = localStorage.getItem('ExoToken');
-
-    student = localStorage.getItem('StdData');
-    teacher = localStorage.getItem('TeaData');
-    headOfDepartment = localStorage.getItem('HodData');
-    accountant = localStorage.getItem('AccData');
-    deanOfStudents = localStorage.getItem('DosData');
-    registrationOfficer = localStorage.getItem('RegData');
-    examinationOfficer = localStorage.getItem('ExoData');
-  },[])
-
   const [declarationFormData, setDeclarationFormData] = useState({});
-  const [courses, setCourses] = useState([]);
-  const [courseErrors, setCourseErrors] = useState({});
   const [proofOfTuitionPayment, setProofOfTuitionPayment] = useState('');
   const [numberOfCourses, setNumberOfCourses] = useState(0);
   const [declarationFormErrors, setDeclarationFormErrors] = useState({});
@@ -175,32 +160,48 @@ function App() {
     setOpen(false);
   };
   
-  useEffect(() => {  
+  useEffect(() => {
+    stdToken = localStorage.getItem('stdToken');
+    teaToken = localStorage.getItem('teaToken');
+    hodToken = localStorage.getItem('hodToken');
+    accToken = localStorage.getItem('accToken');
+    dosToken = localStorage.getItem('dosToken');
+    regToken = localStorage.getItem('regToken');
+    exoToken = localStorage.getItem('exoToken');
+
+    student = JSON.parse(localStorage.getItem('stdData'));
+    teacher = JSON.parse(localStorage.getItem('teaData'));
+    headOfDepartment = JSON.parse(localStorage.getItem('hodData'));
+    accountant = JSON.parse(localStorage.getItem('accData'));
+    deanOfStudents = JSON.parse(localStorage.getItem('dosData'));
+    registrationOfficer = JSON.parse(localStorage.getItem('regData'));
+    examinationOfficer = JSON.parse(localStorage.getItem('exoData')); 
+
     if (student && student !== undefined) {
       // Load student claims
-      dispatch(getStudentClaims(student.registrationNumber));
+      dispatch(getStudentClaims({ registrationNumber: student.registrationNumber }));
       // Load registration information if the student is registered
-      dispatch(getStudentRegistration(student.registrationNumber));
+      dispatch(getStudentRegistration({ registrationNumber: student.registrationNumber }));
     } else if (teacher && teacher !== undefined) {
       // Load all courses assigned to him/her
-      dispatch(getCoursesForTeacher(teacher.id, teaToken));
+      dispatch(getCoursesForTeacher({ lecturerId: teacher.id, token: teaToken}));
     } else if (headOfDepartment && headOfDepartment !== undefined) {
       // Load list of lecturers
       dispatch(getAllUsers());
       // Load list of teacher approved claims
-      dispatch(getDepartmentClaims(hodToken, headOfDepartment.department));
+      dispatch(getDepartmentClaims({ token: hodToken, department: headOfDepartment.department }));
     } else if (accountant && accountant !== undefined) {
       // Load list of claims for students who have paid
-      dispatch(getAccountantClaims(accToken));
+      dispatch(getAccountantClaims({ token: accToken }));
     } else if (deanOfStudents && deanOfStudents !== undefined) {
       // Load list of claims approved by the accounting office
-      dispatch(getDeanOfStudentsClaims(dosToken));
+      dispatch(getDeanOfStudentsClaims({ token: dosToken }));
     } else if (registrationOfficer && registrationOfficer !== undefined) {
       // Load list of claims approved by the dean of students
-      dispatch(getRegistrationOfficeClaims(regToken));
+      dispatch(getRegistrationOfficeClaims({ token: regToken }));
     } else if (examinationOfficer && examinationOfficer !== undefined) {
       // Load list of claims approved by the registration office
-      dispatch(getExaminationOfficeClaims(exoToken));
+      dispatch(getExaminationOfficeClaims({ token: exoToken }));
     }
   },[dispatch]);
 
@@ -228,7 +229,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           
-          {/* RAB pages ////////////////////////////////////////////////////////////////////////////////////////////////////////  */}
+          {/* STUDENT pages ////////////////////////////////////////////////////////////////////////////////////////////////////////  */}
           <Route path='/student/auth/' element={<StudentAuth />}>
             <Route path='signin' element={<StudentSignin />} />
             <Route path='signup' element={<StudentSignup />} />
@@ -257,7 +258,7 @@ function App() {
             <Route path='forgot-password' element={<TeacherForgotPassword />} />
             <Route path='reset-password/:token/:userId' element={<TeacherResetPassword />} />
           </Route>
-          <Route path='/teacher/:name' element={teaToken ? <TeacherDashboardMain /> : <Navigate replace to={'/teacher/auth/signin'} />}>
+          <Route path='/teacher/:name' element={localStorage.getItem('teaToken') ? <TeacherDashboardMain /> : <Navigate replace to={'/teacher/auth/signin'} />}>
             <Route path='home' element={<TeacherStats />} />
             <Route path='courses' element={<TeacherAssignedCourses />} />
             <Route path='courses/:courseId' element={<TeacherAssignedCourseDetails />} />
@@ -274,7 +275,7 @@ function App() {
             <Route path='forgot-password' element={<HODForgotPassword />} />
             <Route path='reset-password/:token/:userId' element={<HODResetPassword />} />
           </Route>
-          <Route path='/hod/:department/' element={hodToken ? <HODDashboardMain /> : <Navigate replace to={'/hod/auth/signin'} />}>
+          <Route path='/hod/:department/' element={localStorage.getItem('hodToken') ? <HODDashboardMain /> : <Navigate replace to={'/hod/auth/signin'} />}>
             <Route path='home' element={<HODStats />} />
             <Route path='claims' element={<HODClaims />} />
             <Route path='claims/:claimId' element={<HODClaimDetails />} />
@@ -294,7 +295,7 @@ function App() {
             <Route path='forgot-password' element={<AccountantForgotPassword />} />
             <Route path='reset-password/:token/:userId' element={<AccountantResetPassword />} />
           </Route>
-          <Route path='/accountant/:name' element={accToken ? <AccountantDashboardMain /> : <Navigate replace to={'/accountant/auth/signin'} />}>
+          <Route path='/accountant/:name' element={localStorage.getItem('accToken') ? <AccountantDashboardMain /> : <Navigate replace to={'/accountant/auth/signin'} />}>
             <Route path='home' element={<AccountantStats />} />
             <Route path='claims' element={<AccountantClaims />} />
             <Route path='claims/:claimId' element={<AccountantClaimDetails />} />
@@ -310,7 +311,7 @@ function App() {
             <Route path='forgot-password' element={<DOSForgotPassword />} />
             <Route path='reset-password/:token/:userId' element={<DOSResetPassword />} />
           </Route>
-          <Route path='/dos/:name' element={dosToken ? <DOSDashboardMain /> : <Navigate replace to={'/dos/auth/signin'} />}>
+          <Route path='/dos/:name' element={localStorage.getItem('dosToken') ? <DOSDashboardMain /> : <Navigate replace to={'/dos/auth/signin'} />}>
             <Route path='home' element={<DOSStats />} />
             <Route path='claims' element={<DOSClaims />} />
             <Route path='claims/:claimId' element={<DOSClaimDetails />} />
@@ -326,7 +327,7 @@ function App() {
             <Route path='forgot-password' element={<RegistrationForgotPassword />} />
             <Route path='reset-password/:token/:userId' element={<RegistrationResetPassword />} />
           </Route>
-          <Route path='/registration/:name' element={regToken ? <RegistrationDashboardMain /> : <Navigate replace to={'/registration/auth/signin'} />}>
+          <Route path='/registration/:name' element={localStorage.getItem('regToken') ? <RegistrationDashboardMain /> : <Navigate replace to={'/registration/auth/signin'} />}>
             <Route path='home' element={<RegistrationStats />} />
             <Route path='claims' element={<RegistrationClaims />} />
             <Route path='claims/:claimId' element={<RegistrationClaimDetails />} />
@@ -342,7 +343,7 @@ function App() {
             <Route path='forgot-password' element={<ExaminationForgotPassword />} />
             <Route path='reset-password/:token/:userId' element={<ExaminationResetPassword />} />
           </Route>
-          <Route path='/examinationoffice/:name' element={exoToken ? <ExaminationDashboardMain /> : <Navigate replace to={'/examinationoffice/auth/signin'} />}>
+          <Route path='/examinationoffice/:name' element={localStorage.getItem('exoToken') ? <ExaminationDashboardMain /> : <Navigate replace to={'/examinationoffice/auth/signin'} />}>
             <Route path='home' element={<ExaminationStats />} />
             <Route path='claims' element={<ExaminationClaims />} />
             <Route path='claims/:claimId' element={<ExaminationClaimDetails />} />

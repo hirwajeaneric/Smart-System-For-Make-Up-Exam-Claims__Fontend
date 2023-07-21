@@ -1,9 +1,8 @@
 import { Link } from "react-router-dom"
-import { FormElement, HeaderOne, HeaderTwo, HorizontallyFlexSpaceBetweenContainer, VerticallyFlexGapContainer, VerticallyFlexGapForm, VerticallyFlexSpaceBetweenContainer } from "../../../components/styles/GenericStyles"
+import { FormElement, HeaderTwo, HorizontallyFlexSpaceBetweenContainer, VerticallyFlexGapContainer, VerticallyFlexGapForm, VerticallyFlexSpaceBetweenContainer } from "../../../components/styles/GenericStyles"
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
 const serverUrl = import.meta.env.VITE_REACT_APP_SERVERURL;
-import { useCookies } from 'react-cookie';
 import { GeneralContext } from "../../../App";
 import { Button } from "@mui/material";
 import { useContext, useState } from "react";
@@ -11,7 +10,6 @@ import { AuthenticationFormContainer } from "../../../components/styles/Authenti
 import { Helmet } from "react-helmet-async";
 
 const Signin = () => {
-  const [ cookies, setCookie, removeCookie ] = useCookies(null);
   const { setOpen, setResponseMessage } = useContext(GeneralContext);
     
   const [isProcessing, setIsProcessing] = useState(false);
@@ -25,7 +23,7 @@ const Signin = () => {
       if (response.status === 200) {
         setIsProcessing(false);
         localStorage.setItem('stdToken', response.data.user.token);
-        localStorage.setItem('student', JSON.stringify(response.data.user));
+        localStorage.setItem('stdData', JSON.stringify(response.data.user));
         window.location.replace(`/student/${response.data.user.registrationNumber}`);
       }
     })
