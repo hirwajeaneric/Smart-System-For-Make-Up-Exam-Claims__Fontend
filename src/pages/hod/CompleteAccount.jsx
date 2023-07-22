@@ -46,7 +46,7 @@ const CompleteAccount = () => {
         setResponseMessage({ message: 'Account created', severity:'success'})
         setOpen(true);
         setTimeout(() => {
-          window.location.replace(`/hod/${response.data.user.registrationNumber}`);
+          window.location.replace(`/hod/${(response.data.user.department).split(' ').join('')}`);
         }, 3000)
       }
     })

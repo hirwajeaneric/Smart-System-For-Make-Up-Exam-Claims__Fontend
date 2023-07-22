@@ -28,7 +28,7 @@ const DashboardMain = () => {
 
     const signout = () => {
         localStorage.removeItem('stdToken');
-        localStorage.removeItem('student');
+        localStorage.removeItem('stdData');
         navigate('/student/auth/signin');
     }
 

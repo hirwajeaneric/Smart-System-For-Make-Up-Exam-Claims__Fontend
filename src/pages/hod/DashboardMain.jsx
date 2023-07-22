@@ -23,13 +23,13 @@ const DashboardMain = () => {
     const [user, setUser] = useState({});
 
     useEffect(() => {
-        setUser(JSON.parse(localStorage.getItem('stdData')));
+        setUser(JSON.parse(localStorage.getItem('hodData')));
     },[]);      
 
     const signout = () => {
-        localStorage.removeItem('stdToken');
-        localStorage.removeItem('student');
-        navigate('/student/auth/signin');
+        localStorage.removeItem('hodToken');
+        localStorage.removeItem('hodData');
+        navigate('/hod/auth/signin');
     }
 
     // Load student claims
@@ -40,7 +40,7 @@ const DashboardMain = () => {
     return (
         <VerticallyFlexSpaceBetweenContainer>
             <TopNavigationBar>
-                <Link to={`/student/${user.registrationNumber}/`}><img src="/ssmec-logo-2.2.png" alt="" /></Link>  
+                <Link to={`/hod/${user.department.split(' ').join('')}/`}><img src="/ssmec-logo-2.2.png" alt="" /></Link>  
                 <div className="right">
                     {/* <MdNotifications style={{ fontSize: '150%', color: 'gray'}} /> */}
                     <Tooltip title="Account settings">
@@ -52,7 +52,7 @@ const DashboardMain = () => {
                             aria-haspopup="true"
                             aria-expanded={open ? 'true' : undefined}
                         >
-                            <Avatar sx={{ width: 32, height: 32 }}>{getSimpleCapitalizedChars(JSON.parse(localStorage.getItem('stdData')).fullName)}</Avatar>
+                            <Avatar sx={{ width: 32, height: 32 }}>{getSimpleCapitalizedChars(JSON.parse(localStorage.getItem('hodData')).fullName)}</Avatar>
                         </IconButton>
                     </Tooltip>
                 </div>
@@ -92,7 +92,7 @@ const DashboardMain = () => {
                     anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
                 >
                     <MenuItem onClick={handleClose} style={{ display:'flex', flexDirection:'row', alignItems:'flex-start' }}>
-                    <Avatar sx={{ width: 32, height: 32 }}>{getSimpleCapitalizedChars(JSON.parse(localStorage.getItem('stdData')).fullName)}</Avatar>
+                    <Avatar sx={{ width: 32, height: 32 }}>{getSimpleCapitalizedChars(JSON.parse(localStorage.getItem('hodData')).fullName)}</Avatar>
                         <VerticallyFlexGapContainer style={{ justifyContent:'flex-start', alignItems:'flex-start', gap: '5px' }}>
                             <p>{user.fullName}</p>
                             <p style={{ color: 'blue', fontWeight:'700', fontSize:'90%' }}>{user.role}</p>
@@ -126,8 +126,9 @@ const DashboardMain = () => {
             <VerticallyFlexGapContainer style={{ position: 'relative' }}>
                 <SecondaryMenue>
                     <Link to={'home'}>Home</Link>
-                    <Link to={'declare'}>Declare absence</Link>
-                    <Link to={'claims'}>My claims</Link>
+                    <Link to={'courses'}>Courses</Link>
+                    <Link to={'lecturers'}>Lecturers</Link>
+                    <Link to={'claims'}>Claims</Link>
                     <Link to={'settings'}>{user.fullName}</Link>
                 </SecondaryMenue>
                 <DashboardMainContainer>

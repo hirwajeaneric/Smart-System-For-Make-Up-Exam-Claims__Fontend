@@ -24,7 +24,7 @@ const Signin = () => {
         setIsProcessing(false);
         localStorage.setItem('hodToken', response.data.user.token);
         localStorage.setItem('hodData', JSON.stringify(response.data.user));
-        window.location.replace(`/hod/${response.data.user.registrationNumber}`);
+        window.location.replace(`/hod/${(response.data.user.department).split(' ').join('')}`);
       }
     })
     .catch(error => {
@@ -43,7 +43,7 @@ const Signin = () => {
         <meta name="description" content={`Login as a HOD.`} /> 
       </Helmet>
 
-      <AuthenticationFormContainer style={{ borderBottom: '6px solid blue', gap: '30px', position: 'relative', boxShadow: 'rgba(0, 0, 0, 0.05) 0 6px 24px, rgba(0, 0, 0, 0.08) 0 5px 12px 1px' }}>
+      <AuthenticationFormContainer style={{ borderBottom: '6px solid chocolate', gap: '30px', position: 'relative', boxShadow: 'rgba(0, 0, 0, 0.05) 0 6px 24px, rgba(0, 0, 0, 0.08) 0 5px 12px 1px' }}>
         <VerticallyFlexGapContainer style={{ gap: '10px' }}>
           <img style={{ width: '90%' }} src="/ssmec-logo-2.png" alt="" />
           <span style={{ color: 'black', fontWeight: '600' }}>Head of Department</span>
