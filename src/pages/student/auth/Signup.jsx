@@ -24,7 +24,7 @@ const Signup = () => {
       setIsProcessing(true);
 
       try {
-        setCookie('incompleteStudentAccount', JSON.stringify(data)); 
+        localStorage.setItem('incompleteStudentAccount', JSON.stringify(data)); 
         setTimeout(() => {
           setIsProcessing(false);
           navigate('/student/complete-account/');

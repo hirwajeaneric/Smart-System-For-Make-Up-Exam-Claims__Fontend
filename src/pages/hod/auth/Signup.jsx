@@ -1,9 +1,6 @@
 import { Link, useNavigate } from "react-router-dom"
-import { FormElement, HeaderOne, HeaderTwo, HorizontallyFlexGapContainer, HorizontallyFlexSpaceBetweenContainer, VerticallyFlexGapContainer, VerticallyFlexGapForm, VerticallyFlexSpaceBetweenContainer } from "../../../components/styles/GenericStyles"
+import { FormElement, HeaderTwo, HorizontallyFlexGapContainer, HorizontallyFlexSpaceBetweenContainer, VerticallyFlexGapContainer, VerticallyFlexGapForm } from "../../../components/styles/GenericStyles"
 import { useForm } from 'react-hook-form';
-import axios from 'axios';
-const serverUrl = import.meta.env.VITE_REACT_APP_SERVERURL;
-import { useCookies } from 'react-cookie';
 import { GeneralContext } from "../../../App";
 import { Button } from "@mui/material";
 import { useContext, useState } from "react";
@@ -12,7 +9,6 @@ import { Helmet } from "react-helmet-async";
 
 const Signup = () => {
   const navigate = useNavigate();
-  const [ cookies, setCookie, removeCookie ] = useCookies(null);
   const { setOpen, setResponseMessage } = useContext(GeneralContext);
     
   const [isProcessing, setIsProcessing] = useState(false);
@@ -24,41 +20,33 @@ const Signup = () => {
       setOpen(true);
       return;
     } else {
-
-      data.userRole = 'rab-admin';
+      data.role = 'Head of Department';
       setIsProcessing(true);
 
-      axios.post(serverUrl+'/api/v1/mmpas/user/signup', data)
-      .then(response => {
+      try {
+        localStorage.setItem('incompleteHODAccount', JSON.stringify(data)); 
         setTimeout(() => {
-          if (response.status === 201) {
-            setIsProcessing(false);
-            setCookie('AuthToken', response.data.user.token);
-            setCookie('UserData', JSON.stringify(response.data.user));
-            window.location.replace('/hod/complete-account/');
-          }
-        }, 3000)
-      })
-      .catch(error => {
-        if (error.response && error.response.status >= 400 && error.response.status <= 500) {
           setIsProcessing(false);
-          setResponseMessage({ message: error.response.data.msg, severity:'error'})
-          setOpen(true);
-        }
-      })
+          navigate('/hod/complete-account/');
+        }, 2000)
+      } catch (error) {
+        setIsProcessing(false);
+        setResponseMessage({ message: error, severity:'error'})
+        setOpen(true);
+      }
     }
   };
 
   return (
     <HorizontallyFlexSpaceBetweenContainer style={{ justifyContent: 'center', alignItems: 'center' }}>
       <Helmet>
-        <title>HOD - Create account</title>
-        <meta name="description" content={`Create an account as a hod.`} /> 
+        <title>Head of Department - Create account</title>
+        <meta name="description" content={`Create an account as a HOD.`} /> 
       </Helmet>
-      <AuthenticationFormContainer style={{ borderBottom: '6px solid black',gap: '30px', position: 'relative', boxShadow: 'rgba(0, 0, 0, 0.05) 0 6px 24px, rgba(0, 0, 0, 0.08) 0 5px 12px 1px' }}>
+      <AuthenticationFormContainer style={{ borderBottom: '6px solid chocolate',gap: '30px', position: 'relative', boxShadow: 'rgba(0, 0, 0, 0.05) 0 6px 24px, rgba(0, 0, 0, 0.08) 0 5px 12px 1px' }}>
         <VerticallyFlexGapContainer style={{ gap: '10px' }}>
           <img style={{ width: '90%', marginBottom: '20px' }} src="/ssmec-logo-2.png" alt=""/>
-          <span style={{ color: 'black', fontWeight: '600' }}>HOD</span>
+          <span style={{ color: 'black', fontWeight: '600' }}>Head of Department</span>
           <HeaderTwo style={{ fontWeight: '600', color: '#476b6b' }}>Sign Up to the Platform </HeaderTwo>
         </VerticallyFlexGapContainer>
 
@@ -122,7 +110,7 @@ const Signup = () => {
           <FormElement>
             {isProcessing 
               ? <Button disabled variant="contained" color="primary" size="small">PROCESSING...</Button> 
-              : <Button variant="contained" color="primary" size="medium" type="submit">Register</Button>
+              : <Button variant="contained" color="primary" size="medium" type="submit">Continue</Button>
             }
           </FormElement>
 
