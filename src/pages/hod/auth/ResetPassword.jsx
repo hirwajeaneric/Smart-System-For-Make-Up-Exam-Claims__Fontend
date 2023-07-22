@@ -1,9 +1,8 @@
-import { Link, useParams } from "react-router-dom"
-import { FormElement, HeaderOne, HeaderTwo, HorizontallyFlexSpaceBetweenContainer, VerticallyFlexGapContainer, VerticallyFlexGapForm, VerticallyFlexSpaceBetweenContainer } from "../../../components/styles/GenericStyles"
+import { useParams } from "react-router-dom"
+import { FormElement, HeaderTwo, HorizontallyFlexSpaceBetweenContainer, VerticallyFlexGapContainer, VerticallyFlexGapForm, VerticallyFlexSpaceBetweenContainer } from "../../../components/styles/GenericStyles"
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
 const serverUrl = import.meta.env.VITE_REACT_APP_SERVERURL;
-import { useCookies } from 'react-cookie';
 import { GeneralContext } from "../../../App";
 import { Button } from "@mui/material";
 import { useContext, useState } from "react";
@@ -12,7 +11,6 @@ import { Helmet } from "react-helmet-async";
 
 const ForgotPassword = () => {
   const params = useParams();
-  const [ cookies, setCookie, removeCookie ] = useCookies(null);
   const { setOpen, setResponseMessage } = useContext(GeneralContext);
     
   const [isProcessing, setIsProcessing] = useState(false);
@@ -31,7 +29,7 @@ const ForgotPassword = () => {
       }
 
       setIsProcessing(true);
-      axios.put(serverUrl+'/api/v1/mmpas/user/resetPassword?id='+params.userId, {password: data.password}, config)
+      axios.put(serverUrl+'/api/v1/ssmec/user/resetPassword?id='+params.userId, {password: data.password}, config)
       .then(response => {
         setTimeout(() => {
           if (response.status === 200) {
@@ -57,13 +55,13 @@ const ForgotPassword = () => {
   return (
     <HorizontallyFlexSpaceBetweenContainer style={{ justifyContent: 'center', alignItems: 'center' }}>
       <Helmet>
-        <title>HOD - Change password</title>
+        <title>Head of Department - Change password</title>
         <meta name="description" content={`Forgot password.`} /> 
       </Helmet>
-      <AuthenticationFormContainer style={{ borderBottom: '6px solid black',gap: '30px', position: 'relative', boxShadow: 'rgba(0, 0, 0, 0.05) 0 6px 24px, rgba(0, 0, 0, 0.08) 0 5px 12px 1px' }}>
+      <AuthenticationFormContainer style={{ borderBottom: '6px solid blue',gap: '30px', position: 'relative', boxShadow: 'rgba(0, 0, 0, 0.05) 0 6px 24px, rgba(0, 0, 0, 0.08) 0 5px 12px 1px' }}>
         <VerticallyFlexGapContainer style={{ gap: '10px' }}>
           <img style={{ width: '90%', marginBottom: '20px' }} src="/ssmec-logo-2.png" alt=""/>
-          <span style={{ color: 'black', fontWeight: '600' }}>HOD</span>
+          <span style={{ color: 'black', fontWeight: '600' }}>Head of Department</span>
           <HeaderTwo style={{ fontWeight: '600', color: '#476b6b' }}>Change password </HeaderTwo>
         </VerticallyFlexGapContainer>
 

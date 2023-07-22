@@ -44,6 +44,7 @@ import HODResetPassword from './pages/hod/auth/ResetPassword';
 import HODDashboardMain from './pages/hod/DashboardMain';
 import HODStats from './pages/hod/Stats';
 import HODSettings from './pages/hod/Settings';
+import HodCompleteAccount from './pages/hod/CompleteAccount'
 import HODClaimDetails from './pages/hod/ClaimDetails';
 import HODClaims from './pages/hod/Claims';
 import HODLecturerDetails from './pages/hod/LecturerDetails';
@@ -275,6 +276,7 @@ function App() {
             <Route path='forgot-password' element={<HODForgotPassword />} />
             <Route path='reset-password/:token/:userId' element={<HODResetPassword />} />
           </Route>
+          <Route path='/hod/complete-account' element={<HodCompleteAccount />} />
           <Route path='/hod/:department/' element={localStorage.getItem('hodToken') ? <HODDashboardMain /> : <Navigate replace to={'/hod/auth/signin'} />}>
             <Route path='home' element={<HODStats />} />
             <Route path='claims' element={<HODClaims />} />

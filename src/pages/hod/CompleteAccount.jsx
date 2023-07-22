@@ -23,36 +23,30 @@ const CompleteAccount = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    var studentInfo = JSON.parse(localStorage.getItem('incompleteStudentAccount'));
+    const hodInfo = JSON.parse(localStorage.getItem('incompleteHODAccount'));
 
-    if (!studentInfo) {
+    if (!hodInfo) {
       setResponseMessage({ message: "Session expired", severity:'error'})
       setOpen(true);
       return;
     }
-    
-    if (formData.registrationNumber === '') {
-      errors.registrationNumber = 'Registration is required';
-      return;
-    }
 
-
-    formData.fullName = studentInfo.fullName;
-    formData.email = studentInfo.email;
-    formData.password = studentInfo.password;
-    formData.role = studentInfo.role;
+    formData.fullName = hodInfo.fullName;
+    formData.email = hodInfo.email;
+    formData.password = hodInfo.password;
+    formData.role = hodInfo.role;
 
     setIsProcessing(true);
     axios.post(`${serverUrl}/api/v1/ssmec/user/signup`, formData)
     .then(response => {
       if (response.status === 201) {
         setIsProcessing(false);
-        ('stdToken', response.data.user.token);
-        localStorage.setItem('stdData', JSON.stringify(response.data.user));
+        ('hodToken', response.data.user.token);
+        localStorage.setItem('hodData', JSON.stringify(response.data.user));
         setResponseMessage({ message: 'Account created', severity:'success'})
         setOpen(true);
         setTimeout(() => {
-          window.location.replace(`/student/${response.data.user.registrationNumber}`);
+          window.location.replace(`/hod/${response.data.user.registrationNumber}`);
         }, 3000)
       }
     })
@@ -69,8 +63,8 @@ const CompleteAccount = () => {
     <CenterFlexedContainer style={{ width: '100vw', height: '100vh', overflowY:'auto', background: "white" }}>
       <HorizontallyFlexSpaceBetweenContainer style={{ justifyContent: 'center', alignItems: 'center' }}>
         <Helmet>
-          <title>Complete your registration - Student</title>
-          <meta name="description" content={`Create an account as a student.`} /> 
+          <title>Complete your registration - Head of department</title>
+          <meta name="description" content={`Create an account as a hod.`} /> 
         </Helmet>
 
         <AuthenticationFormContainer style={{ gap: '30px', position: 'relative' }}>
@@ -80,11 +74,11 @@ const CompleteAccount = () => {
           </VerticallyFlexGapContainer>
           <VerticallyFlexGapForm style={{ gap: '20px'}} onSubmit={handleSubmit}>
             <HorizontallyFlexGapContainer style={{ gap: '20px' }}>
-              <FormElement style={{ color: 'gray' }}>
+              {/* <FormElement style={{ color: 'gray' }}>
                 <label htmlFor="registrationNumber">Registration number *</label>
                 <input type="text" name="registrationNumber" id="registrationNumber" value={formData.registrationNumber || ''} onChange={handleFormInput} />
                 {errors.registrationNumber && <p>Your registration number is required</p>}
-              </FormElement>
+              </FormElement> */}
               <FormElement style={{ color: 'gray' }}>
                 <label htmlFor="phone">Phone number *</label>
                 <input type="text" name="phone" id="phone" value={formData.phone || ''} onChange={handleFormInput} />
@@ -148,7 +142,7 @@ const CompleteAccount = () => {
             </FormElement>
           </VerticallyFlexGapForm>
           <HorizontallyFlexSpaceBetweenContainer>
-            <Link style={{ color: 'blue', fontSize:'90%', textDecoration: 'none', display: 'flex', flexDirection: 'row', gap: '10px', alignItems:'center' }} to={'/student/auth/signup'}><ArrowBack />Go Back</Link>
+            <Link style={{ color: 'blue', fontSize:'90%', textDecoration: 'none', display: 'flex', flexDirection: 'row', gap: '10px', alignItems:'center' }} to={'/hod/auth/signup'}><ArrowBack />Go Back</Link>
           </HorizontallyFlexSpaceBetweenContainer>
 
         </AuthenticationFormContainer>
