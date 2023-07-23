@@ -108,7 +108,7 @@ const DashboardMain = () => {
                         </ListItemIcon>
                         Add another account
                     </MenuItem> */}
-                    <MenuItem onClick={() => {navigate('/settings'); handleClose();}}>
+                    <MenuItem onClick={() => {navigate(`/teacher/${user.userName}/setting`); handleClose();}}>
                         <ListItemIcon>
                             <Settings fontSize="small" />
                         </ListItemIcon>Settings

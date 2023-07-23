@@ -138,24 +138,24 @@ export const HorizontallyFlexGapContainer = styled.div`
 
     div.left {
         display: flex;
-        
+        width: 50%;
     }
 
     div.right {
         display: flex;
-        
+        width: 50%;
     }
 
     @media (max-width: 768px) {
         div.left {
             display: flex;
-            width: 100%;
+            width: 50%;
             margin-bottom: 20px;
         }
     
         div.right {
             display: flex;
-            width: 100%;
+            width: 50%;
         }
     }
 

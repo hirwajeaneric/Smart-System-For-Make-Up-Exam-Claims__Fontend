@@ -7,12 +7,14 @@ import MenuItem from '@mui/material/MenuItem';
 import { Divider, IconButton, ListItemIcon, Tooltip } from "@mui/material";
 import { useEffect, useState } from "react";
 import { Logout, Settings } from "@mui/icons-material";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { getSimpleCapitalizedChars } from "../../utils/HelperFunctions";
+import { getAllCourses } from "../../redux/features/courseSlice";
 
 const DashboardMain = () => {
     const [anchorEl, setAnchorEl] = useState(null);
     const navigate = useNavigate();
+    const dispatch = useDispatch();
     const open = Boolean(anchorEl);
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
@@ -23,8 +25,11 @@ const DashboardMain = () => {
     const [user, setUser] = useState({});
 
     useEffect(() => {
-        setUser(JSON.parse(localStorage.getItem('hodData')));
-    },[]);      
+        let user = JSON.parse(localStorage.getItem('hodData'));
+        user.departmentLink = user.department.split(" ").join(""); 
+        setUser(user);
+        dispatch(getAllCourses());
+    },[dispatch]);      
 
     const signout = () => {
         localStorage.removeItem('hodToken');
@@ -36,11 +41,12 @@ const DashboardMain = () => {
     // dispatch(getStudentClaims(student.registrationNumber));
     // Load registration information if the student is registered
     // dispatch(getStudentRegistration(student.registrationNumber));  
+    const { } = useSelector(state => state.course)
 
     return (
         <VerticallyFlexSpaceBetweenContainer>
             <TopNavigationBar>
-                <Link to={`/hod/${user.department.split(' ').join('')}/`}><img src="/ssmec-logo-2.2.png" alt="" /></Link>  
+                <Link to={`/hod/${user.departmentLink}/`}><img src="/ssmec-logo-2.2.png" alt="" /></Link>  
                 <div className="right">
                     {/* <MdNotifications style={{ fontSize: '150%', color: 'gray'}} /> */}
                     <Tooltip title="Account settings">
@@ -99,17 +105,8 @@ const DashboardMain = () => {
                             <p style={{ color: 'gray', fontSize:'90%' }}>{user.email}</p>
                         </VerticallyFlexGapContainer>
                     </MenuItem>
-                    {/* <MenuItem onClick={handleClose}>
-                        <Avatar /> My account
-                    </MenuItem> */}
                     <Divider />
-                    {/* <MenuItem onClick={handleClose}>
-                        <ListItemIcon>
-                            <PersonAdd fontSize="small" />
-                        </ListItemIcon>
-                        Add another account
-                    </MenuItem> */}
-                    <MenuItem onClick={() => {navigate('/settings'); handleClose();}}>
+                    <MenuItem onClick={() => {navigate(`/hod/${user.departmentLink}/settings`); handleClose();}}>
                         <ListItemIcon>
                             <Settings fontSize="small" />
                         </ListItemIcon>Settings

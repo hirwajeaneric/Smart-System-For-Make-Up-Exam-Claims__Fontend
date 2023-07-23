@@ -200,7 +200,6 @@ export const DashboardInnerContainer = styled.div`
     flex-direction: column;
     width: 100%;
     overflow-y: auto;
-    // min-height: 90vh;
 
     @media (max-width: 1200px) {
 

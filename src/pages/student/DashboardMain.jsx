@@ -109,7 +109,7 @@ const DashboardMain = () => {
                         </ListItemIcon>
                         Add another account
                     </MenuItem> */}
-                    <MenuItem onClick={() => {navigate('/settings'); handleClose();}}>
+                    <MenuItem onClick={() => {navigate(`/student/${user.registrationNumber}/settings`); handleClose();}}>
                         <ListItemIcon>
                             <Settings fontSize="small" />
                         </ListItemIcon>Settings

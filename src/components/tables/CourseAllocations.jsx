@@ -5,39 +5,24 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 const columns = [
   {
-    field: 'fullName',
-    headerName: 'Name',
+    field: 'academicYear',
+    headerName: 'Academic Year',
+    width: 120,
+  },
+  {
+    field: 'semester',
+    headerName: 'Semester',
     width: 80,
   },
   {
-    field: 'phone',
-    headerName: 'Phone',
-    width: 80,
+    field: 'midSemesterExams',
+    headerName: 'Mid Semester Exams',
+    width: 200,
   },
   {
-    field: 'email',
-    headerName: 'Email',
-    width: 80,
-  },
-  {
-    field: 'district',
-    headerName: 'District',
-    width: 80,
-  },
-  {
-    field: 'mccName',
-    headerName: 'Quantity',
-    width: 80,
-  },
-  {
-    field: 'userRole',
-    headerName: 'Role',
-    width: 80,
-  },
-  {
-    field: 'status',
-    headerName: 'Status',
-    width: 80,
+    field: 'finalExams',
+    headerName: 'Final Exams',
+    width: 150,
   },
   {
     field: 'actions',
@@ -59,14 +44,14 @@ function CustomToolbar() {
 export const TableStyles = {
   padding: '0px',
   width: '100%',
-  height: '500px',
+  height: '300px',
   background: 'white',
   marginTop: '20px' 
 }
 
 var rows = [];
 
-export default function CountryLevelEmployeeTable({data}) {
+export default function CourseAllocations({data}) {
   rows = data;
 
   return (
@@ -93,7 +78,7 @@ const TableActions = ({parameters}) => {
   return (
     <Box>
       <Tooltip title='View / Edit'>
-        <IconButton onClick={() => {navigate(parameters.row.id)}}>
+        <IconButton onClick={() => {navigate(`courses/${parameters.row.id}`)}}>
           <Preview />
         </IconButton>
       </Tooltip>
