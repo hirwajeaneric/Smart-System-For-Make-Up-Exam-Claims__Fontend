@@ -120,7 +120,20 @@ import { getAllUsers } from './redux/features/userSlice';
 // FORMS AS PAGES /////////////////////////////////////////////////////////////////////////////////////////////////
 import DeclareAbsenceFormPage1 from './components/forms/DeclareAbsenceFormPage1';
 import DeclareAbsenceFormPage2 from './components/forms/DeclareAbsenceFormPage2';
+import AddCourseForm from './components/forms/AddCourseForm';
+import { Box, Modal } from '@mui/material';
+import { CustomModal } from './components/styles/GenericStyles';
 
+const style = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  boxShadow: 24,
+  p: 4,
+};
 
 // CREATING CONTEXT ///////////////////////////////////////////////////////////////////////////////////////////////////
 export const GeneralContext = createContext();
@@ -129,7 +142,8 @@ function App() {
   const dispatch = useDispatch();
   const [ open, setOpen ] = useState(false);
   const [ responseMessage, setResponseMessage ] = useState({ message: '', severity: ''});
-  
+  const [ isFormVisible, setIsFormVisible] = useState(false);
+
   var stdToken = '';
   var teaToken = '';
   var hodToken = '';
@@ -153,7 +167,10 @@ function App() {
   const [courseOne, setCourseOne] = useState({});
   const [courseTwo, setCourseTwo] = useState({});
   const [courseThree, setCourseThree] = useState({});
-  
+  const [openModal, setOpenModal] = useState(false);
+  const handleOpenModal = () => setOpenModal(!openModal);
+  const handleCloseModal = () => setOpenModal(false);
+  const [formType, setFormType] = useState('');
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
       return;
@@ -225,7 +242,13 @@ function App() {
         courseTwo,
         setCourseTwo,
         courseThree,
-        setCourseThree
+        setCourseThree,
+        formType, 
+        setFormType,
+        openModal,
+        handleOpenModal,
+        isFormVisible,
+        setIsFormVisible
       }}>
       <BrowserRouter>
         <Routes>
@@ -237,6 +260,7 @@ function App() {
             <Route path='forgot-password' element={<StudentForgotPassword />} />
             <Route path='reset-password/:token/:userId' element={<StudentResetPassword />} />
           </Route>
+          
           <Route path='/student/complete-account' element={<CompleteAccount />} />
           <Route path='/student/:registrationNumber' element={localStorage.getItem('stdToken') ? <StudentDashboardMain /> : <Navigate replace to={'/student/auth/signin'} />}>
             <Route path='home' element={<StudentStats />} />
@@ -356,6 +380,15 @@ function App() {
         </Routes>
       </BrowserRouter>
 
+      {/* Multi-purpose modal  */}
+      <Modal open={openModal} onClose={handleCloseModal} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
+        <Box sx={style}>
+          {/* Add resources modal  */}
+          {formType === 'addCourse' && <AddCourseForm />}
+        </Box>
+      </Modal>
+
+
       {/* RESPONSE MESSAGE DISPLAYER ****************************************************************************************************************************** */}
       <ResponseComponent 
         message={responseMessage.message} 
@@ -363,6 +396,9 @@ function App() {
         open={open} 
         handleClose={handleClose} 
       />
+
+
+
     </GeneralContext.Provider>
   )
 }

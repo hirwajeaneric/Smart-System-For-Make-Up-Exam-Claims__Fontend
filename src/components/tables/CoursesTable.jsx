@@ -3,6 +3,8 @@ import { Box, IconButton, Tooltip } from '@mui/material';
 import { Preview } from '@mui/icons-material';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
+import { useContext } from 'react';
+import { GeneralContext } from '../../App';
 
 const columns = [
   {
@@ -70,6 +72,7 @@ const TableActions = ({parameters}) => {
   const navigate = useNavigate();
   const params = useParams();
   const dispatch = useDispatch();
+  const { isFormVisible, setIsFormVisible } = useContext(GeneralContext);
 
   return (
     <Box>
@@ -77,6 +80,7 @@ const TableActions = ({parameters}) => {
         <IconButton 
           onClick={() => {
             // navigate(`courses/${parameters.row.id}`)
+            setIsFormVisible(true);
             dispatch({ type: 'course/getSelectedCourse', payload: parameters.row })
           }}>
           <Preview />

@@ -1,36 +1,25 @@
+import { Button } from '@mui/material'
 import React from 'react'
 import { Helmet } from 'react-helmet-async'
 import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
-import { HeaderTwo, HorizontallyFlexGapContainer, VerticallyFlexGapContainer } from '../../components/styles/GenericStyles'
+import { HeaderTwo, HorizontallyFlexGapContainer, TopPageTitle, VerticallyFlexGapContainer } from '../../components/styles/GenericStyles'
 import CourseAllocations from '../../components/tables/CourseAllocations'
 import CoursesTable from '../../components/tables/CoursesTable'
-
-export const CourseAllocationsContainer = styled.table`
-  width: 100%;
-  overflow-y: auto;
-`;
-
-export const CourseAllocationsTable = styled.table`
-  font-size: 90%; 
-  border-collapse: collapse;
-  width: 100%;
-  
-  th, td {
-    text-align: left;
-    padding: 8px;
-  }
-
-  tr {
-    cursor: pointer;
-  }
-  
-  tr:nth-child(even) {background-color: #f2f2f2;}
-`;
+import { GeneralContext } from '../../App'
+import { useContext } from 'react'
+import { CourseAllocationsContainer, CourseAllocationsTable } from '../../components/styles/PagesStyles'
+import UpdateCourseForm from '../../components/forms/UpdateCourseForm'
 
 const Courses = () => {
   const { isLoading, listOfCourses, selectedCourse, numberOfCourses } = useSelector(state => state.course)
+  const { setFormType, handleOpenModal, isFormVisible } = useContext(GeneralContext);  
+
+  const displayAddCourseModal = () => {
+    setFormType('addCourse');
+    handleOpenModal();
+  }
 
   const displayLecturerPopup = (lecturers) => {
     console.log(lecturers[0].name);
@@ -43,12 +32,18 @@ const Courses = () => {
         <meta name="description" content={`List of Courses.`} /> 
       </Helmet>
       <VerticallyFlexGapContainer style={{ gap: '20px' }}>
-        <HeaderTwo style={{ width: '100%', textAlign: 'left' }}>Courses</HeaderTwo>
+        <TopPageTitle>
+          <HeaderTwo style={{ width: '100%', textAlign: 'left' }}>Courses</HeaderTwo>
+          <Button size='small' color='primary' variant='contained' onClick={displayAddCourseModal}>Add</Button>
+        </TopPageTitle>
         <HorizontallyFlexGapContainer style={{ gap: '20px', alignItems: 'flex-start' }}>
           <div className="left" style={{ background: 'white', borderRadius: '5px', padding: '10px' }}>
+            {/* Courses table */}
             <CoursesTable data={listOfCourses} />
           </div>
           <div className="right" style={{ background: 'white', borderRadius: '5px', padding: '10px 2px', flexDirection: 'column' }}>
+            {/* Form to update courses  */}
+            {isFormVisible && <UpdateCourseForm />}
             <h3 style={{ padding: '0px 0px 0px 8px' }}>Allocations</h3>
             {selectedCourse.allocations && 
               <CourseAllocationsContainer>
@@ -60,14 +55,16 @@ const Courses = () => {
                         <th>Semester</th>
                         <th>Mid semester exam</th>
                         <th>Final exam</th>
-                        <th>Lecturers</th>
+                        <th>More</th>
                       </tr>
-                      <tr onClick={() => displayLecturerPopup(allocation.lecturers)}>
+                      <tr>
                         <td>{allocation.academicYear}</td>
                         <td>{allocation.semester}</td>
                         <td>{allocation.midSemesterExams}</td>
                         <td>{allocation.finalExams}</td>
-                        <td><Link to={'/'}>Teachers</Link></td>
+                        <td>
+                          <button onClick={() => displayLecturerPopup(allocation.lecturers)}>More</button>
+                        </td>
                       </tr>
                     </CourseAllocationsTable>
                   )
