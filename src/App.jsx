@@ -47,6 +47,7 @@ import HODSettings from './pages/hod/Settings';
 import HodCompleteAccount from './pages/hod/CompleteAccount'
 import HODClaimDetails from './pages/hod/ClaimDetails';
 import HODClaims from './pages/hod/Claims';
+import HODCourseAllocations from './components/tables/CourseAllocations';
 import HODLecturerDetails from './pages/hod/LecturerDetails';
 import HODLecturers from './pages/hod/Lecturers';
 import HODCourses from './pages/hod/Courses';
@@ -317,7 +318,7 @@ function App() {
             <Route path='lecturers' element={<HODLecturers />} />
             <Route path='lecturers/:lecturerId' element={<HODLecturerDetails />} />
             <Route path='courses' element={<HODCourses />} />
-            <Route path='courses/:courseCode' element={<HODCourseDetails />} />
+            <Route path='courses/:courseCode/allocations' element={<HODCourseAllocations />} />
             <Route path='assign' element={<HODAssignCourses />} />
             <Route path='settings' element={<HODSettings />} />
           </Route>
@@ -395,7 +396,7 @@ function App() {
           {/* Add resources modal  */}
           {formType === 'addCourse' && <AddCourseForm />}
           {/* Confirm delete modal  */}
-          {formType === 'confirmDelete' && <ConfirmDelete data={courseToBeDeleted} />}
+          {formType === 'confirmDelete' && <ConfirmDelete />}
         </Box>
       </Modal>
 

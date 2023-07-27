@@ -29,8 +29,14 @@ export default function AddCourseForm({projectId}) {
 
       const config = {
         headers: {
-            'Authorization': `Bearer ${JSON.parse(localStorage.getItem('hodToken'))}`
+            'Authorization': `Bearer ${localStorage.getItem('hodToken')}`
         }
+      }
+
+      if (data.code.includes(' ')) {
+        setResponseMessage({ message: 'Course code should not contain spaces', severity: 'warning'})
+        setOpen(true);
+        return;
       }
 
       setIsProcessing(true);
@@ -88,7 +94,7 @@ export default function AddCourseForm({projectId}) {
                         aria-invalid={errors.code ? "true" : "false"}
                     />
                     {errors.code?.type === "required" && (
-                    <p role="alert">Required</p>
+                      <p role="alert">{errors.code}</p>
                     )}
                   </FormElement>
                   <FormElement style={{ color: 'gray' }}>
@@ -165,7 +171,7 @@ export default function AddCourseForm({projectId}) {
                     ? <Button disabled variant="contained" color="primary" size="small">PROCESSING...</Button> 
                     : <Button variant="contained" color="primary" size="small" type="submit">Add</Button>
                     }
-                    <Button variant="contained" color="secondary" size="small" type="button" onClick={() => {window.location.reload()}}>Cancel</Button>
+                    <Button variant="contained" color="secondary" size="small" type="button" onClick={() => {handleCloseModal()}}>Cancel</Button>
                 </FormElement>
             </VerticallyFlexGapContainer>
         </VerticallyFlexGapForm>

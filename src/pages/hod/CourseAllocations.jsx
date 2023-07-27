@@ -12,7 +12,7 @@ import { useContext } from 'react'
 import { CourseAllocationsContainer, CourseAllocationsTable } from '../../components/styles/PagesStyles'
 import UpdateCourseForm from '../../components/forms/UpdateCourseForm'
 
-const Courses = () => {
+const CourseAllocations = () => {
   const { isLoading, listOfCourses, selectedCourse, numberOfCourses } = useSelector(state => state.course)
   const { setFormType, handleOpenModal, isFormVisible } = useContext(GeneralContext);  
 
@@ -28,12 +28,12 @@ const Courses = () => {
   return (
     <VerticallyFlexGapContainer style={{ gap: '20px' }}>
       <Helmet>
-        <title>Courses</title>
-        <meta name="description" content={`List of Courses.`} /> 
+        <title>Course Allocation</title>
+        <meta name="description" content={`Course allocation per semesters.`} /> 
       </Helmet>
       <VerticallyFlexGapContainer style={{ gap: '20px' }}>
         <TopPageTitle>
-          <HeaderTwo style={{ width: '100%', textAlign: 'left' }}>Courses</HeaderTwo>
+          <HeaderTwo style={{ width: '100%', textAlign: 'left' }}>Courses Allocations</HeaderTwo>
           <Button size='small' color='success' variant='contained' onClick={displayAddCourseModal}>Add</Button>
         </TopPageTitle>
         <HorizontallyFlexGapContainer style={{ gap: '20px', alignItems: 'flex-start' }}>
@@ -51,4 +51,4 @@ const Courses = () => {
   )
 }
 
-export default Courses
+export default CourseAllocations

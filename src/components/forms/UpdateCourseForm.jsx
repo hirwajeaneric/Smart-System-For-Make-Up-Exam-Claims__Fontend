@@ -8,10 +8,11 @@ import { useDispatch } from "react-redux";
 import { getAllCourses } from "../../redux/features/courseSlice";
 import { AUCAFacultiesAndDepartments } from "../../utils/AUCAFacultiesAndDepartments";
 import { useEffect } from "react";
+import { Link } from "react-router-dom";
 
 export default function UpdateCourseForm() {
     const [isProcessing, setIsProcessing] = useState(false);
-    const { setOpen, setResponseMessage, selectedCourse, setSelectedCourse, setCourseToBeDeleted } = useContext(GeneralContext);
+    const { setOpen, setResponseMessage, handleOpenModal, setFormType, selectedCourse, setSelectedCourse, setCourseToBeDeleted } = useContext(GeneralContext);
     const dispatch = useDispatch();
     const [openForm, setOpenForm] = useState(true);
     const [selectedCourseErrors, setSelectedCourseErrors] = useState({});
@@ -55,28 +56,29 @@ export default function UpdateCourseForm() {
     };
 
     return (
-        <VerticallyFlexGapForm onSubmit={updateCourseData} style={{ gap: '20px', backgroundColor: 'white', padding: '0 10px 20px' }}>
+        <VerticallyFlexGapForm onSubmit={updateCourseData} style={{ gap: '20px', backgroundColor: 'white', padding: '0 10px 10px' }}>
             <HorizontallyFlexSpaceBetweenContainer>
-                <p style={{ width: '100%', fontWeight: '600', textAlign:'left' }}>Update Course Data</p>
+                <p style={{ fontWeight: '600', textAlign:'left' }}>Update Course Data</p>
+                {selectedCourse.code && <Link to={`${selectedCourse.code}/allocations`} style={{ color: 'black', cursor: 'pointer' }}>View Allocations</Link>}
             </HorizontallyFlexSpaceBetweenContainer>
             <VerticallyFlexGapContainer style={{ gap: '15px' }}>
-                <HorizontallyFlexGapContainer style={{ gap: '20px' }}>
+                <FormElement style={{ color: 'gray' }}>
+                    <label htmlFor="name">Course name</label>
+                    <input 
+                        type="text" 
+                        id="name"
+                        name="name"
+                        placeholder="Course name" 
+                        value={selectedCourse.name || ''}
+                        onChange={handleFormInput}
+                    />
+                    {/* {errors.name?.type === "required" && (
+                            <p role="alert">Required</p>
+                    )} */}
+                </FormElement>
+                <HorizontallyFlexGapContainer style={{ gap: '20px' }}>    
                     <FormElement style={{ color: 'gray' }}>
-                        <label htmlFor="name">Course name *</label>
-                        <input 
-                            type="text" 
-                            id="name"
-                            name="name"
-                            placeholder="Course name" 
-                            value={selectedCourse.name || ''}
-                            onChange={handleFormInput}
-                        />
-                        {/* {errors.name?.type === "required" && (
-                                <p role="alert">Required</p>
-                        )} */}
-                    </FormElement>    
-                    <FormElement style={{ color: 'gray' }}>
-                        <label htmlFor="code">Course code *</label>
+                        <label htmlFor="code">Course code </label>
                         <input 
                             type="text" 
                             id="code"
@@ -90,7 +92,7 @@ export default function UpdateCourseForm() {
                         )} */}
                     </FormElement>
                     <FormElement style={{ color: 'gray' }}>
-                        <label htmlFor="credits">Number of credits *</label>
+                        <label htmlFor="credits">Number of credits</label>
                         <input 
                             type="text" 
                             id="credits"
@@ -107,9 +109,12 @@ export default function UpdateCourseForm() {
 
                 <HorizontallyFlexGapContainer style={{ gap: '20px' }}>
                   <FormElement style={{ color: 'gray' }}>
-                    <label htmlFor="faculty">Faculty *</label>
+                    <HorizontallyFlexSpaceBetweenContainer>
+                        <label htmlFor="faculty">Faculty:</label>
+                        <p style={{ color: 'black', fontWeight: 'bold' }}>{selectedCourse.faculty}</p>
+                    </HorizontallyFlexSpaceBetweenContainer>
                     <select id='faculty' name='faculty' onChange={handleFormInput}>
-                        <option value="">Select faculty</option>
+                        <option value="">Change faculty</option>
                         <option value={"Information Technology"}>Information Technology</option>
                         <option value="Business Administration">Business Administration</option>
                         <option value="Theology">Theology</option>
@@ -119,9 +124,12 @@ export default function UpdateCourseForm() {
                     {selectedCourseErrors.faculty && <p>Faculty is required</p>}
                   </FormElement>
                   <FormElement style={{ color: 'gray' }}>
-                    <label htmlFor="department">Department *</label>
+                    <HorizontallyFlexSpaceBetweenContainer>
+                        <label htmlFor="department">Department:</label>
+                        <p style={{ color: 'black', fontWeight: 'bold' }}>{selectedCourse.department}</p>
+                    </HorizontallyFlexSpaceBetweenContainer>
                     <select id='department' name='department' onChange={handleFormInput}>
-                        <option value="">Select department</option>
+                        <option value="">Change department</option>
                         <option value="All">All</option>
                         { selectedCourse.faculty === 'Information Technology' && 
                           AUCAFacultiesAndDepartments['Information Technology'].map((element, index) => {
@@ -158,14 +166,14 @@ export default function UpdateCourseForm() {
                   </FormElement>                    
                 </HorizontallyFlexGapContainer>
                 
-                <FormElement style={{ flexDirection: 'row' }}>
+                {selectedCourse.name && <FormElement style={{ flexDirection: 'row' }}>
                     {isProcessing 
                     ? <Button disabled variant="contained" color="primary" size="small">PROCESSING...</Button> 
-                    : <Button variant="contained" color="primary" size="small" type="submit">Update</Button>
+                    : <Button variant="contained" color="primary" size="small" type="submit">Confirm changes</Button>
                     }
                     <Button variant="contained" color="secondary" size="small" type="button" onClick={() => {window.location.reload()}}>Cancel</Button>
-                    <Button variant="contained" color="error" size="small" type="button" onClick={() => displayConfirmationModal(selectedCourse.id)}>DELETE</Button>
-                </FormElement>
+                    <Button variant="contained" color="error" size="small" type="button" onClick={() => { displayConfirmationModal(selectedCourse.id);}}>DELETE</Button>
+                </FormElement>}
             </VerticallyFlexGapContainer>
         </VerticallyFlexGapForm>
     )

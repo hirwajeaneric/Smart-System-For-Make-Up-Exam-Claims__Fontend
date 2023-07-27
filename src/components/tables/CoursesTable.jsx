@@ -54,7 +54,7 @@ export default function CoursesTable({data}) {
   return (
     <Box sx={TableStyles}>
       <DataGrid
-        rowHeight={38}
+        rowHeight={25}
         rows={rows}
         columns={columns}
         pageSize={5}
