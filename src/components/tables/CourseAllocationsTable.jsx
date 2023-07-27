@@ -2,6 +2,8 @@ import { DataGrid, GridToolbarContainer, GridToolbarExport } from '@mui/x-data-g
 import { Box, IconButton, Tooltip } from '@mui/material';
 import { Preview } from '@mui/icons-material';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useContext } from 'react';
+import { GeneralContext } from '../../App';
 
 const columns = [
   {
@@ -17,12 +19,12 @@ const columns = [
   {
     field: 'midSemesterExams',
     headerName: 'Mid Semester Exams',
-    width: 200,
+    width: 150,
   },
   {
     field: 'finalExams',
     headerName: 'Final Exams',
-    width: 150,
+    width: 140,
   },
   {
     field: 'actions',
@@ -46,12 +48,11 @@ export const TableStyles = {
   width: '100%',
   height: '300px',
   background: 'white',
-  marginTop: '20px' 
 }
 
 var rows = [];
 
-export default function CourseAllocations({data}) {
+export default function CourseAllocationsTable({data}) {
   rows = data;
 
   return (
@@ -74,11 +75,15 @@ export default function CourseAllocations({data}) {
 const TableActions = ({parameters}) => {
   const navigate = useNavigate();
   const params = useParams();
+  const { setSelectedCourseAllocation } = useContext(GeneralContext);
 
   return (
     <Box>
       <Tooltip title='View / Edit'>
-        <IconButton onClick={() => {navigate(`courses/${parameters.row.id}`)}}>
+        <IconButton 
+          onClick={() => {
+            setSelectedCourseAllocation(parameters.row)
+          }}>
           <Preview />
         </IconButton>
       </Tooltip>

@@ -54,7 +54,7 @@ export default function CoursesTable({data}) {
   return (
     <Box sx={TableStyles}>
       <DataGrid
-        rowHeight={25}
+        rowHeight={37}
         rows={rows}
         columns={columns}
         pageSize={5}
@@ -72,15 +72,13 @@ const TableActions = ({parameters}) => {
   const navigate = useNavigate();
   const params = useParams();
   const dispatch = useDispatch();
-  const { setIsFormVisible, setSelectedCourse } = useContext(GeneralContext);
+  const { setSelectedCourse } = useContext(GeneralContext);
 
   return (
     <Box>
       <Tooltip title='View / Edit'>
         <IconButton 
           onClick={() => {
-            // navigate(`courses/${parameters.row.id}`)
-            setIsFormVisible(true);
             setSelectedCourse(parameters.row)
             dispatch({ type: 'course/getSelectedCourse', payload: parameters.row })
           }}>

@@ -47,7 +47,7 @@ import HODSettings from './pages/hod/Settings';
 import HodCompleteAccount from './pages/hod/CompleteAccount'
 import HODClaimDetails from './pages/hod/ClaimDetails';
 import HODClaims from './pages/hod/Claims';
-import HODCourseAllocations from './components/tables/CourseAllocations';
+import HODCourseAllocations from './pages/hod/CourseAllocations';
 import HODLecturerDetails from './pages/hod/LecturerDetails';
 import HODLecturers from './pages/hod/Lecturers';
 import HODCourses from './pages/hod/Courses';
@@ -175,6 +175,7 @@ function App() {
   const [formType, setFormType] = useState('');
   const [courseToBeDeleted, setCourseToBeDeleted] = useState('');
   const [selectedCourse, setSelectedCourse] = useState({});
+  const [selectedCourseAllocation, setSelectedCourseAllocation] = useState({});
 
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
@@ -258,7 +259,9 @@ function App() {
         courseToBeDeleted,
         setCourseToBeDeleted,
         selectedCourse,
-        setSelectedCourse
+        setSelectedCourse,
+        selectedCourseAllocation,
+        setSelectedCourseAllocation
       }}>
       <BrowserRouter>
         <Routes>
@@ -397,6 +400,8 @@ function App() {
           {formType === 'addCourse' && <AddCourseForm />}
           {/* Confirm delete modal  */}
           {formType === 'confirmDelete' && <ConfirmDelete />}
+            {/* Confirm delete modal  */}
+            {/* {formType === 'confirmDelete' && <ConfirmDelete />} */}
         </Box>
       </Modal>
 

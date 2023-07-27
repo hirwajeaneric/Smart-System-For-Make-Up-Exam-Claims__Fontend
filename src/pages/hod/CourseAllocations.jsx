@@ -1,28 +1,38 @@
 import { Button } from '@mui/material'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Helmet } from 'react-helmet-async'
 import { useSelector } from 'react-redux'
-import { Link } from 'react-router-dom'
-import styled from 'styled-components'
+import { useParams } from 'react-router-dom'
 import { HeaderTwo, HorizontallyFlexGapContainer, TopPageTitle, VerticallyFlexGapContainer } from '../../components/styles/GenericStyles'
-import CourseAllocations from '../../components/tables/CourseAllocations'
-import CoursesTable from '../../components/tables/CoursesTable'
 import { GeneralContext } from '../../App'
 import { useContext } from 'react'
-import { CourseAllocationsContainer, CourseAllocationsTable } from '../../components/styles/PagesStyles'
 import UpdateCourseForm from '../../components/forms/UpdateCourseForm'
+import { useState } from 'react';
+import CourseAllocationsTable from '../../components/tables/CourseAllocationsTable'
+import axios from 'axios'
+import UpdateCourseAllocationsForm from '../../components/forms/UpdateCourseAllocationsForm'
+const serverUrl = import.meta.env.VITE_REACT_APP_SERVERURL;
 
 const CourseAllocations = () => {
-  const { isLoading, listOfCourses, selectedCourse, numberOfCourses } = useSelector(state => state.course)
+  const params = useParams();
+  const [course, setCOurse] = useState({});
   const { setFormType, handleOpenModal, isFormVisible } = useContext(GeneralContext);  
+
+  // Fetch course by code 
+  useEffect(() => {
+    axios.get(`${serverUrl}/api/v1/ssmec/course/findByCode?code=${params.courseCode}`)
+    .then(response => {
+      setCOurse(response.data.course);
+      response.data.course.allocations.forEach(element => {
+        element.id = element._id;
+      })
+    })
+    .catch(err => console.error(err))
+  },[])
 
   const displayAddCourseModal = () => {
     setFormType('addCourse');
     handleOpenModal();
-  }
-
-  const displayLecturerPopup = (lecturers) => {
-    console.log(lecturers[0].name);
   }
 
   return (
@@ -38,12 +48,12 @@ const CourseAllocations = () => {
         </TopPageTitle>
         <HorizontallyFlexGapContainer style={{ gap: '20px', alignItems: 'flex-start' }}>
           <div className="left" style={{ background: 'white', borderRadius: '5px', padding: '10px' }}>
-            {/* Courses table */}
-            <CoursesTable data={listOfCourses} />
+            {/* Course allocations table */}
+            <CourseAllocationsTable data={course.allocations || []} />
           </div>
           <div className="right" style={{ background: 'white', borderRadius: '5px', padding: '10px 2px', flexDirection: 'column' }}>
             {/* Form to update courses  */}
-            <UpdateCourseForm />
+            <UpdateCourseAllocationsForm course={course}/>
           </div>
         </HorizontallyFlexGapContainer>
       </VerticallyFlexGapContainer>
