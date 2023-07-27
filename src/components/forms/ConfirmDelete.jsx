@@ -9,7 +9,7 @@ import { useDispatch } from "react-redux";
 import { getAllCourses } from "../../redux/features/courseSlice";
 import { AUCAFacultiesAndDepartments } from "../../utils/AUCAFacultiesAndDepartments";
 
-export default function AddCourseForm({projectId}) {
+export default function ConfirmDelete({projectId}) {
     const [isProcessing, setIsProcessing] = useState(false);
     const { register, handleSubmit, formState: { errors } } = useForm();
     const { setOpen, setResponseMessage, openModal, setOpenModal, handleCloseModal } = useContext(GeneralContext);
@@ -27,15 +27,9 @@ export default function AddCourseForm({projectId}) {
       formData.code = data.code;
       formData.credits = data.credits;
 
-      const config = {
-        headers: {
-            'Authorization': `Bearer ${JSON.parse(localStorage.getItem('hodToken'))}`
-        }
-      }
-
       setIsProcessing(true);
 
-      axios.post(`${serverUrl}/api/v1/ssmec/course/add`, formData, config)
+      axios.post(`${serverUrl}/api/v1/ssmec/course/add`, formData)
       .then(response => {
         if (response.status === 201) {
           setIsProcessing(false);

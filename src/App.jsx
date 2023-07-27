@@ -123,6 +123,7 @@ import DeclareAbsenceFormPage2 from './components/forms/DeclareAbsenceFormPage2'
 import AddCourseForm from './components/forms/AddCourseForm';
 import { Box, Modal } from '@mui/material';
 import { CustomModal } from './components/styles/GenericStyles';
+import ConfirmDelete from './components/forms/ConfirmDelete';
 
 const style = {
   position: 'absolute',
@@ -140,9 +141,6 @@ export const GeneralContext = createContext();
 
 function App() {
   const dispatch = useDispatch();
-  const [ open, setOpen ] = useState(false);
-  const [ responseMessage, setResponseMessage ] = useState({ message: '', severity: ''});
-  const [ isFormVisible, setIsFormVisible] = useState(false);
 
   var stdToken = '';
   var teaToken = '';
@@ -160,6 +158,9 @@ function App() {
   var registrationOfficer = '';
   var examinationOfficer = '';
 
+  const [open, setOpen] = useState(false);
+  const [responseMessage, setResponseMessage ] = useState({ message: '', severity: ''});
+  const [isFormVisible, setIsFormVisible] = useState(false);
   const [declarationFormData, setDeclarationFormData] = useState({});
   const [proofOfTuitionPayment, setProofOfTuitionPayment] = useState('');
   const [numberOfCourses, setNumberOfCourses] = useState(0);
@@ -171,6 +172,9 @@ function App() {
   const handleOpenModal = () => setOpenModal(!openModal);
   const handleCloseModal = () => setOpenModal(false);
   const [formType, setFormType] = useState('');
+  const [courseToBeDeleted, setCourseToBeDeleted] = useState('');
+  const [selectedCourse, setSelectedCourse] = useState({});
+
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
       return;
@@ -247,8 +251,13 @@ function App() {
         setFormType,
         openModal,
         handleOpenModal,
+        handleCloseModal,
         isFormVisible,
-        setIsFormVisible
+        setIsFormVisible,
+        courseToBeDeleted,
+        setCourseToBeDeleted,
+        selectedCourse,
+        setSelectedCourse
       }}>
       <BrowserRouter>
         <Routes>
@@ -385,6 +394,8 @@ function App() {
         <Box sx={style}>
           {/* Add resources modal  */}
           {formType === 'addCourse' && <AddCourseForm />}
+          {/* Confirm delete modal  */}
+          {formType === 'confirmDelete' && <ConfirmDelete data={courseToBeDeleted} />}
         </Box>
       </Modal>
 

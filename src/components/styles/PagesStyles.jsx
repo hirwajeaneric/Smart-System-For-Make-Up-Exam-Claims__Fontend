@@ -18,16 +18,25 @@ export const CourseAllocationsTable = styled.table`
     border-collapse: collapse;
     width: 100%;
     
-    th, td {
-        text-align: left;
-        padding: 8px;
+    thead {
+        th, td {
+            text-align: left;
+            padding: 8px;
+        }
+    }
 
-        button {
-            border: 0px;
-            background-color: black;
-            color: white;
-            cursor: pointer;
-            padding: 5px 10px;
+    tbody {
+        td {
+            text-align: left;
+            padding: 8px;
+    
+            button {
+                border: 0px;
+                background-color: black;
+                color: white;
+                cursor: pointer;
+                padding: 5px 10px;
+            }
         }
     }
 

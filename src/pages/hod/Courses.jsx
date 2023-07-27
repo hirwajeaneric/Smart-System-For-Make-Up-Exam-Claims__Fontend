@@ -34,7 +34,7 @@ const Courses = () => {
       <VerticallyFlexGapContainer style={{ gap: '20px' }}>
         <TopPageTitle>
           <HeaderTwo style={{ width: '100%', textAlign: 'left' }}>Courses</HeaderTwo>
-          <Button size='small' color='primary' variant='contained' onClick={displayAddCourseModal}>Add</Button>
+          <Button size='small' color='success' variant='contained' onClick={displayAddCourseModal}>Add</Button>
         </TopPageTitle>
         <HorizontallyFlexGapContainer style={{ gap: '20px', alignItems: 'flex-start' }}>
           <div className="left" style={{ background: 'white', borderRadius: '5px', padding: '10px' }}>
@@ -50,22 +50,26 @@ const Courses = () => {
                 {selectedCourse.allocations.map((allocation, index) => {
                   return (
                     <CourseAllocationsTable key={index}>
-                      <tr style={{ textAlign: 'left' }}>
-                        <th>Academic Year</th>
-                        <th>Semester</th>
-                        <th>Mid semester exam</th>
-                        <th>Final exam</th>
-                        <th>More</th>
-                      </tr>
-                      <tr>
-                        <td>{allocation.academicYear}</td>
-                        <td>{allocation.semester}</td>
-                        <td>{allocation.midSemesterExams}</td>
-                        <td>{allocation.finalExams}</td>
-                        <td>
-                          <button onClick={() => displayLecturerPopup(allocation.lecturers)}>More</button>
-                        </td>
-                      </tr>
+                      <thead>
+                        <tr style={{ textAlign: 'left' }}>
+                          <th>Academic Year</th>
+                          <th>Semester</th>
+                          <th>Mid semester exam</th>
+                          <th>Final exam</th>
+                          <th>More</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>{allocation.academicYear}</td>
+                          <td>{allocation.semester}</td>
+                          <td>{allocation.midSemesterExams}</td>
+                          <td>{allocation.finalExams}</td>
+                          <td>
+                            <button onClick={() => displayLecturerPopup(allocation.lecturers)}>More</button>
+                          </td>
+                        </tr>
+                      </tbody>
                     </CourseAllocationsTable>
                   )
                 })}

@@ -72,7 +72,7 @@ const TableActions = ({parameters}) => {
   const navigate = useNavigate();
   const params = useParams();
   const dispatch = useDispatch();
-  const { isFormVisible, setIsFormVisible } = useContext(GeneralContext);
+  const { setIsFormVisible, setSelectedCourse } = useContext(GeneralContext);
 
   return (
     <Box>
@@ -81,6 +81,7 @@ const TableActions = ({parameters}) => {
           onClick={() => {
             // navigate(`courses/${parameters.row.id}`)
             setIsFormVisible(true);
+            setSelectedCourse(parameters.row)
             dispatch({ type: 'course/getSelectedCourse', payload: parameters.row })
           }}>
           <Preview />
