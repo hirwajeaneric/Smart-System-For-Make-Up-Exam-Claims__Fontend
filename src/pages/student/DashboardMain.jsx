@@ -1,4 +1,4 @@
-import { Link, Outlet, useNavigate } from "react-router-dom";
+import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 import { DashboardInnerContainer, DashboardMainContainer, TopNavigationBar, SecondaryMenue } from "../../components/styles/DashboardStructureStyles"
 import { VerticallyFlexGapContainer, VerticallyFlexSpaceBetweenContainer } from "../../components/styles/GenericStyles"
 import Avatar from "@mui/material/Avatar"; 
@@ -125,10 +125,10 @@ const DashboardMain = () => {
 
             <VerticallyFlexGapContainer style={{ position: 'relative' }}>
                 <SecondaryMenue>
-                    <Link to={'home'}>Home</Link>
-                    <Link to={'declare'}>Declare absence</Link>
-                    <Link to={'claims'}>My claims</Link>
-                    <Link to={'settings'}>{user.fullName}</Link>
+                    <NavLink to={'home'}>Home</NavLink>
+                    <NavLink to={'declare'}>Declare absence</NavLink>
+                    <NavLink to={'claims'}>My claims</NavLink>
+                    <NavLink to={'settings'}>{user.fullName}</NavLink>
                 </SecondaryMenue>
                 <DashboardMainContainer>
                     <DashboardInnerContainer>

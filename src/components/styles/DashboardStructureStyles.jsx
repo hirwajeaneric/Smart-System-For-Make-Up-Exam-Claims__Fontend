@@ -154,14 +154,23 @@ export const SecondaryMenue = styled.div`
     width: 100%;
     z-index: 999;
     background-color: #0063ab;
-    padding: 10px 100px;
     align-items: center;
     justify-content: center;
-    gap: 30px;
+    padding: 0px 100px;
     
     a {
         color: white;
         text-decoration: none;
+        padding: 10px 20px;
+    }
+
+    a:hover {
+        color: gold;
+    }
+
+    a.active {
+        background: #001a33;
+        color: gold;
     }
     
 
