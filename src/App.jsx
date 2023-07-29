@@ -125,6 +125,7 @@ import AddCourseForm from './components/forms/AddCourseForm';
 import { Box, Modal } from '@mui/material';
 import { CustomModal } from './components/styles/GenericStyles';
 import ConfirmDelete from './components/forms/ConfirmDelete';
+import AddCourseAllocationForm from './components/forms/AddCourseAllocationForm';
 
 const style = {
   position: 'absolute',
@@ -398,10 +399,15 @@ function App() {
         <Box sx={style}>
           {/* Add resources modal  */}
           {formType === 'addCourse' && <AddCourseForm />}
+          
           {/* Confirm delete modal  */}
           {formType === 'confirmDelete' && <ConfirmDelete />}
-            {/* Confirm delete modal  */}
-            {/* {formType === 'confirmDelete' && <ConfirmDelete />} */}
+          
+          {/* Add course allocation  */}
+          {formType === 'addCourseAllocations' && <AddCourseAllocationForm />}
+          
+          {/* Confirm delete modal  */}
+          {/* {formType === 'confirmDelete' && <ConfirmDelete />} */}
         </Box>
       </Modal>
 

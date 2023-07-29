@@ -82,7 +82,7 @@ const TableActions = ({parameters}) => {
       <Tooltip title='View / Edit'>
         <IconButton 
           onClick={() => {
-            setSelectedCourseAllocation(parameters.row)
+            setSelectedCourseAllocation(parameters.row);
           }}>
           <Preview />
         </IconButton>

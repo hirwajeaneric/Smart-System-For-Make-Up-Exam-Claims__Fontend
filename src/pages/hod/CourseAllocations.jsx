@@ -1,12 +1,10 @@
 import { Button } from '@mui/material'
 import React, { useEffect } from 'react'
 import { Helmet } from 'react-helmet-async'
-import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { HeaderTwo, HorizontallyFlexGapContainer, TopPageTitle, VerticallyFlexGapContainer } from '../../components/styles/GenericStyles'
 import { GeneralContext } from '../../App'
 import { useContext } from 'react'
-import UpdateCourseForm from '../../components/forms/UpdateCourseForm'
 import { useState } from 'react';
 import CourseAllocationsTable from '../../components/tables/CourseAllocationsTable'
 import axios from 'axios'
@@ -16,7 +14,7 @@ const serverUrl = import.meta.env.VITE_REACT_APP_SERVERURL;
 const CourseAllocations = () => {
   const params = useParams();
   const [course, setCOurse] = useState({});
-  const { setFormType, handleOpenModal, isFormVisible } = useContext(GeneralContext);  
+  const { setFormType, handleOpenModal, setSelectedCourse } = useContext(GeneralContext);  
 
   // Fetch course by code 
   useEffect(() => {
@@ -25,14 +23,16 @@ const CourseAllocations = () => {
       setCOurse(response.data.course);
       response.data.course.allocations.forEach(element => {
         element.id = element._id;
-      })
+      });
+      // console.log(response.data.course);
     })
     .catch(err => console.error(err))
   },[])
 
-  const displayAddCourseModal = () => {
-    setFormType('addCourse');
+  const displayAddCourseAllocationModal = () => {
+    setFormType('addCourseAllocations');
     handleOpenModal();
+    setSelectedCourse(course);
   }
 
   return (
@@ -44,7 +44,7 @@ const CourseAllocations = () => {
       <VerticallyFlexGapContainer style={{ gap: '20px' }}>
         <TopPageTitle>
           <HeaderTwo style={{ width: '100%', textAlign: 'left' }}>Courses Allocations</HeaderTwo>
-          <Button size='small' color='success' variant='contained' onClick={displayAddCourseModal}>Add</Button>
+          <Button size='small' color='success' variant='contained' onClick={displayAddCourseAllocationModal}>Add</Button>
         </TopPageTitle>
         <HorizontallyFlexGapContainer style={{ gap: '20px', alignItems: 'flex-start' }}>
           <div className="left" style={{ background: 'white', borderRadius: '5px', padding: '10px' }}>
@@ -53,7 +53,7 @@ const CourseAllocations = () => {
           </div>
           <div className="right" style={{ background: 'white', borderRadius: '5px', padding: '10px 2px', flexDirection: 'column' }}>
             {/* Form to update courses  */}
-            <UpdateCourseAllocationsForm course={course}/>
+            <UpdateCourseAllocationsForm/>
           </div>
         </HorizontallyFlexGapContainer>
       </VerticallyFlexGapContainer>

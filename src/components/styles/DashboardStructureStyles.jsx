@@ -169,8 +169,8 @@ export const SecondaryMenue = styled.div`
     }
 
     a.active {
-        background: #001a33;
-        color: gold;
+        background: #66b3ff;
+        // color: gold;
     }
     
 
