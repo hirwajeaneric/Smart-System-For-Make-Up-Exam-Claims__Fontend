@@ -24,7 +24,6 @@ const CourseAllocations = () => {
       response.data.course.allocations.forEach(element => {
         element.id = element._id;
       });
-      // console.log(response.data.course);
     })
     .catch(err => console.error(err))
   },[])

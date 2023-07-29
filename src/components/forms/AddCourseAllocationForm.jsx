@@ -7,15 +7,28 @@ const serverUrl = import.meta.env.VITE_REACT_APP_SERVERURL;
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { getAllCourses } from "../../redux/features/courseSlice";
+import { useEffect } from "react";
 
-export default function AddCourseAllocationForm({projectId}) {
+export default function AddCourseAllocationForm() {
     const [isProcessing, setIsProcessing] = useState(false);
     const { register, handleSubmit, formState: { errors } } = useForm();
-    const { setOpen, setResponseMessage, handleCloseModal } = useContext(GeneralContext);
+    const { setOpen, setResponseMessage, handleCloseModal, selectedCourse, setSelectedCourse } = useContext(GeneralContext);
     const dispatch = useDispatch();
 
     const onSubmit = data => {
-      
+      // Create a copy of the existing allocations array
+      const existingAllocations = [...selectedCourse.allocations];
+
+      if (selectedCourse.allocations.length !== 0) {
+        existingAllocations.push(data);
+
+        selectedCourse.allocations = existingAllocations
+      } else if (selectedCourse.allocations.length === 0) {
+        selectedCourse.allocations = [data]
+      }
+
+      console.log(selectedCourse);
+
       const config = {
         headers: {
             'Authorization': `Bearer ${localStorage.getItem('hodToken')}`
@@ -24,16 +37,15 @@ export default function AddCourseAllocationForm({projectId}) {
 
       setIsProcessing(true);
       
-      axios.put(`${serverUrl}/api/v1/ssmec/course/update?id=${course._id}`, course, config)
+      axios.put(`${serverUrl}/api/v1/ssmec/course/update?id=${selectedCourse._id}`, selectedCourse, config)
       .then(response => {
         if (response.status === 200) {
           setIsProcessing(false);
           setResponseMessage({ message: response.data.message, severity: 'success' });
           setOpen(true);
           dispatch(getAllCourses());
-          setTimeout(() => {
-            window.location.reload();
-          },2000)
+          setSelectedCourse({});
+          window.location.reload();
         }
       })
       .catch(error => {

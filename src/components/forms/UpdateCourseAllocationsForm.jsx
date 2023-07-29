@@ -95,17 +95,21 @@ export default function UpdateCourseAllocationsForm() {
             </HorizontallyFlexGapContainer>
           }
           {(selectedCourseAllocation.midSemesterExams || selectedCourseAllocation.finalExams) && <VerticallyFlexGapContainer style={{ alignItems: 'flex-start' }}>
-            {selectedCourseAllocation.midSemesterExams &&
-              <>
-                <p style={{ fontWeight: '600', textAlign:'left' }}>Mid semester exam:</p>
-                <p style={{ color: 'gray', textAlign:'left', fontSize: '90%', marginBottom: '10px' }}>{new Date(selectedCourseAllocation.midSemesterExams).toUTCString()}</p>
-              </>
-            }  
-            {selectedCourseAllocation.finalExams && 
-              <>
-                <p style={{ fontWeight: '600', textAlign:'left'}}>Final exams:</p>
-                <p style={{ color: 'gray',textAlign:'left', fontSize: '90%' }}>{new Date(selectedCourseAllocation.finalExams).toUTCString()}</p>
-              </>
+            <p style={{ fontWeight: '600', textAlign:'left' }}>Mid semester exam:</p>
+            {
+              selectedCourseAllocation.midSemesterExams 
+              ? 
+              <p style={{ color: 'gray', textAlign:'left', fontSize: '90%', marginBottom: '10px' }}>{new Date(selectedCourseAllocation.midSemesterExams).toUTCString()}</p> 
+              : 
+              <p style={{ color: 'gray',textAlign:'left', fontSize: '90%' }}>Not yet defined</p>
+            }
+            <p style={{ fontWeight: '600', textAlign:'left'}}>Final exams:</p>
+            {
+              selectedCourseAllocation.finalExams 
+              ? 
+              <p style={{ color: 'gray',textAlign:'left', fontSize: '90%' }}>{new Date(selectedCourseAllocation.finalExams).toUTCString()}</p> 
+              : 
+              <p style={{ color: 'gray',textAlign:'left', fontSize: '90%' }}>Not yet defined</p>
             }
           </VerticallyFlexGapContainer>}
 
