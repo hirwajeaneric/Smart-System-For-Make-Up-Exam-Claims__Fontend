@@ -7,3 +7,9 @@ export const a = styled.div`
     justify-content: center;
     align-items: center;
 `;
+
+export const CourseAllocationsContainer = styled.table`
+    width: 100%;
+    overflow-y: auto;
+`;
+

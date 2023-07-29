@@ -2,42 +2,29 @@ import { DataGrid, GridToolbarContainer, GridToolbarExport } from '@mui/x-data-g
 import { Box, IconButton, Tooltip } from '@mui/material';
 import { Preview } from '@mui/icons-material';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useContext } from 'react';
+import { GeneralContext } from '../../App';
 
 const columns = [
   {
-    field: 'fullName',
-    headerName: 'Name',
+    field: 'academicYear',
+    headerName: 'Academic Year',
+    width: 120,
+  },
+  {
+    field: 'semester',
+    headerName: 'Semester',
     width: 80,
   },
   {
-    field: 'phone',
-    headerName: 'Phone',
-    width: 80,
+    field: 'midSemesterExams',
+    headerName: 'Mid Semester Exams',
+    width: 150,
   },
   {
-    field: 'email',
-    headerName: 'Email',
-    width: 80,
-  },
-  {
-    field: 'district',
-    headerName: 'District',
-    width: 80,
-  },
-  {
-    field: 'mccName',
-    headerName: 'Quantity',
-    width: 80,
-  },
-  {
-    field: 'userRole',
-    headerName: 'Role',
-    width: 80,
-  },
-  {
-    field: 'status',
-    headerName: 'Status',
-    width: 80,
+    field: 'finalExams',
+    headerName: 'Final Exams',
+    width: 140,
   },
   {
     field: 'actions',
@@ -59,14 +46,13 @@ function CustomToolbar() {
 export const TableStyles = {
   padding: '0px',
   width: '100%',
-  height: '500px',
+  height: '300px',
   background: 'white',
-  marginTop: '20px' 
 }
 
 var rows = [];
 
-export default function CountryLevelEmployeeTable({data}) {
+export default function CourseAllocationsTable({data}) {
   rows = data;
 
   return (
@@ -89,11 +75,15 @@ export default function CountryLevelEmployeeTable({data}) {
 const TableActions = ({parameters}) => {
   const navigate = useNavigate();
   const params = useParams();
+  const { setSelectedCourseAllocation } = useContext(GeneralContext);
 
   return (
     <Box>
       <Tooltip title='View / Edit'>
-        <IconButton onClick={() => {navigate(parameters.row.id)}}>
+        <IconButton 
+          onClick={() => {
+            setSelectedCourseAllocation(parameters.row);
+          }}>
           <Preview />
         </IconButton>
       </Tooltip>

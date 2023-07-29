@@ -2,23 +2,26 @@ import { DataGrid, GridToolbarContainer, GridToolbarExport } from '@mui/x-data-g
 import { Box, IconButton, Tooltip } from '@mui/material';
 import { Preview } from '@mui/icons-material';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { useContext } from 'react';
+import { GeneralContext } from '../../App';
 
 const columns = [
   {
-    field: 'date',
-    headerName: 'Date',
-    width: 80,
+    field: 'code',
+    headerName: 'Code',
+    width: 100,
   },
   {
-    field: 'quantity',
-    headerName: 'Quantity',
-    width: 80,
+    field: 'name',
+    headerName: 'Name',
+    width: 300,
   },
   {
-    field: 'mccName',
-    headerName: 'MCC',
+    field: 'credits',
+    headerName: 'Credits',
     width: 80,
-  },
+  },  
   {
     field: 'actions',
     headerName: 'Actions',
@@ -39,20 +42,19 @@ function CustomToolbar() {
 export const TableStyles = {
   padding: '0px',
   width: '100%',
-  height: '400px',
-  background: 'white',
-  marginTop: '20px' 
+  height: '300px',
+  background: 'white'
 }
 
 var rows = [];
 
-export default function FarmerManureProductionTable({data}) {
+export default function CoursesTable({data}) {
   rows = data;
 
   return (
     <Box sx={TableStyles}>
       <DataGrid
-        rowHeight={38}
+        rowHeight={37}
         rows={rows}
         columns={columns}
         pageSize={5}
@@ -69,11 +71,17 @@ export default function FarmerManureProductionTable({data}) {
 const TableActions = ({parameters}) => {
   const navigate = useNavigate();
   const params = useParams();
+  const dispatch = useDispatch();
+  const { setSelectedCourse } = useContext(GeneralContext);
 
   return (
     <Box>
       <Tooltip title='View / Edit'>
-        <IconButton onClick={() => {navigate(parameters.row.id)}}>
+        <IconButton 
+          onClick={() => {
+            setSelectedCourse(parameters.row)
+            dispatch({ type: 'course/getSelectedCourse', payload: parameters.row })
+          }}>
           <Preview />
         </IconButton>
       </Tooltip>

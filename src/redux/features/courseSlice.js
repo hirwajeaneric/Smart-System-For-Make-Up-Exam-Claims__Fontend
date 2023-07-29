@@ -4,9 +4,32 @@ const serverUrl = import.meta.env.VITE_REACT_APP_SERVERURL;
 
 const initialState = {
     coursesForSelectedTeacher: [],
+    listOfCourses: [],
+    numberOfCourses: 0,
+    selectedCourse: {},
     numberOfCoursesForSelectedTeacher: 0,
     isLoading: false,
 }
+
+export const getAllCourses = createAsyncThunk(
+    'course/getAllCourses',
+    async (thunkAPI) => {
+        try {
+            const response = await axios.get(serverUrl+`/api/v1/ssmec/course/list`);
+            response.data.courses.forEach(element => {
+                element.id = element._id;
+                delete element._id;
+                delete element.__v;
+                element.allocations.forEach(allocation => {
+                    allocation.id = allocation._id; 
+                })
+            });
+            return response.data.courses;
+        } catch (error) {
+            return thunkAPI.rejectWithValue('Something went wrong!!');
+        }
+    }
+);
 
 export const getCoursesForTeacher = createAsyncThunk(
     'course/getCoursesForTeacher',
@@ -34,6 +57,12 @@ export const getCoursesForTeacher = createAsyncThunk(
 const courseSlice = createSlice({
     name: 'course',
     initialState,
+    reducers: {
+        getSelectedCourse: (state, action) => {
+            let course = action.payload;
+            state.selectedCourse = course;
+        }
+    },
     extraReducers: {
         [getCoursesForTeacher.pending] : (state) => {
             state.isLoading = true;
@@ -46,8 +75,19 @@ const courseSlice = createSlice({
         [getCoursesForTeacher.rejected] : (state) => {
             state.isLoading = false;
         },
+        [getAllCourses.pending] : (state) => {
+            state.isLoading = true;
+        },
+        [getAllCourses.fulfilled] : (state, action) => {
+            state.isLoading = false;
+            state.listOfCourses = action.payload;
+            state.numberOfCourses = action.payload.length;
+        },
+        [getAllCourses.rejected] : (state) => {
+            state.isLoading = false;
+        },
     }
 });
 
-export const { } = courseSlice.actions;
+export const { getSelectedCourse } = courseSlice.actions;
 export default courseSlice.reducer;

@@ -154,14 +154,23 @@ export const SecondaryMenue = styled.div`
     width: 100%;
     z-index: 999;
     background-color: #0063ab;
-    padding: 10px 100px;
     align-items: center;
     justify-content: center;
-    gap: 30px;
+    padding: 0px 100px;
     
     a {
         color: white;
         text-decoration: none;
+        padding: 10px 20px;
+    }
+
+    a:hover {
+        color: gold;
+    }
+
+    a.active {
+        background: #66b3ff;
+        // color: gold;
     }
     
 
@@ -200,7 +209,6 @@ export const DashboardInnerContainer = styled.div`
     flex-direction: column;
     width: 100%;
     overflow-y: auto;
-    // min-height: 90vh;
 
     @media (max-width: 1200px) {
 

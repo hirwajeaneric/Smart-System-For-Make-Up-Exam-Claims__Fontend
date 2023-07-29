@@ -1,3 +1,4 @@
+import { Modal } from '@mui/material';
 import styled from 'styled-components';
 
 export const CenterFlexedContainer = styled.div`
@@ -17,6 +18,7 @@ export const HeaderTwo = styled.h2`
     font-weight: 400;
     font-size: 1.3rem;
 `;
+
 
 export const VerticallyFlexSpaceBetweenContainer = styled.div`
     width: 100%;  
@@ -138,24 +140,24 @@ export const HorizontallyFlexGapContainer = styled.div`
 
     div.left {
         display: flex;
-        
+        width: 50%;
     }
 
     div.right {
         display: flex;
-        
+        width: 50%;
     }
 
     @media (max-width: 768px) {
         div.left {
             display: flex;
-            width: 100%;
+            width: 50%;
             margin-bottom: 20px;
         }
     
         div.right {
             display: flex;
-            width: 100%;
+            width: 50%;
         }
     }
 
@@ -395,4 +397,16 @@ export const FormElement2 = styled.div`
     button {
         width: 100%;
     }
+`;
+
+export const TopPageTitle = styled.div`
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+`;
+
+export const CustomModal = styled(Modal)`
+    
 `;

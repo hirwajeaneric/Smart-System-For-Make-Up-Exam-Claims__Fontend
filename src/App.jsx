@@ -47,6 +47,7 @@ import HODSettings from './pages/hod/Settings';
 import HodCompleteAccount from './pages/hod/CompleteAccount'
 import HODClaimDetails from './pages/hod/ClaimDetails';
 import HODClaims from './pages/hod/Claims';
+import HODCourseAllocations from './pages/hod/CourseAllocations';
 import HODLecturerDetails from './pages/hod/LecturerDetails';
 import HODLecturers from './pages/hod/Lecturers';
 import HODCourses from './pages/hod/Courses';
@@ -120,16 +121,29 @@ import { getAllUsers } from './redux/features/userSlice';
 // FORMS AS PAGES /////////////////////////////////////////////////////////////////////////////////////////////////
 import DeclareAbsenceFormPage1 from './components/forms/DeclareAbsenceFormPage1';
 import DeclareAbsenceFormPage2 from './components/forms/DeclareAbsenceFormPage2';
+import AddCourseForm from './components/forms/AddCourseForm';
+import { Box, Modal } from '@mui/material';
+import { CustomModal } from './components/styles/GenericStyles';
+import ConfirmDelete from './components/forms/ConfirmDelete';
+import AddCourseAllocationForm from './components/forms/AddCourseAllocationForm';
 
+const style = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  boxShadow: 24,
+  p: 4,
+};
 
 // CREATING CONTEXT ///////////////////////////////////////////////////////////////////////////////////////////////////
 export const GeneralContext = createContext();
 
 function App() {
   const dispatch = useDispatch();
-  const [ open, setOpen ] = useState(false);
-  const [ responseMessage, setResponseMessage ] = useState({ message: '', severity: ''});
-  
+
   var stdToken = '';
   var teaToken = '';
   var hodToken = '';
@@ -146,6 +160,9 @@ function App() {
   var registrationOfficer = '';
   var examinationOfficer = '';
 
+  const [open, setOpen] = useState(false);
+  const [responseMessage, setResponseMessage ] = useState({ message: '', severity: ''});
+  const [isFormVisible, setIsFormVisible] = useState(false);
   const [declarationFormData, setDeclarationFormData] = useState({});
   const [proofOfTuitionPayment, setProofOfTuitionPayment] = useState('');
   const [numberOfCourses, setNumberOfCourses] = useState(0);
@@ -153,7 +170,14 @@ function App() {
   const [courseOne, setCourseOne] = useState({});
   const [courseTwo, setCourseTwo] = useState({});
   const [courseThree, setCourseThree] = useState({});
-  
+  const [openModal, setOpenModal] = useState(false);
+  const handleOpenModal = () => setOpenModal(!openModal);
+  const handleCloseModal = () => setOpenModal(false);
+  const [formType, setFormType] = useState('');
+  const [courseToBeDeleted, setCourseToBeDeleted] = useState('');
+  const [selectedCourse, setSelectedCourse] = useState({});
+  const [selectedCourseAllocation, setSelectedCourseAllocation] = useState({});
+
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
       return;
@@ -225,7 +249,20 @@ function App() {
         courseTwo,
         setCourseTwo,
         courseThree,
-        setCourseThree
+        setCourseThree,
+        formType, 
+        setFormType,
+        openModal,
+        handleOpenModal,
+        handleCloseModal,
+        isFormVisible,
+        setIsFormVisible,
+        courseToBeDeleted,
+        setCourseToBeDeleted,
+        selectedCourse,
+        setSelectedCourse,
+        selectedCourseAllocation,
+        setSelectedCourseAllocation
       }}>
       <BrowserRouter>
         <Routes>
@@ -237,6 +274,7 @@ function App() {
             <Route path='forgot-password' element={<StudentForgotPassword />} />
             <Route path='reset-password/:token/:userId' element={<StudentResetPassword />} />
           </Route>
+          
           <Route path='/student/complete-account' element={<CompleteAccount />} />
           <Route path='/student/:registrationNumber' element={localStorage.getItem('stdToken') ? <StudentDashboardMain /> : <Navigate replace to={'/student/auth/signin'} />}>
             <Route path='home' element={<StudentStats />} />
@@ -284,7 +322,7 @@ function App() {
             <Route path='lecturers' element={<HODLecturers />} />
             <Route path='lecturers/:lecturerId' element={<HODLecturerDetails />} />
             <Route path='courses' element={<HODCourses />} />
-            <Route path='courses/:courseCode' element={<HODCourseDetails />} />
+            <Route path='courses/:courseCode/allocations' element={<HODCourseAllocations />} />
             <Route path='assign' element={<HODAssignCourses />} />
             <Route path='settings' element={<HODSettings />} />
           </Route>
@@ -356,6 +394,24 @@ function App() {
         </Routes>
       </BrowserRouter>
 
+      {/* Multi-purpose modal  */}
+      <Modal open={openModal} onClose={handleCloseModal} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
+        <Box sx={style}>
+          {/* Add resources modal  */}
+          {formType === 'addCourse' && <AddCourseForm />}
+          
+          {/* Confirm delete modal  */}
+          {formType === 'confirmDelete' && <ConfirmDelete />}
+          
+          {/* Add course allocation  */}
+          {formType === 'addCourseAllocations' && <AddCourseAllocationForm />}
+          
+          {/* Confirm delete modal  */}
+          {/* {formType === 'confirmDelete' && <ConfirmDelete />} */}
+        </Box>
+      </Modal>
+
+
       {/* RESPONSE MESSAGE DISPLAYER ****************************************************************************************************************************** */}
       <ResponseComponent 
         message={responseMessage.message} 
@@ -363,6 +419,9 @@ function App() {
         open={open} 
         handleClose={handleClose} 
       />
+
+
+
     </GeneralContext.Provider>
   )
 }
