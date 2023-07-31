@@ -175,6 +175,43 @@ export const HorizontallyFlexGapContainer = styled.div`
     }
 `;
 
+export const CourseTeacherListItems = styled.div`
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+    font-size: 90%;
+    margin-bottom: 5px;
+
+    p {
+
+    }
+
+    div {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 10px;        
+
+        button.more, button.delete {
+            border: 0px;
+            font-size: 100%;
+            cursor: pointer;
+            background: none;
+        }
+
+        button.more {
+            color: green;
+        }
+
+        button.delete {
+            color: tomato;
+        }
+    }
+`;
+
 export const HorizontallyFlexGapForm = styled.form`
     width: 100%;
     display: flex;

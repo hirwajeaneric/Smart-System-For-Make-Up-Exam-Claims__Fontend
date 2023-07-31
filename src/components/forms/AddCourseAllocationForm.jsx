@@ -7,7 +7,6 @@ const serverUrl = import.meta.env.VITE_REACT_APP_SERVERURL;
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { getAllCourses } from "../../redux/features/courseSlice";
-import { useEffect } from "react";
 
 export default function AddCourseAllocationForm() {
     const [isProcessing, setIsProcessing] = useState(false);

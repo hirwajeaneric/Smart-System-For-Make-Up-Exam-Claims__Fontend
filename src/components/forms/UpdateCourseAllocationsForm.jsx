@@ -1,7 +1,7 @@
 import { Button } from "@mui/material";
 import { useContext, useState } from "react";
 import { GeneralContext } from "../../App";
-import { FormElement, HorizontallyFlexGapContainer, HorizontallyFlexSpaceBetweenContainer, VerticallyFlexGapContainer, VerticallyFlexGapForm } from "../styles/GenericStyles";
+import { CourseTeacherListItems, FormElement, HorizontallyFlexGapContainer, HorizontallyFlexSpaceBetweenContainer, VerticallyFlexGapContainer, VerticallyFlexGapForm } from "../styles/GenericStyles";
 const serverUrl = import.meta.env.VITE_REACT_APP_SERVERURL;
 import axios from "axios";
 import { useDispatch } from "react-redux";
@@ -12,7 +12,7 @@ import { getAllUsers } from "../../redux/features/userSlice";
 export default function UpdateCourseAllocationsForm() {
   const params = useParams();
   const [isProcessing, setIsProcessing] = useState(false);
-  const { setOpen, setResponseMessage, selectedCourseAllocation, setSelectedCourseAllocation, handleOpenModal, setFormType,setCourseToBeDeleted } = useContext(GeneralContext);
+  const { setOpen, setResponseMessage, selectedCourseAllocation, setSelectedCourseAllocation, handleOpenModal, setFormType,setSelectedCourse } = useContext(GeneralContext);
   const dispatch = useDispatch();
   const [course, setCourse] = useState({});
 
@@ -34,10 +34,22 @@ export default function UpdateCourseAllocationsForm() {
     setSelectedCourseAllocation({...selectedCourseAllocation, [input.name]: input.value });
   }
 
-  const displayConfirmationModal = (courseId) => {
-      setFormType('confirmDelete');
-      handleOpenModal();
-      setCourseToBeDeleted(courseId);
+  const displayAssignCoursesModal = (courseInfo) => {
+    setFormType('assignCourses');
+    handleOpenModal();
+    setSelectedCourse(courseInfo);
+  }
+
+  const displayMoreLectureInfoForm = (courseInfo) => {
+    setFormType('assignCourses');
+    handleOpenModal();
+    setSelectedCourse(courseInfo);
+  }
+
+  const displayConfirmDeleteLectureForm = (courseInfo) => {
+    setFormType('assignCourses');
+    handleOpenModal();
+    setSelectedCourse(courseInfo);
   }
 
   // UPDATING COURSE ALLOCAITON DATA 
@@ -83,17 +95,28 @@ export default function UpdateCourseAllocationsForm() {
   return (
       <VerticallyFlexGapForm onSubmit={updateCourseAllocationData} style={{ gap: '20px', backgroundColor: 'white', padding: '0 10px 10px' }}>
           {selectedCourseAllocation.lecturers && 
-            <HorizontallyFlexGapContainer style={{ gap: '20px' }}>
-              <div className="left" style={{ flexDirection: 'column' }}>
+            <HorizontallyFlexGapContainer style={{ gap: '20px', alignItems: 'flex-start' }}>
+              <div className="left" style={{ flexDirection: 'column', width: '100%', gap: '5px' }}>
                 <p style={{ fontWeight: '600', textAlign:'left' }}>Lecturers</p>
                 <ul style={{ listStyleType: 'none' }}>
                   {selectedCourseAllocation.lecturers && selectedCourseAllocation.lecturers.map((lecturer, index) => {
-                    return(<li style={{ fontSize: '90%' }} key={index}>{lecturer.name}</li>)
+                    return(
+                      <CourseTeacherListItems key={index}>
+                        <p>{lecturer.name}</p>
+                        <div>
+                          <button className="more" type="button" onClick={() => displayMoreLectureInfoForm({course: course, allocation: selectedCourseAllocation})}>More</button>
+                          <button className="delete" type="button" onClick={() => displayConfirmDeleteLectureForm({course: course, allocation: selectedCourseAllocation})}>Delete</button>
+                        </div>
+                      </CourseTeacherListItems>)
                   })}
                 </ul>
               </div>
+              <div className="right" style={{ justifyContent: 'flex-end' }}>
+                <Button variant="text" color="primary" size="small" type="button" onClick={() => { displayAssignCoursesModal({course: course, allocation: selectedCourseAllocation});}}>Assign teacher(s)</Button>
+              </div>
             </HorizontallyFlexGapContainer>
           }
+
           {(selectedCourseAllocation.midSemesterExams || selectedCourseAllocation.finalExams) && <VerticallyFlexGapContainer style={{ alignItems: 'flex-start' }}>
             <p style={{ fontWeight: '600', textAlign:'left' }}>Mid semester exam:</p>
             {
@@ -172,7 +195,7 @@ export default function UpdateCourseAllocationsForm() {
               : <Button variant="contained" color="primary" size="small" type="submit">Confirm changes</Button>
               }
               <Button variant="contained" color="secondary" size="small" type="button" onClick={() => {window.location.reload()}}>Cancel</Button>
-              <Button variant="contained" color="error" size="small" type="button" onClick={() => { displayConfirmationModal(selectedCourse.id);}}>DELETE</Button>
+              {/* <Button variant="contained" color="error" size="small" type="button" onClick={() => { displayConfirmationModal(selectedCourse.id);}}>DELETE</Button> */}
             </FormElement>}
           </VerticallyFlexGapContainer>
       </VerticallyFlexGapForm>

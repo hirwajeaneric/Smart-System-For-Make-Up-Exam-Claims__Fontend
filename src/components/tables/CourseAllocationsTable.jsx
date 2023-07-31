@@ -28,7 +28,7 @@ const columns = [
   },
   {
     field: 'actions',
-    headerName: 'Actions',
+    headerName: 'More',
     type: 'actions',
     width: 70,
     renderCell: (params) => <TableActions parameters= {params} />
