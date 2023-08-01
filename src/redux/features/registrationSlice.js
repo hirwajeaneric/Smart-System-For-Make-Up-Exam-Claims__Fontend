@@ -12,7 +12,7 @@ export const getStudentRegistration = createAsyncThunk(
     async (filter, thunkAPI) => {
         const { registrationNumber } = filter;
         try {
-            const response = await axios.get(serverUrl+`/api/v1/ssmec/findByRegistration?registrationNumber=${registrationNumber}`);
+            const response = await axios.get(serverUrl+`/api/v1/ssmec/registration/findByRegistrationNumber?registrationNumber=${registrationNumber}`);
             return response.data.studentRegistration
         } catch (error) {
             return thunkAPI.rejectWithValue('Something went wrong!!');
