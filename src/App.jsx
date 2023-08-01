@@ -1,6 +1,8 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { createContext, useEffect, useState } from 'react';
+import { Box, Modal } from '@mui/material';
+
 import ResponseComponent from './components/ResponseComponent';
 
 // PAGES 
@@ -125,6 +127,7 @@ import AddCourseForm from './components/forms/AddCourseForm';
 import { Box, Modal } from '@mui/material';
 import ConfirmDelete from './components/forms/ConfirmDelete';
 import AddCourseAllocationForm from './components/forms/AddCourseAllocationForm';
+import AssignCoursesToTeachersForm from './components/forms/AssignCoursesToTeachersForm';
 
 import HomePage from './pages/HomePage';
 
@@ -408,9 +411,10 @@ function App() {
           
           {/* Add course allocation  */}
           {formType === 'addCourseAllocations' && <AddCourseAllocationForm />}
+
+          {/* Assign courses to teachers  */}
+          {formType === 'assignCourses' && <AssignCoursesToTeachersForm />}
           
-          {/* Confirm delete modal  */}
-          {/* {formType === 'confirmDelete' && <ConfirmDelete />} */}
         </Box>
       </Modal>
 
@@ -422,8 +426,6 @@ function App() {
         open={open} 
         handleClose={handleClose} 
       />
-
-
 
     </GeneralContext.Provider>
   )
