@@ -208,7 +208,7 @@ export default function DeclareAbsenceFormPage1() {
                 </HorizontallyFlexGapContainer>
 
                 <HorizontallyFlexGapContainer style={{ justifyContent: 'flex-end' }}> 
-                    <Button variant="contained" color="primary" size="medium" type="button" onClick={() => nextStep()}>Next</Button>
+                    <Button variant="contained" color="primary" size="small" type="button" onClick={() => nextStep()}>Next</Button>
                 </HorizontallyFlexGapContainer>
             </VerticallyFlexGapContainer>
         </VerticallyFlexGapForm>

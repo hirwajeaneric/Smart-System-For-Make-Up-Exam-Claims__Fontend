@@ -124,9 +124,12 @@ import { getAllUsers } from './redux/features/userSlice';
 import DeclareAbsenceFormPage1 from './components/forms/DeclareAbsenceFormPage1';
 import DeclareAbsenceFormPage2 from './components/forms/DeclareAbsenceFormPage2';
 import AddCourseForm from './components/forms/AddCourseForm';
+import { Box, Modal } from '@mui/material';
 import ConfirmDelete from './components/forms/ConfirmDelete';
 import AddCourseAllocationForm from './components/forms/AddCourseAllocationForm';
 import AssignCoursesToTeachersForm from './components/forms/AssignCoursesToTeachersForm';
+
+import HomePage from './pages/HomePage';
 
 const style = {
   position: 'absolute',
@@ -267,7 +270,9 @@ function App() {
       }}>
       <BrowserRouter>
         <Routes>
-          
+          {/* HOME PAGE  ///////////////////////////////////////////////////////////////////////////////////////////////////////////  */}
+          <Route path='' element={<HomePage />} />
+
           {/* STUDENT pages ////////////////////////////////////////////////////////////////////////////////////////////////////////  */}
           <Route path='/student/auth/' element={<StudentAuth />}>
             <Route path='signin' element={<StudentSignin />} />

@@ -108,23 +108,22 @@ export default function DeclareAbsenceFormPage2() {
         setIsProcessing(true);
         axios.post(serverUrl+'/api/v1/ssmec/claim/add', declarationFormData, config)
         .then(response => {
-        if (response.status === 201) {
-            setIsProcessing(false);
-            setResponseMessage({ message: response.data.message, severity:'success' })
-            setOpen(true);
-            dispatch(getStudentClaims({ registrationNumber: response.data.claim.registrationNumber }));
-            setTimeout(() => {
-            window.location.replace(`/student/${response.data.claim.registrationNumber}/claims`);
-            }, 2000);
-        }
+            if (response.status === 201) {
+                setIsProcessing(false);
+                setResponseMessage({ message: response.data.message, severity:'success' })
+                setOpen(true);
+                dispatch(getStudentClaims({ registrationNumber: response.data.claim.registrationNumber }));
+                setTimeout(() => {
+                window.location.replace(`/student/${response.data.claim.registrationNumber}/claims`);
+                }, 2000);
+            }
         })
         .catch(error => {
-        if (error.response && error.response.status >= 400 && error.response.status <= 500) {
-            setIsProcessing(false);
-            setResponseMessage({ message: error.response.data.msg, severity:'error'})
-            setOpen(true);
-        }
-        })
+            if (error.response && error.response.status >= 400 && error.response.status <= 500) {
+                setIsProcessing(false);
+                setResponseMessage({ message: error.response.data.msg, severity:'error'})
+                setOpen(true);
+            }})
         }        
     }
 
@@ -308,10 +307,10 @@ export default function DeclareAbsenceFormPage2() {
             </HorizontallyFlexGapContainer>
 
             <HorizontallyFlexSpaceBetweenContainer style={{ }}> 
-                <Button variant="contained" color="primary" size="medium" type="button" onClick={() => nextStep()}>Previous</Button>
+                <Button variant="contained" color="primary" size="small" type="button" onClick={() => nextStep()}>Previous</Button>
                 {isProcessing 
                     ? <Button disabled variant="contained" color="primary" size="small">PROCESSING...</Button> 
-                    : <Button variant="contained" color="success" size="medium" type="submit">Submit</Button>
+                    : <Button variant="contained" color="success" size="small" type="submit">Submit</Button>
                 }
             </HorizontallyFlexSpaceBetweenContainer>
         </VerticallyFlexGapForm>
