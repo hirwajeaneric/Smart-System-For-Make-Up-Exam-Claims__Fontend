@@ -7,7 +7,6 @@ import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { getStudentClaims } from "../../redux/features/claimSlice";
-import { getSelectedCourse } from "../../redux/features/courseSlice";
 
 export default function DeclareAbsenceFormPage2() {
     const { 
@@ -59,34 +58,86 @@ export default function DeclareAbsenceFormPage2() {
         if (input.name === 'courseCode') {
             dispatch({ type: 'course/getSelectedCourse', payload: input.value });
         }
-        
-        console.log(selectedCourse.allocations[0]);
 
+        // Getting the index of the most recent added course allocation
+        const currentAllocationIndex = selectedCourse.allocations.length-1;
+    
         // Check whether the course has an allocation that corresponds to this semester
-        if (selectedCourse && selectedCourse.allocations[0].semester !== declarationFormData.semester && selectedCourse.allocations[0].academicYear !== declarationFormData.academicYear) {
+        if (selectedCourse.allocations[currentAllocationIndex].academicYear === declarationFormData.academicYear && selectedCourse.allocations[currentAllocationIndex].semester !== declarationFormData.semester) {
             setResponseMessage({ message: 'Selected course is not being tought in this semester', severity: 'error' });
             setOpen(true);
             return;
-        } else if (selectedCourse && selectedCourse.allocations[0].semester === declarationFormData.semester && selectedCourse.allocations[0].academicYear === declarationFormData.academicYear) {
+        } else if (selectedCourse.allocations[currentAllocationIndex].academicYear !== declarationFormData.academicYear && selectedCourse.allocations[currentAllocationIndex].semester !== declarationFormData.semester) {
+            setResponseMessage({ message: 'The selected academic year and semester do not correspond to the claiming period.', severity: 'error' });
+            setOpen(true);
+            return;
+        } else if (selectedCourse.allocations[currentAllocationIndex].semester === declarationFormData.semester && selectedCourse.allocations[currentAllocationIndex].academicYear === declarationFormData.academicYear) {
             setCourseOne({
                 ...courseOne, 
                 courseName: selectedCourse.name,
                 credits: selectedCourse.credits,
-                semester: selectedCourse.allocations[0].semester,
-                academicYear: selectedCourse.allocations[0].academicYear
+                semester: selectedCourse.allocations[currentAllocationIndex].semester,
+                academicYear: selectedCourse.allocations[currentAllocationIndex].academicYear,
             })
         }
-
-        console.log(courseOne);
-
     }
 
     const handleCourseTwo = ({ target: input}) => {
         setCourseTwo({...courseTwo, [input.name]:input.value});
+        if (input.name === 'courseCode') {
+            dispatch({ type: 'course/getSelectedCourse', payload: input.value });
+        }
+        
+        // Getting the index of the most recent added course allocation
+        const currentAllocationIndex = selectedCourse.allocations.length-1;
+
+        // Check whether the course has an allocation that corresponds to this semester
+        if (selectedCourse.allocations[currentAllocationIndex].academicYear === declarationFormData.academicYear && selectedCourse.allocations[currentAllocationIndex].semester !== declarationFormData.semester) {
+            setResponseMessage({ message: 'Selected course is not being tought in this semester', severity: 'error' });
+            setOpen(true);
+            return;
+        } else if (selectedCourse.allocations[currentAllocationIndex].academicYear !== declarationFormData.academicYear && selectedCourse.allocations[currentAllocationIndex].semester !== declarationFormData.semester) {
+            setResponseMessage({ message: 'The selected academic year and semester do not correspond to the claiming period.', severity: 'error' });
+            setOpen(true);
+            return;
+        } else if (selectedCourse.allocations[currentAllocationIndex].semester === declarationFormData.semester && selectedCourse.allocations[currentAllocationIndex].academicYear === declarationFormData.academicYear) {
+            setCourseTwo({
+                ...courseTwo, 
+                courseName: selectedCourse.name,
+                credits: selectedCourse.credits,
+                semester: selectedCourse.allocations[currentAllocationIndex].semester,
+                academicYear: selectedCourse.allocations[currentAllocationIndex].academicYear
+            })
+        }
     }
 
     const handleCourseThree = ({ target: input}) => {
         setCourseThree({...courseThree, [input.name]:input.value});
+        if (input.name === 'courseCode') {
+            dispatch({ type: 'course/getSelectedCourse', payload: input.value });
+        }
+
+        // Getting the index of the most recent added course allocation
+        const currentAllocationIndex = selectedCourse.allocations.length-1;
+
+        // Check whether the course has an allocation that corresponds to this semester
+        if (selectedCourse.allocations[currentAllocationIndex].academicYear === declarationFormData.academicYear && selectedCourse.allocations[currentAllocationIndex].semester !== declarationFormData.semester) {
+            setResponseMessage({ message: 'Selected course is not being tought in this semester', severity: 'error' });
+            setOpen(true);
+            return;
+        } else if (selectedCourse.allocations[currentAllocationIndex].academicYear !== declarationFormData.academicYear && selectedCourse.allocations[currentAllocationIndex].semester !== declarationFormData.semester) {
+            setResponseMessage({ message: 'The selected academic year and semester do not correspond to the claiming period.', severity: 'error' });
+            setOpen(true);
+            return;
+        } else if (selectedCourse.allocations[currentAllocationIndex].semester === declarationFormData.semester && selectedCourse.allocations[currentAllocationIndex].academicYear === declarationFormData.academicYear) {
+            setCourseThree({
+                ...courseThree, 
+                courseName: selectedCourse.name,
+                credits: selectedCourse.credits,
+                semester: selectedCourse.allocations[currentAllocationIndex].semester,
+                academicYear: selectedCourse.allocations[currentAllocationIndex].academicYear
+            })
+        }
     }
 
     const handleFormFileInput = (e) => {
@@ -107,16 +158,14 @@ export default function DeclareAbsenceFormPage2() {
             headers: { "Content-Type":"multipart/form-data" }
         }
 
-        console.log(courseOne);
-
         if (!proofOfTuitionPayment) {
             setDeclarationFormErrors({...declarationFormErrors, proofOfTuitionPayment: 'Required'});
             return;
         } else {
             var courses = [];
         if (numberOfCourses === '1') {
-            courses.push(courseOne);
             courseOne.reason = declarationFormData.reason;
+            courses.push(courseOne);
         } else if (numberOfCourses === '2') {
             courseOne.reason = declarationFormData.reason;
             courseTwo.reason = declarationFormData.reason;
@@ -133,26 +182,26 @@ export default function DeclareAbsenceFormPage2() {
 
         console.log(declarationFormData);
 
-        // setIsProcessing(true);
-        // axios.post(serverUrl+'/api/v1/ssmec/claim/add', declarationFormData, config)
-        // .then(response => {
-        //     if (response.status === 201) {
-        //         setIsProcessing(false);
-        //         setResponseMessage({ message: response.data.message, severity:'success' })
-        //         setOpen(true);
-        //         dispatch(getStudentClaims({ registrationNumber: response.data.claim.registrationNumber }));
-        //         setTimeout(() => {
-        //         window.location.replace(`/student/${response.data.claim.registrationNumber}/claims`);
-        //         }, 2000);
-        //     }
-        // })
-        // .catch(error => {
-        //     if (error.response && error.response.status >= 400 && error.response.status <= 500) {
-        //         setIsProcessing(false);
-        //         setResponseMessage({ message: error.response.data.msg, severity:'error'})
-        //         setOpen(true);
-        //     }}
-        // )
+        setIsProcessing(true);
+        axios.post(serverUrl+'/api/v1/ssmec/claim/add', declarationFormData, config)
+        .then(response => {
+            if (response.status === 201) {
+                setIsProcessing(false);
+                setResponseMessage({ message: response.data.message, severity:'success' })
+                setOpen(true);
+                dispatch(getStudentClaims({ registrationNumber: response.data.claim.registrationNumber }));
+                setTimeout(() => {
+                window.location.replace(`/student/${response.data.claim.registrationNumber}/claims`);
+                }, 2000);
+            }
+        })
+        .catch(error => {
+            if (error.response && error.response.status >= 400 && error.response.status <= 500) {
+                setIsProcessing(false);
+                setResponseMessage({ message: error.response.data.msg, severity:'error'})
+                setOpen(true);
+            }}
+        )
     }        
 }
 
@@ -242,30 +291,18 @@ export default function DeclareAbsenceFormPage2() {
 
                 {/* Second course  */}
                 {(numberOfCourses === '2' || numberOfCourses === '3') && <VerticallyFlexGapContainer style={{ gap: '20px' }}>
-                <h3 style={{ width: '100%', textAlign: 'left', color: 'gray' }}>Course 2</h3>
+                    <h3 style={{ width: '100%', textAlign: 'left', color: 'gray' }}>Course 2</h3>
                     <FormElement style={{ color: 'gray' }}>
-                        <label htmlFor="fullName">Name *</label>
-                        <input 
-                            type="text" 
-                            id="courseName"
-                            placeholder="Course name" 
-                            value={courseTwo.courseName || ''}
-                            name='courseName'
-                            onChange={handleCourseTwo}
-                        />
-                        {declarationFormErrors.courseName2 && (<p>Required</p>)}
-                    </FormElement>
-                    <FormElement style={{ color: 'gray' }}>
-                        <label htmlFor="courseCode">Code *</label>
-                        <input 
-                            type="text" 
-                            id="courseCode"
-                            placeholder="Course Code" 
-                            value={courseTwo.courseCode || ''}
-                            name='courseCode'
-                            onChange={handleCourseTwo}
-                        />
-                        {declarationFormErrors.courseCode2 && (<p>Required</p>)}
+                        <label htmlFor="courseCode">Name *</label>
+                        <select id='courseCode' name='courseCode' onChange={handleCourseTwo}>
+                            <option value="">Select course</option>
+                            {listOfCourses.map((course, index) => {
+                                return (
+                                    <option key={index} value={course.code}>{course.name}</option>     
+                                )
+                            })}
+                        </select>
+                        {declarationFormErrors.courseCode && (<p>Required</p>)}
                     </FormElement>
                     <FormElement style={{ color: 'gray' }}>
                         <label htmlFor="group">Group *</label>
@@ -277,36 +314,24 @@ export default function DeclareAbsenceFormPage2() {
                             <option value="D">D</option>
                             <option value="E">E</option>
                         </select>
-                        {declarationFormErrors.group2 && <p>{declarationFormErrors.group2}</p>}
+                        {declarationFormErrors.group && <p>{declarationFormErrors.group}</p>}
                     </FormElement>
                 </VerticallyFlexGapContainer>}
 
                 {/* Third course  */}
                 {(numberOfCourses === '3') && <VerticallyFlexGapContainer style={{ gap: '20px' }}>
-                <h3 style={{ width: '100%', textAlign: 'left', color: 'gray' }}>Course 3</h3>
+                    <h3 style={{ width: '100%', textAlign: 'left', color: 'gray' }}>Course 3</h3>
                     <FormElement style={{ color: 'gray' }}>
-                        <label htmlFor="fullName">Name *</label>
-                        <input 
-                            type="text" 
-                            id="courseName"
-                            placeholder="Course name" 
-                            value={courseThree.courseName || ''}
-                            name='courseName'
-                            onChange={handleCourseThree}
-                        />
-                        {declarationFormErrors.courseName3 && (<p>Required</p>)}
-                    </FormElement>
-                    <FormElement style={{ color: 'gray' }}>
-                        <label htmlFor="courseCode">Code *</label>
-                        <input 
-                            type="text" 
-                            id="courseCode"
-                            placeholder="Course Code" 
-                            value={courseThree.courseCode || ''}
-                            name='courseCode'
-                            onChange={handleCourseThree}
-                        />
-                        {declarationFormErrors.courseCode3 && (<p>Required</p>)}
+                        <label htmlFor="courseCode">Name *</label>
+                        <select id='courseCode' name='courseCode' onChange={handleCourseThree}>
+                            <option value="">Select course</option>
+                            {listOfCourses.map((course, index) => {
+                                return (
+                                    <option key={index} value={course.code}>{course.name}</option>     
+                                )
+                            })}
+                        </select>
+                        {declarationFormErrors.courseCode && (<p>Required</p>)}
                     </FormElement>
                     <FormElement style={{ color: 'gray' }}>
                         <label htmlFor="group">Group *</label>
@@ -318,7 +343,7 @@ export default function DeclareAbsenceFormPage2() {
                             <option value="D">D</option>
                             <option value="E">E</option>
                         </select>
-                        {declarationFormErrors.group3 && <p>{declarationFormErrors.group3}</p>}
+                        {declarationFormErrors.group && <p>{declarationFormErrors.group}</p>}
                     </FormElement>
                 </VerticallyFlexGapContainer>}
             </HorizontallyFlexGapContainer>
