@@ -54,60 +54,70 @@ export default function DeclareAbsenceFormPage2() {
     }
 
     const handleCourseOne = ({ target: input}) => {
-        setCourseOne({...courseOne, [input.name]:input.value});
+        
         if (input.name === 'courseCode') {
             dispatch({ type: 'course/getSelectedCourse', payload: input.value });
+             
+            // Getting the index of the most recent added course allocation
+            const currentAllocationIndex = selectedCourse.allocations.length-1;
+        
+            // Check whether the course has an allocation that corresponds to this semester
+            if (selectedCourse.allocations[currentAllocationIndex].academicYear === declarationFormData.academicYear && selectedCourse.allocations[currentAllocationIndex].semester !== declarationFormData.semester) {
+                setResponseMessage({ message: 'Selected course is not being tought in this semester', severity: 'error' });
+                setOpen(true);
+                return;
+            } else if (selectedCourse.allocations[currentAllocationIndex].academicYear !== declarationFormData.academicYear && selectedCourse.allocations[currentAllocationIndex].semester !== declarationFormData.semester) {
+                setResponseMessage({ message: 'The selected academic year and semester do not correspond to the claiming period.', severity: 'error' });
+                setOpen(true);
+                return;
+            } else if (selectedCourse.allocations[currentAllocationIndex].semester === declarationFormData.semester && selectedCourse.allocations[currentAllocationIndex].academicYear === declarationFormData.academicYear) {
+                setCourseOne({
+                    ...courseOne, 
+                    courseName: selectedCourse.name,
+                    courseCode: selectedCourse.code,
+                    credits: selectedCourse.credits,
+                    semester: selectedCourse.allocations[currentAllocationIndex].semester,
+                    academicYear: selectedCourse.allocations[currentAllocationIndex].academicYear,
+                })
+            }
         }
 
-        // Getting the index of the most recent added course allocation
-        const currentAllocationIndex = selectedCourse.allocations.length-1;
-    
-        // Check whether the course has an allocation that corresponds to this semester
-        if (selectedCourse.allocations[currentAllocationIndex].academicYear === declarationFormData.academicYear && selectedCourse.allocations[currentAllocationIndex].semester !== declarationFormData.semester) {
-            setResponseMessage({ message: 'Selected course is not being tought in this semester', severity: 'error' });
-            setOpen(true);
-            return;
-        } else if (selectedCourse.allocations[currentAllocationIndex].academicYear !== declarationFormData.academicYear && selectedCourse.allocations[currentAllocationIndex].semester !== declarationFormData.semester) {
-            setResponseMessage({ message: 'The selected academic year and semester do not correspond to the claiming period.', severity: 'error' });
-            setOpen(true);
-            return;
-        } else if (selectedCourse.allocations[currentAllocationIndex].semester === declarationFormData.semester && selectedCourse.allocations[currentAllocationIndex].academicYear === declarationFormData.academicYear) {
-            setCourseOne({
-                ...courseOne, 
-                courseName: selectedCourse.name,
-                credits: selectedCourse.credits,
-                semester: selectedCourse.allocations[currentAllocationIndex].semester,
-                academicYear: selectedCourse.allocations[currentAllocationIndex].academicYear,
-            })
+        if (input.name === 'group') {
+            setCourseOne({ ...courseOne, group: input.value })
         }
     }
 
     const handleCourseTwo = ({ target: input}) => {
-        setCourseTwo({...courseTwo, [input.name]:input.value});
+
         if (input.name === 'courseCode') {
             dispatch({ type: 'course/getSelectedCourse', payload: input.value });
-        }
-        
-        // Getting the index of the most recent added course allocation
-        const currentAllocationIndex = selectedCourse.allocations.length-1;
+            
+            // Getting the index of the most recent added course allocation
+            const currentAllocationIndex = selectedCourse.allocations.length-1;
 
-        // Check whether the course has an allocation that corresponds to this semester
-        if (selectedCourse.allocations[currentAllocationIndex].academicYear === declarationFormData.academicYear && selectedCourse.allocations[currentAllocationIndex].semester !== declarationFormData.semester) {
-            setResponseMessage({ message: 'Selected course is not being tought in this semester', severity: 'error' });
-            setOpen(true);
-            return;
-        } else if (selectedCourse.allocations[currentAllocationIndex].academicYear !== declarationFormData.academicYear && selectedCourse.allocations[currentAllocationIndex].semester !== declarationFormData.semester) {
-            setResponseMessage({ message: 'The selected academic year and semester do not correspond to the claiming period.', severity: 'error' });
-            setOpen(true);
-            return;
-        } else if (selectedCourse.allocations[currentAllocationIndex].semester === declarationFormData.semester && selectedCourse.allocations[currentAllocationIndex].academicYear === declarationFormData.academicYear) {
-            setCourseTwo({
-                ...courseTwo, 
-                courseName: selectedCourse.name,
-                credits: selectedCourse.credits,
-                semester: selectedCourse.allocations[currentAllocationIndex].semester,
-                academicYear: selectedCourse.allocations[currentAllocationIndex].academicYear
-            })
+            // Check whether the course has an allocation that corresponds to this semester
+            if (selectedCourse.allocations[currentAllocationIndex].academicYear === declarationFormData.academicYear && selectedCourse.allocations[currentAllocationIndex].semester !== declarationFormData.semester) {
+                setResponseMessage({ message: 'Selected course is not being tought in this semester', severity: 'error' });
+                setOpen(true);
+                return;
+            } else if (selectedCourse.allocations[currentAllocationIndex].academicYear !== declarationFormData.academicYear && selectedCourse.allocations[currentAllocationIndex].semester !== declarationFormData.semester) {
+                setResponseMessage({ message: 'The selected academic year and semester do not correspond to the claiming period.', severity: 'error' });
+                setOpen(true);
+                return;
+            } else if (selectedCourse.allocations[currentAllocationIndex].semester === declarationFormData.semester && selectedCourse.allocations[currentAllocationIndex].academicYear === declarationFormData.academicYear) {
+                setCourseTwo({
+                    ...courseTwo, 
+                    courseName: selectedCourse.name,
+                    courseCode: selectedCourse.code,
+                    credits: selectedCourse.credits,
+                    semester: selectedCourse.allocations[currentAllocationIndex].semester,
+                    academicYear: selectedCourse.allocations[currentAllocationIndex].academicYear
+                })
+            }
+        }
+
+        if (input.name === 'group') {
+            setCourseTwo({ ...courseTwo, group: input.value })
         }
     }
 
@@ -115,28 +125,33 @@ export default function DeclareAbsenceFormPage2() {
         setCourseThree({...courseThree, [input.name]:input.value});
         if (input.name === 'courseCode') {
             dispatch({ type: 'course/getSelectedCourse', payload: input.value });
+         
+            // Getting the index of the most recent added course allocation
+            const currentAllocationIndex = selectedCourse.allocations.length-1;
+
+            // Check whether the course has an allocation that corresponds to this semester
+            if (selectedCourse.allocations[currentAllocationIndex].academicYear === declarationFormData.academicYear && selectedCourse.allocations[currentAllocationIndex].semester !== declarationFormData.semester) {
+                setResponseMessage({ message: 'Selected course is not being tought in this semester', severity: 'error' });
+                setOpen(true);
+                return;
+            } else if (selectedCourse.allocations[currentAllocationIndex].academicYear !== declarationFormData.academicYear && selectedCourse.allocations[currentAllocationIndex].semester !== declarationFormData.semester) {
+                setResponseMessage({ message: 'The selected academic year and semester do not correspond to the claiming period.', severity: 'error' });
+                setOpen(true);
+                return;
+            } else if (selectedCourse.allocations[currentAllocationIndex].semester === declarationFormData.semester && selectedCourse.allocations[currentAllocationIndex].academicYear === declarationFormData.academicYear) {
+                setCourseThree({
+                    ...courseThree, 
+                    courseName: selectedCourse.name,
+                    courseCode: selectedCourse.code,
+                    credits: selectedCourse.credits,
+                    semester: selectedCourse.allocations[currentAllocationIndex].semester,
+                    academicYear: selectedCourse.allocations[currentAllocationIndex].academicYear
+                })
+            }
         }
 
-        // Getting the index of the most recent added course allocation
-        const currentAllocationIndex = selectedCourse.allocations.length-1;
-
-        // Check whether the course has an allocation that corresponds to this semester
-        if (selectedCourse.allocations[currentAllocationIndex].academicYear === declarationFormData.academicYear && selectedCourse.allocations[currentAllocationIndex].semester !== declarationFormData.semester) {
-            setResponseMessage({ message: 'Selected course is not being tought in this semester', severity: 'error' });
-            setOpen(true);
-            return;
-        } else if (selectedCourse.allocations[currentAllocationIndex].academicYear !== declarationFormData.academicYear && selectedCourse.allocations[currentAllocationIndex].semester !== declarationFormData.semester) {
-            setResponseMessage({ message: 'The selected academic year and semester do not correspond to the claiming period.', severity: 'error' });
-            setOpen(true);
-            return;
-        } else if (selectedCourse.allocations[currentAllocationIndex].semester === declarationFormData.semester && selectedCourse.allocations[currentAllocationIndex].academicYear === declarationFormData.academicYear) {
-            setCourseThree({
-                ...courseThree, 
-                courseName: selectedCourse.name,
-                credits: selectedCourse.credits,
-                semester: selectedCourse.allocations[currentAllocationIndex].semester,
-                academicYear: selectedCourse.allocations[currentAllocationIndex].academicYear
-            })
+        if (input.name === 'group') {
+            setCourseThree({ ...courseThree, group: input.value })
         }
     }
 

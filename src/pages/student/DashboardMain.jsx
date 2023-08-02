@@ -131,7 +131,6 @@ const DashboardMain = () => {
                 <SecondaryMenue>
                     <NavLink to={'home'}>Home</NavLink>
                     <NavLink to={'declare'}>Declare absence</NavLink>
-                    <NavLink to={'claims'}>My claims</NavLink>
                     <NavLink to={'settings'}>{user.fullName}</NavLink>
                 </SecondaryMenue>
                 <DashboardMainContainer>
