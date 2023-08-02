@@ -59,7 +59,26 @@ export default function DeclareAbsenceFormPage2() {
         if (input.name === 'courseCode') {
             dispatch({ type: 'course/getSelectedCourse', payload: input.value });
         }
+        
+        console.log(selectedCourse.allocations[0]);
+
+        // Check whether the course has an allocation that corresponds to this semester
+        if (selectedCourse && selectedCourse.allocations[0].semester !== declarationFormData.semester && selectedCourse.allocations[0].academicYear !== declarationFormData.academicYear) {
+            setResponseMessage({ message: 'Selected course is not being tought in this semester', severity: 'error' });
+            setOpen(true);
+            return;
+        } else if (selectedCourse && selectedCourse.allocations[0].semester === declarationFormData.semester && selectedCourse.allocations[0].academicYear === declarationFormData.academicYear) {
+            setCourseOne({
+                ...courseOne, 
+                courseName: selectedCourse.name,
+                credits: selectedCourse.credits,
+                semester: selectedCourse.allocations[0].semester,
+                academicYear: selectedCourse.allocations[0].academicYear
+            })
+        }
+
         console.log(courseOne);
+
     }
 
     const handleCourseTwo = ({ target: input}) => {
@@ -88,7 +107,7 @@ export default function DeclareAbsenceFormPage2() {
             headers: { "Content-Type":"multipart/form-data" }
         }
 
-        console.log(selectedCourse);
+        console.log(courseOne);
 
         if (!proofOfTuitionPayment) {
             setDeclarationFormErrors({...declarationFormErrors, proofOfTuitionPayment: 'Required'});
