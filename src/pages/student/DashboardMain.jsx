@@ -7,13 +7,16 @@ import MenuItem from '@mui/material/MenuItem';
 import { Divider, IconButton, ListItemIcon, Tooltip } from "@mui/material";
 import { useEffect, useState } from "react";
 import { Logout, Settings } from "@mui/icons-material";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { getSimpleCapitalizedChars } from "../../utils/HelperFunctions";
+import { getAllCourses } from "../../redux/features/courseSlice";
 
 const DashboardMain = () => {
     const [anchorEl, setAnchorEl] = useState(null);
     const navigate = useNavigate();
     const open = Boolean(anchorEl);
+    const dispatch = useDispatch();
+
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
     };
@@ -24,6 +27,7 @@ const DashboardMain = () => {
 
     useEffect(() => {
         setUser(JSON.parse(localStorage.getItem('stdData')));
+        dispatch(getAllCourses());
     },[]);      
 
     const signout = () => {

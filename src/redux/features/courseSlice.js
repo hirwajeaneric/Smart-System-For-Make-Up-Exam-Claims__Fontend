@@ -59,7 +59,8 @@ const courseSlice = createSlice({
     initialState,
     reducers: {
         getSelectedCourse: (state, action) => {
-            let course = action.payload;
+            console.log(action.payload);
+            let course = state.listOfCourses.find(c => c.code === action.payload);
             state.selectedCourse = course;
         }
     },

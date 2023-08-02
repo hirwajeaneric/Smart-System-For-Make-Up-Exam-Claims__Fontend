@@ -4,9 +4,10 @@ import { GeneralContext } from "../../App";
 import { FormElement, HeaderTwo, HorizontallyFlexGapContainer, HorizontallyFlexSpaceBetweenContainer, VerticallyFlexGapContainer, VerticallyFlexGapForm } from "../styles/GenericStyles";
 const serverUrl = import.meta.env.VITE_REACT_APP_SERVERURL;
 import axios from "axios";
-import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
 import { getStudentClaims } from "../../redux/features/claimSlice";
+import { getSelectedCourse } from "../../redux/features/courseSlice";
 
 export default function DeclareAbsenceFormPage2() {
     const { 
@@ -31,7 +32,7 @@ export default function DeclareAbsenceFormPage2() {
     const dispatch = useDispatch();
     const [isProcessing, setIsProcessing] = useState(false);
     const [user, setUser] = useState({});
-
+    const params = useParams();
 
 
     // FETCH USER DATA ****************************************************************************
@@ -39,6 +40,8 @@ export default function DeclareAbsenceFormPage2() {
         setUser(JSON.parse(localStorage.getItem('student')));
     },[]);  
 
+    // Fetching courses from the store
+    const { listOfCourses, selectedCourse } = useSelector(state => state.course);
 
 
     // INPUT FORM HANDLES *************************************************************************
@@ -53,6 +56,10 @@ export default function DeclareAbsenceFormPage2() {
 
     const handleCourseOne = ({ target: input}) => {
         setCourseOne({...courseOne, [input.name]:input.value});
+        if (input.name === 'courseCode') {
+            dispatch({ type: 'course/getSelectedCourse', payload: input.value });
+        }
+        console.log(courseOne);
     }
 
     const handleCourseTwo = ({ target: input}) => {
@@ -68,7 +75,7 @@ export default function DeclareAbsenceFormPage2() {
     } 
 
     const nextStep = () => {
-        navigate(`/student/${user.registrationNumber}/declare/step1`);
+        navigate(`/student/${params.registrationNumber}/declare/step1`);
     };
 
 
@@ -80,6 +87,8 @@ export default function DeclareAbsenceFormPage2() {
         const config = {
             headers: { "Content-Type":"multipart/form-data" }
         }
+
+        console.log(selectedCourse);
 
         if (!proofOfTuitionPayment) {
             setDeclarationFormErrors({...declarationFormErrors, proofOfTuitionPayment: 'Required'});
@@ -105,28 +114,28 @@ export default function DeclareAbsenceFormPage2() {
 
         console.log(declarationFormData);
 
-        setIsProcessing(true);
-        axios.post(serverUrl+'/api/v1/ssmec/claim/add', declarationFormData, config)
-        .then(response => {
-            if (response.status === 201) {
-                setIsProcessing(false);
-                setResponseMessage({ message: response.data.message, severity:'success' })
-                setOpen(true);
-                dispatch(getStudentClaims({ registrationNumber: response.data.claim.registrationNumber }));
-                setTimeout(() => {
-                window.location.replace(`/student/${response.data.claim.registrationNumber}/claims`);
-                }, 2000);
-            }
-        })
-        .catch(error => {
-            if (error.response && error.response.status >= 400 && error.response.status <= 500) {
-                setIsProcessing(false);
-                setResponseMessage({ message: error.response.data.msg, severity:'error'})
-                setOpen(true);
-            }})
-        }        
-    }
-
+        // setIsProcessing(true);
+        // axios.post(serverUrl+'/api/v1/ssmec/claim/add', declarationFormData, config)
+        // .then(response => {
+        //     if (response.status === 201) {
+        //         setIsProcessing(false);
+        //         setResponseMessage({ message: response.data.message, severity:'success' })
+        //         setOpen(true);
+        //         dispatch(getStudentClaims({ registrationNumber: response.data.claim.registrationNumber }));
+        //         setTimeout(() => {
+        //         window.location.replace(`/student/${response.data.claim.registrationNumber}/claims`);
+        //         }, 2000);
+        //     }
+        // })
+        // .catch(error => {
+        //     if (error.response && error.response.status >= 400 && error.response.status <= 500) {
+        //         setIsProcessing(false);
+        //         setResponseMessage({ message: error.response.data.msg, severity:'error'})
+        //         setOpen(true);
+        //     }}
+        // )
+    }        
+}
 
     return (
         <VerticallyFlexGapForm onSubmit={submitDeclaration} style={{ gap: '20px', backgroundColor: 'white', padding: '20px', borderRadius: '5px', boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.1)' }}>
@@ -138,6 +147,7 @@ export default function DeclareAbsenceFormPage2() {
             
 
             <HorizontallyFlexGapContainer style={{ alignItems: 'flex-start', gap: '15px' }}>
+                {/* Left side  */}
                 <VerticallyFlexGapContainer style={{ gap: '20px' }}>
                     <FormElement style={{ color: 'gray' }}>
                         <label htmlFor="proofOfTuitionPayment">Registration form *</label>
@@ -186,27 +196,15 @@ export default function DeclareAbsenceFormPage2() {
                 <VerticallyFlexGapContainer style={{ gap: '20px' }}>
                     <h3 style={{ width: '100%', textAlign: 'left', color: 'gray' }}>Course 1</h3>
                     <FormElement style={{ color: 'gray' }}>
-                        <label htmlFor="fullName">Name *</label>
-                        <input 
-                            type="text" 
-                            id="courseName"
-                            placeholder="Course name" 
-                            value={courseOne.courseName || ''}
-                            name='courseName'
-                            onChange={handleCourseOne}
-                        />
-                        {declarationFormErrors.courseName && (<p>Required</p>)}
-                    </FormElement>
-                    <FormElement style={{ color: 'gray' }}>
-                        <label htmlFor="courseCode">Code *</label>
-                        <input 
-                            type="text" 
-                            id="courseCode"
-                            placeholder="Course Code" 
-                            value={courseOne.courseCode || ''}
-                            name='courseCode'
-                            onChange={handleCourseOne}
-                        />
+                        <label htmlFor="courseCode">Name *</label>
+                        <select id='courseCode' name='courseCode' onChange={handleCourseOne}>
+                            <option value="">Select course</option>
+                            {listOfCourses.map((course, index) => {
+                                return (
+                                    <option key={index} value={course.code}>{course.name}</option>     
+                                )
+                            })}
+                        </select>
                         {declarationFormErrors.courseCode && (<p>Required</p>)}
                     </FormElement>
                     <FormElement style={{ color: 'gray' }}>
