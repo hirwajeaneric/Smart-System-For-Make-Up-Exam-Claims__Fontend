@@ -37,13 +37,17 @@ const CourseAllocations = () => {
   return (
     <VerticallyFlexGapContainer style={{ gap: '20px' }}>
       <Helmet>
-        <title>Course Allocation</title>
+        <title>{`Course Allocations for ${course.name}`}</title>
         <meta name="description" content={`Course allocation per semesters.`} /> 
       </Helmet>
       <VerticallyFlexGapContainer style={{ gap: '20px' }}>
         <TopPageTitle>
-          <HeaderTwo style={{ width: '100%', textAlign: 'left' }}>Courses Allocations</HeaderTwo>
-          <Button size='small' color='success' variant='contained' onClick={displayAddCourseAllocationModal}>Add</Button>
+          {course.name && 
+            <>
+              <HeaderTwo style={{ width: '100%', textAlign: 'left' }}>{`Course Allocations for ${course.name}`}</HeaderTwo>
+              <Button size='small' color='success' variant='contained' onClick={displayAddCourseAllocationModal}>Add</Button>
+            </>
+          }
         </TopPageTitle>
         <HorizontallyFlexGapContainer style={{ gap: '20px', alignItems: 'flex-start' }}>
           <div className="left" style={{ background: 'white', borderRadius: '5px', padding: '10px' }}>

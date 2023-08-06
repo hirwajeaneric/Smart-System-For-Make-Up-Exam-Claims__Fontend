@@ -1,6 +1,6 @@
 import { DataGrid, GridToolbarContainer, GridToolbarExport } from '@mui/x-data-grid';
 import { Box, IconButton, Tooltip } from '@mui/material';
-import { Preview } from '@mui/icons-material';
+import { MoreHoriz, Preview } from '@mui/icons-material';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { useContext } from 'react';
@@ -15,12 +15,12 @@ const columns = [
   {
     field: 'name',
     headerName: 'Name',
-    width: 300,
+    width: 230,
   },
   {
     field: 'credits',
     headerName: 'Credits',
-    width: 80,
+    width: 60,
   },  
   {
     field: 'actions',
@@ -82,7 +82,8 @@ const TableActions = ({parameters}) => {
             setSelectedCourse(parameters.row)
             dispatch({ type: 'course/getSelectedCourse', payload: parameters.row })
           }}>
-          <Preview />
+          {/* <Preview /> */}
+          <MoreHoriz />
         </IconButton>
       </Tooltip>
     </Box>

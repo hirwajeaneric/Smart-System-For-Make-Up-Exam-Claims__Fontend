@@ -103,16 +103,7 @@ const DashboardMain = () => {
                             <p style={{ color: 'gray', fontSize:'90%' }}>{user.email}</p>
                         </VerticallyFlexGapContainer>
                     </MenuItem>
-                    {/* <MenuItem onClick={handleClose}>
-                        <Avatar /> My account
-                    </MenuItem> */}
                     <Divider />
-                    {/* <MenuItem onClick={handleClose}>
-                        <ListItemIcon>
-                            <PersonAdd fontSize="small" />
-                        </ListItemIcon>
-                        Add another account
-                    </MenuItem> */}
                     <MenuItem onClick={() => {navigate(`/student/${user.registrationNumber}/settings`); handleClose();}}>
                         <ListItemIcon>
                             <Settings fontSize="small" />

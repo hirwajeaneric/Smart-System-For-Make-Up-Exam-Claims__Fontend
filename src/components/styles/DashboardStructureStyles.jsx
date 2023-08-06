@@ -6,7 +6,7 @@ export const TopNavigationBar = styled.div`
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 100px;
+    padding: 10px 200px;
     z-index: 1000;
     width: 100vw;
     background: white; 
@@ -189,7 +189,7 @@ export const DashboardMainContainer = styled.div`
     width: 100%;
     position: relative;
     background-color: #e0ebeb;
-    padding: 40px 100px; 
+    padding: 40px 200px; 
 
     @media (max-width: 991px) {
         padding: 40px 80px;

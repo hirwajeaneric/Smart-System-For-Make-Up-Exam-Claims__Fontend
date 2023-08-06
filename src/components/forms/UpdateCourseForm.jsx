@@ -109,7 +109,7 @@ export default function UpdateCourseForm() {
 
                 <HorizontallyFlexGapContainer style={{ gap: '20px' }}>
                   <FormElement style={{ color: 'gray' }}>
-                    <HorizontallyFlexSpaceBetweenContainer>
+                    <HorizontallyFlexSpaceBetweenContainer style={{ alignItems: 'flex-start', gap: '5px' }}>
                         <label htmlFor="faculty">Faculty:</label>
                         <p style={{ color: 'black', fontWeight: 'bold' }}>{selectedCourse.faculty}</p>
                     </HorizontallyFlexSpaceBetweenContainer>
@@ -124,7 +124,7 @@ export default function UpdateCourseForm() {
                     {selectedCourseErrors.faculty && <p>Faculty is required</p>}
                   </FormElement>
                   <FormElement style={{ color: 'gray' }}>
-                    <HorizontallyFlexSpaceBetweenContainer>
+                    <HorizontallyFlexSpaceBetweenContainer style={{ alignItems: 'flex-start', gap: '5px' }}>
                         <label htmlFor="department">Department:</label>
                         <p style={{ color: 'black', fontWeight: 'bold' }}>{selectedCourse.department}</p>
                     </HorizontallyFlexSpaceBetweenContainer>
@@ -169,7 +169,7 @@ export default function UpdateCourseForm() {
                 {selectedCourse.name && <FormElement style={{ flexDirection: 'row' }}>
                     {isProcessing 
                     ? <Button disabled variant="contained" color="primary" size="small">PROCESSING...</Button> 
-                    : <Button variant="contained" color="primary" size="small" type="submit">Confirm changes</Button>
+                    : <Button variant="contained" color="primary" size="small" type="submit">Update</Button>
                     }
                     <Button variant="contained" color="secondary" size="small" type="button" onClick={() => {window.location.reload()}}>Cancel</Button>
                     <Button variant="contained" color="error" size="small" type="button" onClick={() => { displayConfirmationModal(selectedCourse.id);}}>DELETE</Button>
