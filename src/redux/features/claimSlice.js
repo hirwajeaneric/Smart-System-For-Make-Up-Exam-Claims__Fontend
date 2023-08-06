@@ -19,6 +19,9 @@ export const getStudentClaims = createAsyncThunk(
         const { registrationNumber } = filter;
         try {
             const response = await axios.get(serverUrl+`/api/v1/ssmec/claim/findByRegistrationNumber?registrationNumber=${registrationNumber}`);
+            response.data.claims.forEach((element) => {
+                element.id = element._id;
+            })
             return response.data.claims;
         } catch (error) {
             return thunkAPI.rejectWithValue('Something went wrong!!');

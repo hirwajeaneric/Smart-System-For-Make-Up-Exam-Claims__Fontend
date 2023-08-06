@@ -200,12 +200,10 @@ export default function DeclareAbsenceFormPage2() {
         .then(response => {
             if (response.status === 201) {
                 setIsProcessing(false);
-                setResponseMessage({ message: response.data.message, severity:'success' })
-                setOpen(true);
                 dispatch(getStudentClaims({ registrationNumber: response.data.claim.registrationNumber }));
-                // setTimeout(() => {
-                // window.location.replace(`/student/${response.data.claim.registrationNumber}/claims`);
-                // }, 2000);
+                setTimeout(() => {
+                    window.location.replace(`/student/${response.data.claim.registrationNumber}/success`);
+                }, 2000);
             }
         })
         .catch(error => {

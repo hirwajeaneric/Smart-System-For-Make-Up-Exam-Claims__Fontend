@@ -10,6 +10,7 @@ import { Logout, Settings } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
 import { getSimpleCapitalizedChars } from "../../utils/HelperFunctions";
 import { getAllCourses } from "../../redux/features/courseSlice";
+import { getStudentClaims } from "../../redux/features/claimSlice";
 
 const DashboardMain = () => {
     const [anchorEl, setAnchorEl] = useState(null);
@@ -27,7 +28,7 @@ const DashboardMain = () => {
 
     useEffect(() => {
         setUser(JSON.parse(localStorage.getItem('stdData')));
-        dispatch(getAllCourses());
+        dispatch(getStudentClaims(user.registrationNumber));
     },[]);      
 
     const signout = () => {
@@ -37,7 +38,6 @@ const DashboardMain = () => {
     }
 
     // Load student claims
-    // dispatch(getStudentClaims(student.registrationNumber));
     // Load registration information if the student is registered
     // dispatch(getStudentRegistration(student.registrationNumber));  
 
@@ -96,7 +96,7 @@ const DashboardMain = () => {
                     anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
                 >
                     <MenuItem onClick={handleClose} style={{ display:'flex', flexDirection:'row', alignItems:'flex-start' }}>
-                    <Avatar sx={{ width: 32, height: 32 }}>{getSimpleCapitalizedChars(JSON.parse(localStorage.getItem('stdData')).fullName)}</Avatar>
+                        <Avatar sx={{ width: 32, height: 32 }}>{getSimpleCapitalizedChars(JSON.parse(localStorage.getItem('stdData')).fullName)}</Avatar>
                         <VerticallyFlexGapContainer style={{ justifyContent:'flex-start', alignItems:'flex-start', gap: '5px' }}>
                             <p>{user.fullName}</p>
                             <p style={{ color: 'blue', fontWeight:'700', fontSize:'90%' }}>{user.role}</p>
@@ -104,11 +104,11 @@ const DashboardMain = () => {
                         </VerticallyFlexGapContainer>
                     </MenuItem>
                     <Divider />
-                    <MenuItem onClick={() => {navigate(`/student/${user.registrationNumber}/settings`); handleClose();}}>
+                    {/* <MenuItem onClick={() => {navigate(`/student/${user.registrationNumber}/settings`); handleClose();}}>
                         <ListItemIcon>
                             <Settings fontSize="small" />
                         </ListItemIcon>Settings
-                    </MenuItem>
+                    </MenuItem> */}
                     <MenuItem onClick={() => {handleClose(); signout()}}>
                         <ListItemIcon>
                             <Logout fontSize="small" />
@@ -122,7 +122,7 @@ const DashboardMain = () => {
                 <SecondaryMenue>
                     <NavLink to={'home'}>Home</NavLink>
                     <NavLink to={'declare'}>Declare absence</NavLink>
-                    <NavLink to={'settings'}>{user.fullName}</NavLink>
+                    {/* <NavLink to={'settings'}>{user.fullName}</NavLink> */}
                 </SecondaryMenue>
                 <DashboardMainContainer>
                     <DashboardInnerContainer>
