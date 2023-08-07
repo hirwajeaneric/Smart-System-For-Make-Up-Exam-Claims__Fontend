@@ -4,6 +4,7 @@ const serverUrl = import.meta.env.VITE_REACT_APP_SERVERURL;
 
 const initialState = {
     studentClaims: [],
+    selectedClaim: [],
     courseClaims: [],
     hodClaims: [],
     accountantClaims: [],
@@ -18,10 +19,12 @@ export const getStudentClaims = createAsyncThunk(
     async (filter, thunkAPI) => {
         const { registrationNumber } = filter;
         try {
-            const response = await axios.get(serverUrl+`/api/v1/ssmec/claim/findByRegistrationNumber?registrationNumber=${registrationNumber}`);
+            const response = await axios.get(`${serverUrl}/api/v1/ssmec/claim/findByRegistrationNumber?registrationNumber=${registrationNumber}`);
             response.data.claims.forEach((element) => {
                 element.id = element._id;
-            })
+                element.course = element.courses[0].courseName;
+                element.submitDate = new Date(element.submitDate).toUTCString();
+            });
             return response.data.claims;
         } catch (error) {
             return thunkAPI.rejectWithValue('Something went wrong!!');
@@ -141,6 +144,11 @@ export const getExaminationOfficeClaims = createAsyncThunk(
 const claimSlice = createSlice({
     name: 'claim',
     initialState,
+    reducers: {
+        setSelectedClaim: (state, action) => {
+            state.selectedClaim = action.payload;
+        }
+    },
     extraReducers: {
         [getStudentClaims.pending] : (state) => {
             state.isLoading = true;
@@ -215,5 +223,5 @@ const claimSlice = createSlice({
     }
 });
 
-export const { } = claimSlice.actions;
+export const { setSelectedClaim } = claimSlice.actions;
 export default claimSlice.reducer;

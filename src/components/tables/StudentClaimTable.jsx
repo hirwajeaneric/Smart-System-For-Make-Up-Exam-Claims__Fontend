@@ -8,19 +8,24 @@ import { GeneralContext } from '../../App';
 
 const columns = [
   {
-    field: 'code',
-    headerName: 'Code',
+    field: 'semester',
+    headerName: 'Semester',
     width: 100,
   },
   {
-    field: 'name',
-    headerName: 'Name',
-    width: 230,
+    field: 'academicYear',
+    headerName: 'Academic year',
+    width: 150,
   },
   {
-    field: 'credits',
-    headerName: 'Credits',
-    width: 60,
+    field: 'course',
+    headerName: 'Course',
+    width: 400,
+  },  
+  {
+    field: 'submitDate',
+    headerName: 'Declared on',
+    width: 250,
   },  
   {
     field: 'actions',
@@ -40,7 +45,7 @@ function CustomToolbar() {
 }
 
 export const TableStyles = {
-  padding: '0px',
+  // padding: '10px',
   width: '100%',
   height: '300px',
   background: 'white'
@@ -61,7 +66,7 @@ export default function StudentClaimTable({data}) {
         rowsPerPageOptions={[20]}
         disableSelectionOnClick
         experimentalFeatures={{newEditingApi: true}}
-        components={{Toolbar: CustomToolbar}}
+        // components={{Toolbar: CustomToolbar}}
       />
     </Box>
   );
@@ -79,10 +84,8 @@ const TableActions = ({parameters}) => {
       <Tooltip title='View / Edit'>
         <IconButton 
           onClick={() => {
-            setSelectedCourse(parameters.row)
-            dispatch({ type: 'course/getSelectedCourse', payload: parameters.row })
+             navigate(`/student/${params.registrationNumber}/claim/${parameters.row.id}`);
           }}>
-          {/* <Preview /> */}
           <MoreHoriz />
         </IconButton>
       </Tooltip>

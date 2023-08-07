@@ -289,7 +289,7 @@ function App() {
               <Route path='step2' element={<DeclareAbsenceFormPage2 />} />
             </Route>
             <Route path='claims' element={<StudentMyClaims />} />
-            <Route path='claims/:claimId' element={<StudentClaimDetails />} />
+            <Route path='claim/:claimId' element={<StudentClaimDetails />} />
             <Route path='success' element={<StudentSuccessPage />} />
             <Route path='settings' element={<StudentSettings />} />
           </Route>
