@@ -4,7 +4,8 @@ const serverUrl = import.meta.env.VITE_REACT_APP_SERVERURL;
 
 const initialState = {
     studentClaims: [],
-    selectedClaim: [],
+    selectedClaim: {},
+    selectedClaimCourse: {},
     courseClaims: [],
     hodClaims: [],
     accountantClaims: [],
@@ -147,6 +148,7 @@ const claimSlice = createSlice({
     reducers: {
         setSelectedClaim: (state, action) => {
             state.selectedClaim = action.payload;
+            state.selectedClaimCourse = action.payload.courses[0];
         }
     },
     extraReducers: {

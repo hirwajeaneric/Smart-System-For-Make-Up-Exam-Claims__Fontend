@@ -282,6 +282,7 @@ function App() {
           
           <Route path='/student/complete-account' element={<CompleteAccount />} />
           <Route path='/student/:registrationNumber' element={localStorage.getItem('stdToken') ? <StudentDashboardMain /> : <Navigate replace to={'/student/auth/signin'} />}>
+            <Route path='' element={<StudentStats />} />
             <Route path='home' element={<StudentStats />} />
             <Route path='declare' element={<StudentDeclareAbsence />}>
               <Route path='' element={<DeclareAbsenceFormPage1 />} />

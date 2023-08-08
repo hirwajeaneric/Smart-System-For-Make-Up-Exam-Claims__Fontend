@@ -20,12 +20,17 @@ const columns = [
   {
     field: 'course',
     headerName: 'Course',
-    width: 400,
+    width: 300,
   },  
   {
     field: 'submitDate',
     headerName: 'Declared on',
     width: 250,
+  },  
+  {
+    field: 'status',
+    headerName: 'Status',
+    width: 100,
   },  
   {
     field: 'actions',

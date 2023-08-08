@@ -100,3 +100,17 @@ export const ClaimDetailsItem = styled.div`
         color: black;
     }
 `;
+
+export const AttachmentFile = styled.div`
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 5px;
+    margin-top: 5px;
+
+    a {
+        text-decoration: none;
+        color: blue;
+    }
+`;
