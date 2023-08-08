@@ -1,15 +1,20 @@
 import React, { useState, useEffect } from 'react'
 import { HeaderTwo, VerticallyFlexGapContainer } from '../../components/styles/GenericStyles'
 import { Helmet } from 'react-helmet-async'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import StudentClaimTable from '../../components/tables/StudentClaimTable'
 import { StudentDashboardInformationContainer } from '../../components/styles/PagesStyles';
+import { getStudentClaims } from '../../redux/features/claimSlice'
+import { useParams } from 'react-router-dom'
 
 const Stats = () => {
+  const dispatch = useDispatch();
+  const params = useParams();
   const [user, setUser] = useState({});
 
   useEffect(() => {
     setUser(JSON.parse(localStorage.getItem('stdData')));
+    dispatch(getStudentClaims({ registrationNumber: params.registrationNumber }));
   }, [])
 
   const { isLoading, studentClaims } = useSelector(state => state.claim);

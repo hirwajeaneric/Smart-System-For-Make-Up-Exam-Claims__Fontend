@@ -148,7 +148,7 @@ const claimSlice = createSlice({
     reducers: {
         setSelectedClaim: (state, action) => {
             state.selectedClaim = action.payload;
-            state.selectedClaimCourse = action.payload.courses[0];
+            state.selectedClaimCourse = action.payload;
         }
     },
     extraReducers: {

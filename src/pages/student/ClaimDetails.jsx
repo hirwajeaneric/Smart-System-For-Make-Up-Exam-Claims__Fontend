@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react'
-import { useParams } from 'react-router-dom'
-import { FormElement, HeaderTwo, VerticallyFlexGapContainer } from '../../components/styles/GenericStyles'
+import { useNavigate, useParams } from 'react-router-dom'
+import { FormElement, HeaderTwo, TopPageTitle, VerticallyFlexGapContainer } from '../../components/styles/GenericStyles'
 import { Helmet } from 'react-helmet-async'
 import { AttachmentFile, ClaimDetailsContainer, ClaimDetailsItem } from '../../components/styles/PagesStyles';
 import { useDispatch, useSelector } from 'react-redux';
@@ -13,7 +13,10 @@ const serverUrl = import.meta.env.VITE_REACT_APP_SERVERURL;
 const ClaimDetails = () => {
   const dispatch = useDispatch();
   const params = useParams();
+  const navigate = useNavigate();
+
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isProcessing2, setIsProcessing2] = useState(false);
   const { setOpen, setResponseMessage} = useContext(GeneralContext);
   const [user, setUser] = useState({});
   const [claim, setClaim] = useState({});
@@ -69,6 +72,8 @@ const ClaimDetails = () => {
 
     if (studentSignature === 'Signed') {
       claimUpdates.status = 'In Progress';
+    } else if (studentSignature === 'Rejected') {
+      claimUpdates.status = 'Pending';
     }
 
     if (studentSignature) {
@@ -97,10 +102,10 @@ const ClaimDetails = () => {
     .then(response => {
       if (response.status === 200) {
         setIsProcessing(false);
-        dispatch({type: 'claim/setSelectedClaim', payload: response.data.claim});
-        dispatch(getStudentClaims({ registrationNumber: response.data.claim.registrationNumber }));
-        setResponseMessage({ message: response.data.message, severity: 'success'});
-        setOpen(true);
+        // dispatch({type: 'claim/setSelectedClaim', payload: response.data.claim});
+        window.location.reload();
+        // setResponseMessage({ message: response.data.message, severity: 'success'});
+        // setOpen(true);
       }
     })
     .catch(error => {
@@ -112,6 +117,26 @@ const ClaimDetails = () => {
     )
   }
 
+  // Delete functionality 
+  const deleteClaim = (e) => {
+    e.preventDefault();
+
+    console.log(`${serverUrl}/api/v1/ssmec/claim/delete?id=${params.claimId}`)
+
+    setIsProcessing2(true);
+    axios.delete(`${serverUrl}/api/v1/ssmec/claim/delete?id=${params.claimId}`)
+    .then(response => {
+      window.location.replace(`/student/${params.registrationNumber}`);
+      console.log(`/student/${params.registrationNumber}`);
+    })
+    .catch(error => {
+      if (error.response && error.response.status >= 400 && error.response.status <= 500) {
+        setIsProcessing2(false);
+        setResponseMessage({ message: error.response.data.msg, severity:'error'})
+        setOpen(true);
+      }}
+    )
+  }
 
   const { isLoading, selectedClaim, selectedClaimCourse } = useSelector(state => state.claim)
 
@@ -130,7 +155,16 @@ const ClaimDetails = () => {
         <meta name="description" content={`More claim details.`} /> 
       </Helmet>
       <VerticallyFlexGapContainer style={{ gap: '20px', alignItems: 'flex-start' }}>
-        <HeaderTwo style={{ width: '100%', fontWeight: '700', textAlign: 'left', fontSize: '150%' }}>Claim</HeaderTwo>
+        <TopPageTitle>
+          <HeaderTwo style={{ width: '100%', fontWeight: '700', textAlign: 'left', fontSize: '150%' }}>Claim</HeaderTwo>
+          {selectedClaim.status === 'Pending' && 
+            <>{isProcessing2 
+              ? <Button disabled variant="contained" color="primary" size="small">PROCESSING...</Button> 
+              : <Button variant="contained" color="error" size="small" type="button" onClick={deleteClaim}>DELETE</Button>}
+            </>
+          }
+        </TopPageTitle>
+        
         
         <ClaimDetailsContainer>
           <div className='first'>
@@ -171,7 +205,6 @@ const ClaimDetails = () => {
               <p>{selectedClaim.studentSignature}</p> 
             </ClaimDetailsItem>
           </div>
-
 
 
           <div className='middle'>
@@ -255,6 +288,7 @@ const ClaimDetails = () => {
           </form>
         </ClaimDetailsContainer>
       
+
       </VerticallyFlexGapContainer>
     </VerticallyFlexGapContainer>
   )
