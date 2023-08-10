@@ -28,6 +28,7 @@ const DashboardMain = () => {
 
     useEffect(() => {
         setUser(JSON.parse(localStorage.getItem('stdData')));
+        // dispatch(getCourse)
         // dispatch(getStudentClaims(user.registrationNumber));
     },[]);      
 

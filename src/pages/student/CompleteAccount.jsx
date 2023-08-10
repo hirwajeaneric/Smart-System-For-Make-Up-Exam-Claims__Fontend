@@ -82,12 +82,12 @@ const CompleteAccount = () => {
             <HorizontallyFlexGapContainer style={{ gap: '20px' }}>
               <FormElement style={{ color: 'gray' }}>
                 <label htmlFor="registrationNumber">Registration number *</label>
-                <input type="text" name="registrationNumber" id="registrationNumber" value={formData.registrationNumber || ''} onChange={handleFormInput} />
+                <input type="text" name="registrationNumber" maxLength='5' minLength='5' id="registrationNumber" value={formData.registrationNumber || ''} onChange={handleFormInput} />
                 {errors.registrationNumber && <p>Your registration number is required</p>}
               </FormElement>
               <FormElement style={{ color: 'gray' }}>
                 <label htmlFor="phone">Phone number *</label>
-                <input type="text" name="phone" id="phone" value={formData.phone || ''} onChange={handleFormInput} />
+                <input type="text" name="phone" maxLength='10' minLength='10' id="phone" value={formData.phone || ''} onChange={handleFormInput} />
                 {errors.phone && <p>Your phone number is required</p>}
               </FormElement>
             </HorizontallyFlexGapContainer>

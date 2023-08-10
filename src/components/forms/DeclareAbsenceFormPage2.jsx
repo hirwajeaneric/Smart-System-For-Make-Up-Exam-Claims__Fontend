@@ -7,6 +7,7 @@ import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { getStudentClaims } from "../../redux/features/claimSlice";
+import { getAllCourses } from "../../redux/features/courseSlice";
 
 // FUNCTION TO CHECK IF A STUDENT CLAIMED INSIDE THE DESIGNATED CLAIMING PERIOD. *************************************
 function isWithinTimeRange(givenDate, designatedDate) {
@@ -62,6 +63,7 @@ export default function DeclareAbsenceFormPage2() {
     // FETCH USER DATA ****************************************************************************
     useEffect(() => {
         setUser(JSON.parse(localStorage.getItem('student')));
+        dispatch(getAllCourses())
     },[]);  
 
     // Fetching courses from the store

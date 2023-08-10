@@ -56,6 +56,7 @@ const Signup = () => {
             <input 
               type="text" 
               id="fullName"
+              minLength='4'
               placeholder="name" 
               {...register("fullName", 
               {required: true})} 
@@ -70,6 +71,7 @@ const Signup = () => {
             <input 
               type="email" 
               id="email"
+              minLength='10'
               placeholder="email" 
               {...register("email", 
               {required: true})} 
@@ -85,6 +87,7 @@ const Signup = () => {
               <input 
                 type="password"
                 id="password" 
+                minLength='8'
                 placeholder="password" 
                 {...register("password", {required: true})} 
                 aria-invalid={errors.password ? "true" : "false"}

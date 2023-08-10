@@ -7,11 +7,18 @@ const initialState = {
     selectedClaim: {},
     selectedClaimCourse: {},
     courseClaims: [],
+    teacherClaims: [],
     hodClaims: [],
     accountantClaims: [],
     deanOfStudentsClaims: [],
     registrationOfficeClaims: [],
     examinationOfficerClaims: [],
+    numberOfTeacherClaims: 0,
+    numberOfHodClaims: 0,
+    numberOfAccountantClaims: 0,
+    numberOfDeanOfStudentsClaims: 0,
+    numberOfRegistrationOfficeClaims: 0,
+    numberOfExaminationOfficerClaims: 0,
     isLoading: false,
 }
 
@@ -45,6 +52,43 @@ export const getCourseClaims = createAsyncThunk(
             }
             const response = await axios.get(serverUrl+`/api/v1/ssmec/claim/findByCourse?courseCode=${courseCode}`, config);
             return response.data.claims;
+        } catch (error) {
+            return thunkAPI.rejectWithValue('Something went wrong!!');
+        }
+    }
+);
+
+export const getTeacherClaims = createAsyncThunk(
+    'claim/getTeacherClaims',
+    async (filter, thunkAPI) => {
+        const { lecturerId, token } = filter;
+        try {
+            const config = {
+                headers: {
+                    'Authorization' : `Bearer ${token}`
+                }
+            }
+
+            const resp = await axios.get(serverUrl+`/api/v1/ssmec/course/findByLecturerId?lecturerId=${lecturerId}`, config);
+            var assignedCourses = resp.data.courses;
+
+            var claims = [];            
+            const response = await axios.get(serverUrl+`/api/v1/ssmec/claim/list`, config);
+            response.data.claims.forEach((element) => {
+                element.id = element._id;
+                element.course = element.courses[0].courseName;
+                element.submitDate = new Date(element.submitDate).toUTCString();
+            });
+
+            response.data.claims.forEach(claim => {
+                assignedCourses.forEach((course) => {
+                    if (claim.courses[0].courseCode === course.code && claim.status === 'In Progress') {
+                        claims.push(claim);
+                    }
+                });
+            })
+            
+            return claims;
         } catch (error) {
             return thunkAPI.rejectWithValue('Something went wrong!!');
         }
@@ -148,7 +192,7 @@ const claimSlice = createSlice({
     reducers: {
         setSelectedClaim: (state, action) => {
             state.selectedClaim = action.payload;
-            state.selectedClaimCourse = action.payload;
+            state.selectedClaimCourse = action.payload.courses[0];
         }
     },
     extraReducers: {
@@ -160,6 +204,16 @@ const claimSlice = createSlice({
             state.studentClaims = action.payload;
         },
         [getStudentClaims.rejected] : (state) => {
+            state.isLoading = false;
+        },
+        [getTeacherClaims.pending] : (state) => {
+            state.isLoading = true;
+        },
+        [getTeacherClaims.fulfilled] : (state, action) => {
+            state.isLoading = false;
+            state.teacherClaims = action.payload;
+        },
+        [getTeacherClaims.rejected] : (state) => {
             state.isLoading = false;
         },
         [getCourseClaims.pending] : (state) => {

@@ -308,7 +308,7 @@ function App() {
             <Route path='courses' element={<TeacherAssignedCourses />} />
             <Route path='courses/:courseId' element={<TeacherAssignedCourseDetails />} />
             <Route path='claims' element={<TeacherClaims />} />
-            <Route path='claims/:claimId' element={<TeacherClaimDetails />} />
+            <Route path='claim/:claimId' element={<TeacherClaimDetails />} />
             <Route path='settings' element={<TeacherSettings />} />
           </Route>
 

@@ -7,10 +7,13 @@ import MenuItem from '@mui/material/MenuItem';
 import { Divider, IconButton, ListItemIcon, Tooltip } from "@mui/material";
 import { useEffect, useState } from "react";
 import { Logout, Settings } from "@mui/icons-material";
-import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { getSimpleCapitalizedChars } from "../../utils/HelperFunctions";
+import { getCoursesForTeacher } from "../../redux/features/courseSlice";
+import { getTeacherClaims } from "../../redux/features/claimSlice";
 
 const DashboardMain = () => {
+    const dispatch = useDispatch();
     const [anchorEl, setAnchorEl] = useState(null);
     const navigate = useNavigate();
     const open = Boolean(anchorEl);
@@ -23,7 +26,18 @@ const DashboardMain = () => {
     const [user, setUser] = useState({});
 
     useEffect(() => {
-        setUser(JSON.parse(localStorage.getItem('teaData')));
+        var user = JSON.parse(localStorage.getItem('teaData'));
+        setUser(user);
+        
+        dispatch(getCoursesForTeacher({
+            lecturerId: user.id, 
+            token: localStorage.getItem('teaToken')
+        }));
+        
+        dispatch(getTeacherClaims({ 
+            lecturerId: user.id, 
+            token: localStorage.getItem('teaToken')
+        }));
     },[]);      
 
     const signout = () => {
@@ -31,11 +45,6 @@ const DashboardMain = () => {
         localStorage.removeItem('teaData');
         navigate('/teacher/auth/signin');
     }
-
-    // Load teacher claims
-    // dispatch(getStudentClaims(student.registrationNumber));
-    // Load registration information if the student is registered
-    // dispatch(getStudentRegistration(student.registrationNumber));  
 
     return (
         <VerticallyFlexSpaceBetweenContainer>
@@ -125,7 +134,7 @@ const DashboardMain = () => {
             <VerticallyFlexGapContainer style={{ position: 'relative' }}>
                 <SecondaryMenue>
                     <NavLink to={'home'}>Home</NavLink>
-                    <NavLink to={'claims'}>Claims</NavLink>
+                    {/* <NavLink to={'claims'}>Claims</NavLink> */}
                     <NavLink to={'courses'}>Courses</NavLink>
                     <NavLink to={'settings'}>{user.userName}</NavLink>
                 </SecondaryMenue>

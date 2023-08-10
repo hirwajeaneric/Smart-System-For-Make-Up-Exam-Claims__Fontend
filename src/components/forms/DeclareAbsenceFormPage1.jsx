@@ -91,6 +91,8 @@ export default function DeclareAbsenceFormPage1() {
                         <label htmlFor="registrationNumber">Registration Number *</label>
                         <input 
                             type="number" 
+                            maxLength='5'
+                            minLength='5'
                             id="registrationNumber"
                             placeholder="Registration number" 
                             value={declarationFormData.registrationNumber || ''}
@@ -104,6 +106,7 @@ export default function DeclareAbsenceFormPage1() {
                         <input 
                             type="email" 
                             id="email"
+                            minLength='10'
                             placeholder="email" 
                             value={declarationFormData.email || ''}
                             name='email'
@@ -116,6 +119,8 @@ export default function DeclareAbsenceFormPage1() {
                         <input 
                             type="text" 
                             id="phone"
+                            maxLength='10'
+                            minLength='10'
                             placeholder="Phone number" 
                             value={declarationFormData.phone || ''}
                             name='phone'
@@ -180,6 +185,8 @@ export default function DeclareAbsenceFormPage1() {
                         <input 
                             type="text" 
                             id="academicYear"
+                            maxLength='4'
+                            minLength='4'
                             placeholder="Academic year" 
                             value={declarationFormData.academicYear || ''}
                             name='academicYear'
