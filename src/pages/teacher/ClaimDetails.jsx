@@ -9,6 +9,7 @@ import { Button, FormControl, FormControlLabel, Radio, RadioGroup } from '@mui/m
 import { GeneralContext } from '../../App';
 import { GrAttachment } from 'react-icons/gr';
 const serverUrl = import.meta.env.VITE_REACT_APP_SERVERURL;
+import lodash from 'lodash';
 
 const ClaimDetails = () => {
   const dispatch = useDispatch();
@@ -34,6 +35,7 @@ const ClaimDetails = () => {
     axios.get(`${serverUrl}/api/v1/ssmec/claim/findById?id=${params.claimId}`)
     .then(response => {
       response.data.claim.submitDate = new Date(response.data.claim.submitDate).toUTCString();
+      delete response.data.claim.__v;
       setClaim(response.data.claim);
       dispatch({type: 'claim/setSelectedClaim', payload: response.data.claim});
     })
@@ -58,34 +60,39 @@ const ClaimDetails = () => {
   const handleClaimUpdates = (e) => {
     e.preventDefault();
 
+    // Attaching lecture claim updates to the existing claim
+    var updatedClaim = lodash.cloneDeep(claim); // Create a deep copy of claim
+
+
     if (!signature && !attachment) {
       setResponseMessage({ message: 'No modifications to update', severity:'warning'})
       setOpen(true);
     }
 
-    var lecturer = {};
+    let teacher = {};
     var url = '';
     var config = {};
 
     if (signature === 'Signed') {
-      lecturer.signature = 'Signed';
+      teacher.signature = 'Signed';
     } else if (signature === 'Rejected') {
-      lecturer.signature = 'Rejected';
+      teacher.signature = 'Rejected';
     }
 
     if (comment) {
-      lecturer.comment = comment;
+      teacher.comment = comment;
+      url = `${serverUrl}/api/v1/ssmec/claim/update?id=${params.claimId}`
     }
 
     if (signature) {
-      lecturer.id = user.id;
-      lecturer.name = user.name;
-      lecturer.dateOfSignature = new Date().toUTCString();
+      teacher.id = user.id;
+      teacher.name = user.fullName;
+      teacher.dateOfSignature = new Date().toUTCString();
       url = `${serverUrl}/api/v1/ssmec/claim/update?id=${params.claimId}`
     }
 
     if (attachment || (attachment && signature)) {
-      claimUpdates.attachment = attachment;
+      updatedClaim.attachment = attachment;
       url = `${serverUrl}/api/v1/ssmec/claim/updateWithAttachment?id=${params.claimId}`
     }
 
@@ -97,11 +104,11 @@ const ClaimDetails = () => {
       } 
     }
 
-
-    // Attaching lecture claim updates to the existing claim
-    var updatedClaim = claim;
-    updatedClaim.courses[0].lecturer = lecturer;
-
+    updatedClaim.courses[0].lecturer = teacher;
+    delete updatedClaim._id;
+    delete updatedClaim.__v;
+    
+    console.log(updatedClaim.courses[0].lecturer);
 
     console.log(updatedClaim);
     console.log(url);
@@ -111,26 +118,25 @@ const ClaimDetails = () => {
     setIsProcessing(true);
 
     // Executing the claim update
-    // axios.put(url, updatedClaim, config)
-    // .then(response => {
-    //   if (response.status === 200) {
-    //     setIsProcessing(false);
-    //     dispatch({type: 'claim/setSelectedClaim', payload: response.data.claim});
-    //     setResponseMessage({ message: response.data.message, severity: 'success'});
-    //     setOpen(true);
-    //     window.location.reload();
-    //   }
-    // })
-    // .catch(error => {
-    //   if (error.response && error.response.status >= 400 && error.response.status <= 500) {
-    //     setIsProcessing(false);
-    //     setResponseMessage({ message: error.response.data.msg, severity:'error'})
-    //     setOpen(true);
-    //   }}
-    // )
+    axios.put(url, updatedClaim, config)
+    .then(response => {
+      if (response.status === 200) {
+        setIsProcessing(false);
+        setResponseMessage({ message: response.data.message, severity: 'success'});
+        setOpen(true);
+        window.location.reload();
+      }
+    })
+    .catch(error => {
+      if (error.response && error.response.status >= 400 && error.response.status <= 500) {
+        setIsProcessing(false);
+        setResponseMessage({ message: error.response.data.msg, severity:'error'})
+        setOpen(true);
+      }}
+    )
   }
 
-  const { isLoading, selectedClaim, selectedClaimCourse } = useSelector(state => state.claim)
+  const { isLoading, selectedClaim, selectedClaimCourse, selectedClaimCourseLecturer } = useSelector(state => state.claim)
 
   if (isLoading) {
     return (
@@ -186,6 +192,10 @@ const ClaimDetails = () => {
               <p>{selectedClaim.semester}</p>  
             </ClaimDetailsItem>
             <ClaimDetailsItem>
+              <label>Reason for absence:</label>
+              <p>{selectedClaimCourse.reason}</p> 
+            </ClaimDetailsItem>
+            <ClaimDetailsItem>
               <label>Student signature:</label>
               <p>{selectedClaim.studentSignature}</p> 
             </ClaimDetailsItem>
@@ -213,10 +223,15 @@ const ClaimDetails = () => {
               <label>Group:</label>
               <p>{selectedClaimCourse.group}</p> 
             </ClaimDetailsItem>
-            <ClaimDetailsItem>
-              <label>Reason for absence:</label>
-              <p>{selectedClaimCourse.reason}</p> 
-            </ClaimDetailsItem>
+            {selectedClaimCourseLecturer.signature && <ClaimDetailsItem>
+              <label>Lecturer signature:</label>
+              <p>{selectedClaimCourseLecturer.signature}</p> 
+            </ClaimDetailsItem>}
+            {selectedClaimCourseLecturer.comment && <ClaimDetailsItem>
+              <label>Lecturer comment:</label>
+              <p>{selectedClaimCourse.lecturer.comment}</p> 
+            </ClaimDetailsItem>}
+            
             {selectedClaim.examPermit && <ClaimDetailsItem>
                 <label>Exam permit card:</label>
                 <AttachmentFile>
@@ -238,11 +253,11 @@ const ClaimDetails = () => {
                 <a href={`${serverUrl}/api/v1/ssmec/uploads/${selectedClaim.proofOfClaimPayment}`}>Claim payment</a>
               </AttachmentFile>
             </ClaimDetailsItem>}
-            {selectedClaim.proofOfClaimPayment && <ClaimDetailsItem>
+            {selectedClaim.attachment && <ClaimDetailsItem>
               <label>Attendance list:</label>
               <AttachmentFile>
                 <GrAttachment />
-                <a href={`${serverUrl}/api/v1/ssmec/uploads/${selectedClaim.proofOfClaimPayment}`}>Claim payment</a>
+                <a href={`${serverUrl}/api/v1/ssmec/uploads/${selectedClaim.attachment}`}>Claim payment</a>
               </AttachmentFile>
             </ClaimDetailsItem>}
           </div>

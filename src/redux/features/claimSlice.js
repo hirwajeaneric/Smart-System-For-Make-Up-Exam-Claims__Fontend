@@ -6,6 +6,7 @@ const initialState = {
     studentClaims: [],
     selectedClaim: {},
     selectedClaimCourse: {},
+    selectedClaimCourseLecturer: {},
     courseClaims: [],
     teacherClaims: [],
     hodClaims: [],
@@ -185,7 +186,6 @@ export const getExaminationOfficeClaims = createAsyncThunk(
     }
 );
 
-
 const claimSlice = createSlice({
     name: 'claim',
     initialState,
@@ -193,6 +193,7 @@ const claimSlice = createSlice({
         setSelectedClaim: (state, action) => {
             state.selectedClaim = action.payload;
             state.selectedClaimCourse = action.payload.courses[0];
+            state.selectedClaimCourseLecturer = action.payload.courses[0].lecturer;
         }
     },
     extraReducers: {

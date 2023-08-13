@@ -138,7 +138,7 @@ const ClaimDetails = () => {
     )
   }
 
-  const { isLoading, selectedClaim, selectedClaimCourse } = useSelector(state => state.claim)
+  const { isLoading, selectedClaim, selectedClaimCourse, selectedClaimCourseLecturer } = useSelector(state => state.claim)
 
 
   if (isLoading) {
@@ -201,6 +201,10 @@ const ClaimDetails = () => {
               <p>{selectedClaim.semester}</p>  
             </ClaimDetailsItem>
             <ClaimDetailsItem>
+              <label>Reason for absence:</label>
+              <p>{selectedClaimCourse.reason}</p> 
+            </ClaimDetailsItem>
+            <ClaimDetailsItem>
               <label>Student signature:</label>
               <p>{selectedClaim.studentSignature}</p> 
             </ClaimDetailsItem>
@@ -228,10 +232,14 @@ const ClaimDetails = () => {
               <label>Group:</label>
               <p>{selectedClaimCourse.group}</p> 
             </ClaimDetailsItem>
-            <ClaimDetailsItem>
-              <label>Reason for absence:</label>
-              <p>{selectedClaimCourse.reason}</p> 
-            </ClaimDetailsItem>
+            {selectedClaimCourseLecturer.signature && <ClaimDetailsItem>
+              <label>Lecturer signature:</label>
+              <p>{selectedClaimCourseLecturer.signature}</p> 
+            </ClaimDetailsItem>}
+            {selectedClaimCourseLecturer.comment && <ClaimDetailsItem>
+              <label>Lecturer comment:</label>
+              <p>{selectedClaimCourse.lecturer.comment}</p> 
+            </ClaimDetailsItem>}
             {selectedClaim.examPermit && <ClaimDetailsItem>
                 <label>Exam permit card:</label>
                 <AttachmentFile>
