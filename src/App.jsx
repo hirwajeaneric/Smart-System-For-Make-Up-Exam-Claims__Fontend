@@ -305,6 +305,7 @@ function App() {
           </Route>
           <Route path='/teacher/:name' element={localStorage.getItem('teaToken') ? <TeacherDashboardMain /> : <Navigate replace to={'/teacher/auth/signin'} />}>
             <Route path='home' element={<TeacherStats />} />
+            <Route path='' element={<TeacherStats />} />
             <Route path='courses' element={<TeacherAssignedCourses />} />
             <Route path='courses/:courseId' element={<TeacherAssignedCourseDetails />} />
             <Route path='claims' element={<TeacherClaims />} />

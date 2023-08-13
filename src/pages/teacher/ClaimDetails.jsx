@@ -21,12 +21,14 @@ const ClaimDetails = () => {
   const [user, setUser] = useState({});
   const [claim, setClaim] = useState({});
 
-  const [studentSignature, setStudentSignature] = useState('');
-  const [examPermit, setExamPermit] = useState('');
-  const [proofOfClaimPayment, setProofOfClaimPayment] = useState('');
+  // Manageable states
+  const [signature, setSignature] = useState('');
+  const [comment, setComment] = useState('');
+  const [attachment, setAttachment] = useState('');
 
+  // Data fetching 
   useEffect(() => {
-    var currentUser = JSON.parse(localStorage.getItem('stdData'));
+    var currentUser = JSON.parse(localStorage.getItem('teaData'));
     setUser(currentUser);
 
     axios.get(`${serverUrl}/api/v1/ssmec/claim/findById?id=${params.claimId}`)
@@ -39,57 +41,55 @@ const ClaimDetails = () => {
   }, [params.claimId]);
 
 
-  // Handle claim updates
-  // const handleFormInput = ({ target: input}) => {
-  //   setClaim({...claim, [input.name]: input.value });
-  // }
-
-  const handleFormInput = (event) => {
-    setStudentSignature(event.target.value);
+  const handleSignature = (event) => {
+    setSignature(event.target.value);
   };
 
-  const handleExamPermitCard = (e) => {
-    setExamPermit(e.target.files[0]);
+  const handleComment = (event) => {
+    setComment(event.target.value);
+  };
+
+  const handleAttachment = (e) => {
+    setAttachment(e.target.files[0]);
   } 
 
-  const handleProofOfClaimPayment = (e) => {
-    setProofOfClaimPayment(e.target.files[0]);
-  } 
 
-
-  // Submit claim updates
+  // Submit claim updates ***************************************************************************************
   const handleClaimUpdates = (e) => {
     e.preventDefault();
 
-    if (!studentSignature && !examPermit && !proofOfClaimPayment) {
+    if (!signature && !attachment) {
       setResponseMessage({ message: 'No modifications to update', severity:'warning'})
       setOpen(true);
     }
 
-    var claimUpdates = {};
+    var lecturer = {};
     var url = '';
     var config = {};
 
-    if (studentSignature === 'Signed') {
-      claimUpdates.status = 'In Progress';
-    } else if (studentSignature === 'Rejected') {
-      claimUpdates.status = 'Pending';
+    if (signature === 'Signed') {
+      lecturer.signature = 'Signed';
+    } else if (signature === 'Rejected') {
+      lecturer.signature = 'Rejected';
     }
 
-    if (studentSignature) {
-      claimUpdates.studentSignature = studentSignature;
+    if (comment) {
+      lecturer.comment = comment;
+    }
+
+    if (signature) {
+      lecturer.id = user.id;
+      lecturer.name = user.name;
+      lecturer.dateOfSignature = new Date().toUTCString();
       url = `${serverUrl}/api/v1/ssmec/claim/update?id=${params.claimId}`
     }
-    if (examPermit || (examPermit && studentSignature)) {
-      claimUpdates.examPermit = examPermit;
-      url = `${serverUrl}/api/v1/ssmec/claim/updateWithExamPermit?id=${params.claimId}`
-    }
-    if (proofOfClaimPayment || (proofOfClaimPayment && studentSignature)) {
-      claimUpdates.proofOfClaimPayment = proofOfClaimPayment;
-      url = `${serverUrl}/api/v1/ssmec/claim/updateWithProofOfClaimPayment?id=${params.claimId}`
+
+    if (attachment || (attachment && signature)) {
+      claimUpdates.attachment = attachment;
+      url = `${serverUrl}/api/v1/ssmec/claim/updateWithAttachment?id=${params.claimId}`
     }
 
-    if (!examPermit && !proofOfClaimPayment) {
+    if (!attachment) {
       config = {}
     } else {
       config = {
@@ -97,49 +97,40 @@ const ClaimDetails = () => {
       } 
     }
 
+
+    // Attaching lecture claim updates to the existing claim
+    var updatedClaim = claim;
+    updatedClaim.courses[0].lecturer = lecturer;
+
+
+    console.log(updatedClaim);
+    console.log(url);
+    console.log(config);
+
+
     setIsProcessing(true);
-    axios.put(url, claimUpdates, config)
-    .then(response => {
-      if (response.status === 200) {
-        setIsProcessing(false);
-        // dispatch({type: 'claim/setSelectedClaim', payload: response.data.claim});
-        window.location.reload();
-        // setResponseMessage({ message: response.data.message, severity: 'success'});
-        // setOpen(true);
-      }
-    })
-    .catch(error => {
-      if (error.response && error.response.status >= 400 && error.response.status <= 500) {
-        setIsProcessing(false);
-        setResponseMessage({ message: error.response.data.msg, severity:'error'})
-        setOpen(true);
-      }}
-    )
-  }
 
-  // Delete functionality 
-  const deleteClaim = (e) => {
-    e.preventDefault();
-
-    console.log(`${serverUrl}/api/v1/ssmec/claim/delete?id=${params.claimId}`)
-
-    setIsProcessing2(true);
-    axios.delete(`${serverUrl}/api/v1/ssmec/claim/delete?id=${params.claimId}`)
-    .then(response => {
-      window.location.replace(`/student/${params.registrationNumber}`);
-      console.log(`/student/${params.registrationNumber}`);
-    })
-    .catch(error => {
-      if (error.response && error.response.status >= 400 && error.response.status <= 500) {
-        setIsProcessing2(false);
-        setResponseMessage({ message: error.response.data.msg, severity:'error'})
-        setOpen(true);
-      }}
-    )
+    // Executing the claim update
+    // axios.put(url, updatedClaim, config)
+    // .then(response => {
+    //   if (response.status === 200) {
+    //     setIsProcessing(false);
+    //     dispatch({type: 'claim/setSelectedClaim', payload: response.data.claim});
+    //     setResponseMessage({ message: response.data.message, severity: 'success'});
+    //     setOpen(true);
+    //     window.location.reload();
+    //   }
+    // })
+    // .catch(error => {
+    //   if (error.response && error.response.status >= 400 && error.response.status <= 500) {
+    //     setIsProcessing(false);
+    //     setResponseMessage({ message: error.response.data.msg, severity:'error'})
+    //     setOpen(true);
+    //   }}
+    // )
   }
 
   const { isLoading, selectedClaim, selectedClaimCourse } = useSelector(state => state.claim)
-
 
   if (isLoading) {
     return (
@@ -157,19 +148,13 @@ const ClaimDetails = () => {
       <VerticallyFlexGapContainer style={{ gap: '20px', alignItems: 'flex-start' }}>
         <TopPageTitle>
           <HeaderTwo style={{ width: '100%', fontWeight: '700', textAlign: 'left', fontSize: '150%' }}>Claim</HeaderTwo>
-          {selectedClaim.status === 'Pending' && 
-            <>{isProcessing2 
-              ? <Button disabled variant="contained" color="primary" size="small">PROCESSING...</Button> 
-              : <Button variant="contained" color="error" size="small" type="button" onClick={deleteClaim}>DELETE</Button>}
-            </>
-          }
         </TopPageTitle>
         
         
         <ClaimDetailsContainer>
           <div className='first'>
             <ClaimDetailsItem>
-              <label>Name</label>
+              <label>Name of student</label>
               <p>{selectedClaim.fullName}</p>  
             </ClaimDetailsItem>
             <ClaimDetailsItem>
@@ -253,34 +238,40 @@ const ClaimDetails = () => {
                 <a href={`${serverUrl}/api/v1/ssmec/uploads/${selectedClaim.proofOfClaimPayment}`}>Claim payment</a>
               </AttachmentFile>
             </ClaimDetailsItem>}
+            {selectedClaim.proofOfClaimPayment && <ClaimDetailsItem>
+              <label>Attendance list:</label>
+              <AttachmentFile>
+                <GrAttachment />
+                <a href={`${serverUrl}/api/v1/ssmec/uploads/${selectedClaim.proofOfClaimPayment}`}>Claim payment</a>
+              </AttachmentFile>
+            </ClaimDetailsItem>}
           </div>
           
           
           <form className='last' onSubmit={handleClaimUpdates}>
             <h3>Update</h3>
             <FormElement>
-              <label htmlFor="examPermit">Upload exam permit card</label>
-              <input type="file" name="examPermit" id="examPermit" onChange={handleExamPermitCard}/>
-            </FormElement>
-            <FormElement>
-              <label htmlFor="proofOfClaimPayment">Upload proof of payment for claim</label>
-              <input type="file" name="proofOfClaimPayment" id="proofOfClaimPayment" onChange={handleProofOfClaimPayment}/>
+              <label htmlFor="attachment">Upload attendance list</label>
+              <input type="file" name="attachment" id="attachment" onChange={handleAttachment}/>
             </FormElement>
             <ClaimDetailsItem>
-              <p>I acccept terms and conditions regarding the claiming process and hereby confirm that the provided information and documents are correct.</p>
               <FormControl>
                 <RadioGroup
                   row
-                  aria-labelledby="studentSignature"
-                  name="studentSignature"
-                  value={studentSignature}
-                  onChange={handleFormInput}
+                  aria-labelledby="signature"
+                  name="signature"
+                  value={signature}
+                  onChange={handleSignature}
                 >
-                  <FormControlLabel value="Signed" control={<Radio />} size="small" label="Agree to continue" />
-                  <FormControlLabel value="Rejected" control={<Radio />} size="small" label="Abandon claim" />
+                  <FormControlLabel value="Signed" control={<Radio />} size="small" label="Approve claim" />
+                  <FormControlLabel value="Rejected" control={<Radio />} size="small" label="Reject claim" />
                 </RadioGroup>
               </FormControl>
             </ClaimDetailsItem>
+            <FormElement>
+              <label htmlFor="comment">Comment</label>
+              <textarea id='comment' name='comment' value={comment} onChange={handleComment}></textarea>
+            </FormElement>
             {isProcessing 
               ? <Button disabled variant="contained" color="primary" size="small">PROCESSING...</Button> 
               : <Button variant="contained" color="success" size="small" type="submit">Submit</Button>
