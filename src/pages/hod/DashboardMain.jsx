@@ -10,6 +10,7 @@ import { Logout, Settings } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
 import { getSimpleCapitalizedChars } from "../../utils/HelperFunctions";
 import { getAllCourses } from "../../redux/features/courseSlice";
+import { getDepartmentClaims } from "../../redux/features/claimSlice";
 
 const DashboardMain = () => {
     const [anchorEl, setAnchorEl] = useState(null);
@@ -29,6 +30,7 @@ const DashboardMain = () => {
         user.departmentLink = user.department.split(" ").join(""); 
         setUser(user);
         dispatch(getAllCourses());
+        dispatch(getDepartmentClaims({ token: user.token, department: user.department }));
     },[dispatch]);      
 
     const signout = () => {
@@ -37,10 +39,6 @@ const DashboardMain = () => {
         navigate('/hod/auth/signin');
     }
 
-    // Load student claims
-    // dispatch(getStudentClaims(student.registrationNumber));
-    // Load registration information if the student is registered
-    // dispatch(getStudentRegistration(student.registrationNumber));  
     const { } = useSelector(state => state.course)
 
     return (
@@ -124,8 +122,8 @@ const DashboardMain = () => {
                 <SecondaryMenue>
                     <NavLink to={'home'}>Home</NavLink>
                     <NavLink to={'courses'}>Courses</NavLink>
-                    <NavLink to={'lecturers'}>Lecturers</NavLink>
-                    <NavLink to={'claims'}>Claims</NavLink>
+                    {/* <NavLink to={'lecturers'}>Lecturers</NavLink> */}
+                    {/* <NavLink to={'claims'}>Claims</NavLink> */}
                     <NavLink to={'settings'}>{user.fullName}</NavLink>
                 </SecondaryMenue>
                 <DashboardMainContainer>

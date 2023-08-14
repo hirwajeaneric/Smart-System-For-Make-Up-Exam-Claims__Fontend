@@ -323,6 +323,7 @@ function App() {
           </Route>
           <Route path='/hod/complete-account' element={<HodCompleteAccount />} />
           <Route path='/hod/:department/' element={localStorage.getItem('hodToken') ? <HODDashboardMain /> : <Navigate replace to={'/hod/auth/signin'} />}>
+            <Route path='' element={<HODStats />} />
             <Route path='home' element={<HODStats />} />
             <Route path='claims' element={<HODClaims />} />
             <Route path='claims/:claimId' element={<HODClaimDetails />} />

@@ -4,9 +4,16 @@ const serverUrl = import.meta.env.VITE_REACT_APP_SERVERURL;
 
 const initialState = {
     studentClaims: [],
+    
     selectedClaim: {},
     selectedClaimCourse: {},
     selectedClaimCourseLecturer: {},
+    selectedClaimHodSignature: {},
+    selectedClaimRegistrationOfficerSignature: {},
+    selectedClaimDeanOfStudentsSignature: {},
+    selectedClaimAccountantSignature: {},
+    selectedClaimExaminationOfficerSignature: {},
+
     courseClaims: [],
     teacherClaims: [],
     hodClaims: [],
@@ -107,6 +114,12 @@ export const getDepartmentClaims = createAsyncThunk(
                 }
             }
             const response = await axios.get(serverUrl+`/api/v1/ssmec/claim/findByLecturerSignature?department=${department}`, config);
+            response.data.claims.forEach((element) => {
+                element.id = element._id;
+                delete element.__v;
+                element.course = element.courses[0].courseName;
+                element.submitDate = new Date(element.submitDate).toUTCString()
+            });
             return response.data.claims;
         } catch (error) {
             return thunkAPI.rejectWithValue('Something went wrong!!');
@@ -194,6 +207,11 @@ const claimSlice = createSlice({
             state.selectedClaim = action.payload;
             state.selectedClaimCourse = action.payload.courses[0];
             state.selectedClaimCourseLecturer = action.payload.courses[0].lecturer;
+            state.selectedClaimHodSignature = action.payload.hodDeanSignature;
+            state.selectedClaimRegistrationOfficerSignature = action.payload.registrationOfficerSignature;
+            state.selectedClaimDeanOfStudentsSignature = action.payload.deanOfStudentsSignature;
+            state.selectedClaimAccountantSignature = action.payload.accountantSignature;
+            state.selectedClaimExaminationOfficerSignature = action.payload.examinationOfficerSignature;
         }
     },
     extraReducers: {
@@ -232,7 +250,8 @@ const claimSlice = createSlice({
         },
         [getDepartmentClaims.fulfilled] : (state, action) => {
             state.isLoading = false;
-            state.hodClaims = action.payload;
+            state.hodClaims = action.payload.filter(element => element.attachment);
+
         },
         [getDepartmentClaims.rejected] : (state) => {
             state.isLoading = false;

@@ -38,12 +38,6 @@ const ClaimDetails = () => {
     .catch(error => console.error(error))
   }, [params.claimId]);
 
-
-  // Handle claim updates
-  // const handleFormInput = ({ target: input}) => {
-  //   setClaim({...claim, [input.name]: input.value });
-  // }
-
   const handleFormInput = (event) => {
     setStudentSignature(event.target.value);
   };
@@ -102,10 +96,9 @@ const ClaimDetails = () => {
     .then(response => {
       if (response.status === 200) {
         setIsProcessing(false);
-        // dispatch({type: 'claim/setSelectedClaim', payload: response.data.claim});
+        setResponseMessage({ message: response.data.message, severity: 'success'});
+        setOpen(true);
         window.location.reload();
-        // setResponseMessage({ message: response.data.message, severity: 'success'});
-        // setOpen(true);
       }
     })
     .catch(error => {
@@ -138,7 +131,17 @@ const ClaimDetails = () => {
     )
   }
 
-  const { isLoading, selectedClaim, selectedClaimCourse, selectedClaimCourseLecturer } = useSelector(state => state.claim)
+  const { 
+    isLoading, 
+    selectedClaim, 
+    selectedClaimCourse, 
+    selectedClaimCourseLecturer,
+    selectedClaimHodSignature,
+    selectedClaimRegistrationOfficerSignature,
+    selectedClaimDeanOfStudentsSignature,
+    selectedClaimAccountantSignature,
+    selectedClaimExaminationOfficerSignature,
+  } = useSelector(state => state.claim)
 
 
   if (isLoading) {
@@ -265,6 +268,51 @@ const ClaimDetails = () => {
           
           
           <form className='last' onSubmit={handleClaimUpdates}>
+            {selectedClaimHodSignature.signature && <ClaimDetailsItem>
+              <label>Head of department's signature</label>
+              <p>{selectedClaimHodSignature.signature}</p>  
+            </ClaimDetailsItem>}
+            {selectedClaimHodSignature.comment && <ClaimDetailsItem>
+              <label>Head of department's Comment:</label>
+              <p>{selectedClaimHodSignature.comment}</p>  
+            </ClaimDetailsItem>}
+
+            {selectedClaimAccountantSignature.signature && <ClaimDetailsItem>
+              <label>Accountant's signature</label>
+              <p>{selectedClaimAccountantSignature.signature}</p>  
+            </ClaimDetailsItem>}
+            {selectedClaimAccountantSignature.comment && <ClaimDetailsItem>
+              <label>Accountant's Comment:</label>
+              <p>{selectedClaimAccountantSignature.comment}</p>  
+            </ClaimDetailsItem>}
+
+            {selectedClaimDeanOfStudentsSignature.signature && <ClaimDetailsItem>
+              <label>Dean of Student's signature</label>
+              <p>{selectedClaimDeanOfStudentsSignature.signature}</p>  
+            </ClaimDetailsItem>}
+            {selectedClaimDeanOfStudentsSignature.comment && <ClaimDetailsItem>
+              <label>Dean of Student's Comment:</label>
+              <p>{selectedClaimDeanOfStudentsSignature.comment}</p>  
+            </ClaimDetailsItem>}
+
+            {selectedClaimRegistrationOfficerSignature.signature && <ClaimDetailsItem>
+              <label>Registration office signature</label>
+              <p>{selectedClaimRegistrationOfficerSignature.signature}</p>  
+            </ClaimDetailsItem>}
+            {selectedClaimRegistrationOfficerSignature.comment && <ClaimDetailsItem>
+              <label>Registration office Comment:</label>
+              <p>{selectedClaimRegistrationOfficerSignature.comment}</p>  
+            </ClaimDetailsItem>}
+
+            {selectedClaimExaminationOfficerSignature.signature && <ClaimDetailsItem>
+              <label>Examination officer's signature</label>
+              <p>{selectedClaimExaminationOfficerSignature.signature}</p>  
+            </ClaimDetailsItem>}
+            {selectedClaimExaminationOfficerSignature.comment && <ClaimDetailsItem>
+              <label>Examination officer's Comment:</label>
+              <p>{selectedClaimExaminationOfficerSignature.comment}</p>  
+            </ClaimDetailsItem>}
+            
             <h3>Update</h3>
             <FormElement>
               <label htmlFor="examPermit">Upload exam permit card</label>

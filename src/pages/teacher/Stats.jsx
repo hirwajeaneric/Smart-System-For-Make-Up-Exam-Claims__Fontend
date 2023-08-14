@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import { Helmet } from 'react-helmet-async'
 import { useSelector } from 'react-redux'
 import { HeaderTwo, VerticallyFlexGapContainer } from '../../components/styles/GenericStyles'
-import LecturerCoursesTable from '../../components/tables/LecturerCoursesTable';
 import TeacherClaimsTable from '../../components/tables/TeacherClaimsTable';
 
 const Stats = () => {
@@ -14,9 +13,7 @@ const Stats = () => {
   },[]);
 
   const { coursesForSelectedTeacher } = useSelector(state => state.course);
-  const { isLoading, teacherClaims } = useSelector(state => state.claim);
-  
-
+ 
   return (
     <VerticallyFlexGapContainer style={{ gap: '20px' }}>
       <Helmet>
