@@ -242,7 +242,7 @@ const ClaimDetails = () => {
             {selectedClaimCourseLecturer.comment && <ClaimDetailsItem>
               <label>Lecturer comment:</label>
               <p>{selectedClaimCourse.lecturer.comment}</p> 
-            </ClaimDetailsItem>}
+            </ClaimDetailsItem>}            
             {selectedClaim.examPermit && <ClaimDetailsItem>
                 <label>Exam permit card:</label>
                 <AttachmentFile>
@@ -264,11 +264,18 @@ const ClaimDetails = () => {
                 <a href={`${serverUrl}/api/v1/ssmec/uploads/${selectedClaim.proofOfClaimPayment}`}>Claim payment</a>
               </AttachmentFile>
             </ClaimDetailsItem>}
+            {selectedClaim.attachment && <ClaimDetailsItem>
+              <label>Attendance list:</label>
+              <AttachmentFile>
+                <GrAttachment />
+                <a href={`${serverUrl}/api/v1/ssmec/uploads/${selectedClaim.attachment}`}>Attendance list</a>
+              </AttachmentFile>
+            </ClaimDetailsItem>}
           </div>
           
           
           <form className='last' onSubmit={handleClaimUpdates}>
-            {selectedClaimHodSignature.signature && <ClaimDetailsItem>
+            {selectedClaimHodSignature.signature !== 'None' && <ClaimDetailsItem>
               <label>Head of department's signature</label>
               <p>{selectedClaimHodSignature.signature}</p>  
             </ClaimDetailsItem>}
@@ -277,7 +284,7 @@ const ClaimDetails = () => {
               <p>{selectedClaimHodSignature.comment}</p>  
             </ClaimDetailsItem>}
 
-            {selectedClaimAccountantSignature.signature && <ClaimDetailsItem>
+            {selectedClaimAccountantSignature.signature !== 'None' && <ClaimDetailsItem>
               <label>Accountant's signature</label>
               <p>{selectedClaimAccountantSignature.signature}</p>  
             </ClaimDetailsItem>}
@@ -286,7 +293,7 @@ const ClaimDetails = () => {
               <p>{selectedClaimAccountantSignature.comment}</p>  
             </ClaimDetailsItem>}
 
-            {selectedClaimDeanOfStudentsSignature.signature && <ClaimDetailsItem>
+            {selectedClaimDeanOfStudentsSignature.signature !== 'None' && <ClaimDetailsItem>
               <label>Dean of Student's signature</label>
               <p>{selectedClaimDeanOfStudentsSignature.signature}</p>  
             </ClaimDetailsItem>}
@@ -295,7 +302,7 @@ const ClaimDetails = () => {
               <p>{selectedClaimDeanOfStudentsSignature.comment}</p>  
             </ClaimDetailsItem>}
 
-            {selectedClaimRegistrationOfficerSignature.signature && <ClaimDetailsItem>
+            {selectedClaimRegistrationOfficerSignature.signature !== 'None' && <ClaimDetailsItem>
               <label>Registration office signature</label>
               <p>{selectedClaimRegistrationOfficerSignature.signature}</p>  
             </ClaimDetailsItem>}
@@ -304,7 +311,7 @@ const ClaimDetails = () => {
               <p>{selectedClaimRegistrationOfficerSignature.comment}</p>  
             </ClaimDetailsItem>}
 
-            {selectedClaimExaminationOfficerSignature.signature && <ClaimDetailsItem>
+            {selectedClaimExaminationOfficerSignature.signature !== 'None' && <ClaimDetailsItem>
               <label>Examination officer's signature</label>
               <p>{selectedClaimExaminationOfficerSignature.signature}</p>  
             </ClaimDetailsItem>}
@@ -312,7 +319,7 @@ const ClaimDetails = () => {
               <label>Examination officer's Comment:</label>
               <p>{selectedClaimExaminationOfficerSignature.comment}</p>  
             </ClaimDetailsItem>}
-            
+
             <h3>Update</h3>
             <FormElement>
               <label htmlFor="examPermit">Upload exam permit card</label>

@@ -285,7 +285,7 @@ const ClaimDetails = () => {
             </ClaimDetailsItem>
             <FormElement>
               <label htmlFor="comment">Comment</label>
-              <textarea id='comment' name='comment' value={comment} onChange={handleComment}></textarea>
+              <textarea id='comment' name='comment' placeholder='Add comment' value={comment} onChange={handleComment}></textarea>
             </FormElement>
             {isProcessing 
               ? <Button disabled variant="contained" color="primary" size="small">PROCESSING...</Button> 

@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom"
-import { FormElement, HeaderOne, HeaderTwo, HorizontallyFlexSpaceBetweenContainer, VerticallyFlexGapContainer, VerticallyFlexGapForm, VerticallyFlexSpaceBetweenContainer } from "../../../components/styles/GenericStyles"
+import { FormElement, HeaderTwo, HorizontallyFlexSpaceBetweenContainer, VerticallyFlexGapContainer, VerticallyFlexGapForm } from "../../../components/styles/GenericStyles"
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
 const serverUrl = import.meta.env.VITE_REACT_APP_SERVERURL;

@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom"
-import { FormElement, HeaderTwo, HorizontallyFlexSpaceBetweenContainer, VerticallyFlexGapContainer, VerticallyFlexGapForm, VerticallyFlexSpaceBetweenContainer } from "../../../components/styles/GenericStyles"
+import { FormElement, HeaderTwo, HorizontallyFlexSpaceBetweenContainer, VerticallyFlexGapContainer, VerticallyFlexGapForm } from "../../../components/styles/GenericStyles"
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
 const serverUrl = import.meta.env.VITE_REACT_APP_SERVERURL;
@@ -37,7 +37,7 @@ const ForgotPassword = () => {
             setResponseMessage({message: 'Password changed' , severity: 'success'});
             setOpen(true);
             setTimeout(() => {
-              window.location.replace('/auth/signin');
+              window.location.replace('/hod/auth/signin');
             },2000);
           }
         }, 3000)

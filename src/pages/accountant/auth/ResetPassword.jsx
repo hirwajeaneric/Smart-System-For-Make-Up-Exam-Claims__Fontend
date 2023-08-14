@@ -1,9 +1,8 @@
-import { Link, useParams } from "react-router-dom"
-import { FormElement, HeaderOne, HeaderTwo, HorizontallyFlexSpaceBetweenContainer, VerticallyFlexGapContainer, VerticallyFlexGapForm, VerticallyFlexSpaceBetweenContainer } from "../../../components/styles/GenericStyles"
+import { useParams } from "react-router-dom"
+import { FormElement, HeaderTwo, HorizontallyFlexSpaceBetweenContainer, VerticallyFlexGapContainer, VerticallyFlexGapForm } from "../../../components/styles/GenericStyles"
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
 const serverUrl = import.meta.env.VITE_REACT_APP_SERVERURL;
-import { useCookies } from 'react-cookie';
 import { GeneralContext } from "../../../App";
 import { Button } from "@mui/material";
 import { useContext, useState } from "react";
@@ -12,7 +11,6 @@ import { Helmet } from "react-helmet-async";
 
 const ForgotPassword = () => {
   const params = useParams();
-  const [ cookies, setCookie, removeCookie ] = useCookies(null);
   const { setOpen, setResponseMessage } = useContext(GeneralContext);
     
   const [isProcessing, setIsProcessing] = useState(false);
@@ -31,7 +29,7 @@ const ForgotPassword = () => {
       }
 
       setIsProcessing(true);
-      axios.put(serverUrl+'/api/v1/mmpas/user/resetPassword?id='+params.userId, {password: data.password}, config)
+      axios.put(serverUrl+'/api/v1/ssmec/user/resetPassword?id='+params.userId, {password: data.password}, config)
       .then(response => {
         setTimeout(() => {
           if (response.status === 200) {

@@ -60,65 +60,39 @@ const ClaimDetails = () => {
   const handleClaimUpdates = (e) => {
     e.preventDefault();
 
-    // Attaching lecture claim updates to the existing claim
     var updatedClaim = lodash.cloneDeep(claim); // Create a deep copy of claim
 
-
-    if (!signature && !attachment) {
+    if (!signature && !comment) {
       setResponseMessage({ message: 'No modifications to update', severity:'warning'})
       setOpen(true);
     }
 
-    let teacher = {};
-    var url = '';
-    var config = {};
+    let hod = {};
 
     if (signature === 'Signed') {
-      teacher.signature = 'Signed';
+      hod.signature = 'Signed';
     } else if (signature === 'Rejected') {
       teacher.signature = 'Rejected';
     }
 
     if (comment) {
-      teacher.comment = comment;
-      url = `${serverUrl}/api/v1/ssmec/claim/update?id=${params.claimId}`
+      hod.comment = comment;
     }
 
     if (signature) {
-      teacher.id = user.id;
-      teacher.name = user.fullName;
-      teacher.dateOfSignature = new Date().toUTCString();
-      url = `${serverUrl}/api/v1/ssmec/claim/update?id=${params.claimId}`
+      hod.dateOfSignature = new Date().toUTCString();
     }
 
-    if (attachment || (attachment && signature)) {
-      updatedClaim.attachment = attachment;
-      url = `${serverUrl}/api/v1/ssmec/claim/updateWithAttachment?id=${params.claimId}`
-    }
-
-    if (!attachment) {
-      config = {}
-    } else {
-      config = {
-        headers: { "Content-Type":"multipart/form-data" }
-      } 
-    }
-
-    updatedClaim.courses[0].lecturer = teacher;
+    updatedClaim.hodDeanSignature = hod;
     delete updatedClaim._id;
     delete updatedClaim.__v;
     
-    console.log(updatedClaim.courses[0].lecturer);
-
-    console.log(updatedClaim);
-    console.log(url);
-    console.log(config);
-
+    console.log(updatedClaim.hodDeanSignature);
 
     setIsProcessing(true);
 
     // Executing the claim update
-    axios.put(url, updatedClaim, config)
+    axios.put(`${serverUrl}/api/v1/ssmec/claim/update?id=${params.claimId}`, updatedClaim)
     .then(response => {
       if (response.status === 200) {
         setIsProcessing(false);
@@ -335,7 +309,7 @@ const ClaimDetails = () => {
             </ClaimDetailsItem>
             <FormElement>
               <label htmlFor="comment">Comment</label>
-              <textarea id='comment' name='comment' value={comment} onChange={handleComment}></textarea>
+              <textarea id='comment' name='comment' placeholder='Add comment' value={comment} onChange={handleComment}></textarea>
             </FormElement>
             {isProcessing 
               ? <Button disabled variant="contained" color="primary" size="small">PROCESSING...</Button> 
