@@ -1,27 +1,22 @@
-import { Link, Outlet, useNavigate } from "react-router-dom";
-import { DashboardInnerContainer, DashboardMainContainer, SideBarMenuItem, SideBarMenueContainer, SideNavigationBar, TopNavigationBar } from "../../components/styles/DashboardStructureStyles"
-import { HorizontallyFlexGapContainer, VerticallyFlexGapContainer, VerticallyFlexSpaceBetweenContainer } from "../../components/styles/GenericStyles"
-import { MdHome, MdMenu, MdNotifications, MdPropaneTank } from 'react-icons/md';
-import { RiPlantFill, RiUser2Fill, RiUser3Fill, RiUser4Fill } from 'react-icons/ri';
-import { TiUser } from 'react-icons/ti';
-import { GiFarmer } from 'react-icons/gi';
-import { HiOfficeBuilding } from 'react-icons/hi';
-import { FaUserAlt } from 'react-icons/fa';
+import { Link, NavLink, Outlet, useNavigate, useParams } from "react-router-dom";
+import { DashboardInnerContainer, DashboardMainContainer, TopNavigationBar, SecondaryMenue } from "../../components/styles/DashboardStructureStyles"
+import { VerticallyFlexGapContainer, VerticallyFlexSpaceBetweenContainer } from "../../components/styles/GenericStyles"
 import Avatar from "@mui/material/Avatar"; 
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { Divider, IconButton, ListItemIcon, Tooltip } from "@mui/material";
-import { useState } from "react";
-import { Logout, PersonAdd, Settings } from "@mui/icons-material";
-import { useCookies } from "react-cookie";
-import { useSelector } from "react-redux";
+import { useEffect, useState } from "react";
+import { Logout, Settings } from "@mui/icons-material";
+import { useDispatch, useSelector } from "react-redux";
 import { getSimpleCapitalizedChars } from "../../utils/HelperFunctions";
+import { getAllCourses } from "../../redux/features/courseSlice";
+import { getDepartmentClaims } from "../../redux/features/claimSlice";
 
 const DashboardMain = () => {
-    const [ cookies, setCookie, removeCookie ] = useCookies(null);
     const [anchorEl, setAnchorEl] = useState(null);
     const navigate = useNavigate();
-    const [fullSize, setFullSize] = useState(false);
+    const dispatch = useDispatch();
+    const params = useParams();
     const open = Boolean(anchorEl);
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
@@ -29,46 +24,39 @@ const DashboardMain = () => {
     const handleClose = () => {
         setAnchorEl(null);
     };
+    const [user, setUser] = useState({});
 
-    // const user = cookies.UserData;      
-    const user = {
-        fullName: 'Impuhwe Stella',
-        userRole: 'rab-admin',
-        email: 'impuhwe@gmail.com'
-    }
+    useEffect(() => {
+        let user = JSON.parse(localStorage.getItem('accData')); 
+        setUser(user);
+        dispatch(getAllCourses());
+        dispatch(getDepartmentClaims({ token: user.token, department: user.department }));
+    },[dispatch]);      
 
     const signout = () => {
-        removeCookie('AuthToken');
-        removeCookie('UserData');
-        navigate('/rab/auth/signin')
+        localStorage.removeItem('accToken');
+        localStorage.removeItem('accData');
+        navigate('/accountant/auth/signin');
     }
 
-    const { isLoading: loadingManure, manureProductionOnCountryLevel, amountOfManureProductionOnCountryLevel } = useSelector(state => state.manure);
-    const { isLoading: loadingMilk, milkProductionOnCountryLevel, amountOfMilkProductionOnCountryLevel } = useSelector(state => state.milk);
-    const { isLoading: loadingMccs, allMCCs, numberOfAllMCCs } = useSelector(state => state.mcc);
-    const { isLoading: loadingUsers, allMccEmployees, numberOfAllMccEmployees } = useSelector(state => state.user);
-    
+    const { } = useSelector(state => state.course)
 
     return (
-        <VerticallyFlexSpaceBetweenContainer style={{ backgroundColor: '#e0ebeb' }}>
+        <VerticallyFlexSpaceBetweenContainer>
             <TopNavigationBar>
-                <div className="left">
-                    <MdMenu style={{ cursor: 'pointer' }} onClick={() => setFullSize(!fullSize)}/>
-                    <Link to='/'>MMPAs</Link>
-                    <h3>RAB Official</h3>
-                </div>    
+                <Link to={`/accountant/${params.name}/`}><img src="/ssmec-logo-2.2.png" alt="" /></Link>  
                 <div className="right">
-                    <MdNotifications style={{ fontSize: '150%', color: 'gray'}} />
+                    {/* <MdNotifications style={{ fontSize: '150%', color: 'gray'}} /> */}
                     <Tooltip title="Account settings">
                         <IconButton
                             onClick={handleClick}
                             size="small"
-                            sx={{ ml: 2, background: 'white' }}
+                            sx={{ ml: 2, background: '#0063ab' }}
                             aria-controls={open ? 'account-menu' : undefined}
                             aria-haspopup="true"
                             aria-expanded={open ? 'true' : undefined}
                         >
-                            <Avatar sx={{ width: 32, height: 32, background: 'black' }}>{getSimpleCapitalizedChars(user.fullName)}</Avatar>
+                            <Avatar sx={{ width: 32, height: 32 }}>{getSimpleCapitalizedChars(JSON.parse(localStorage.getItem('accData')).fullName)}</Avatar>
                         </IconButton>
                     </Tooltip>
                 </div>
@@ -108,24 +96,15 @@ const DashboardMain = () => {
                     anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
                 >
                     <MenuItem onClick={handleClose} style={{ display:'flex', flexDirection:'row', alignItems:'flex-start' }}>
-                    <Avatar sx={{ width: 32, height: 32 }}>{getSimpleCapitalizedChars(user.fullName)}</Avatar>
+                    <Avatar sx={{ width: 32, height: 32 }}>{getSimpleCapitalizedChars(JSON.parse(localStorage.getItem('accData')).fullName)}</Avatar>
                         <VerticallyFlexGapContainer style={{ justifyContent:'flex-start', alignItems:'flex-start', gap: '5px' }}>
                             <p>{user.fullName}</p>
-                            <p style={{ color: '#26734d', fontWeight:'700', fontSize:'90%' }}>{user.userRole}</p>
+                            <p style={{ color: 'blue', fontWeight:'700', fontSize:'90%' }}>{user.role}</p>
                             <p style={{ color: 'gray', fontSize:'90%' }}>{user.email}</p>
                         </VerticallyFlexGapContainer>
                     </MenuItem>
-                    {/* <MenuItem onClick={handleClose}>
-                        <Avatar /> My account
-                    </MenuItem> */}
                     <Divider />
-                    {/* <MenuItem onClick={handleClose}>
-                        <ListItemIcon>
-                            <PersonAdd fontSize="small" />
-                        </ListItemIcon>
-                        Add another account
-                    </MenuItem> */}
-                    <MenuItem onClick={() => {navigate('/rab/settings'); handleClose();}}>
+                    <MenuItem onClick={() => {navigate(`/hod/${user.departmentLink}/settings`); handleClose();}}>
                         <ListItemIcon>
                             <Settings fontSize="small" />
                         </ListItemIcon>Settings
@@ -139,73 +118,21 @@ const DashboardMain = () => {
             </TopNavigationBar> 
 
 
-            <HorizontallyFlexGapContainer style={{ position: 'relative' }}>                
-                <SideNavigationBar style={{ width: fullSize ? '5%' : '20%' }}>
-                    <SideBarMenueContainer>
-                        <SideBarMenuItem to={'dashboard'}>
-                            <MdHome style={{ width: fullSize ? '100%' : '20%'}}/>
-                            <div style={{ width: fullSize ? '0%' : '80%'}} className="nav-data">
-                                {!fullSize && <span className="text">Dashboard</span>}
-                            </div>
-                        </SideBarMenuItem>
-                        <SideBarMenuItem to={'production/milk'}>
-                            <MdPropaneTank style={{ width: fullSize ? '100%' : '20%'}}/>
-                            <div style={{ width: fullSize ? '0%' : '80%'}} className="nav-data">
-                            {!fullSize && <>
-                                <span className="text">Production</span>
-                                {/* <span className="number">{numberOfProjects}</span> */}
-                                </>
-                            }
-                            </div>
-                        </SideBarMenuItem>
-                        {/* <SideBarMenuItem to={'resources'}>
-                            <RiPlantFill style={{ width: fullSize ? '100%' : '20%'}}/>
-                            <div style={{ width: fullSize ? '0%' : '80%'}} className="nav-data">
-                            {!fullSize && <><span className="text">Manure</span></>}
-                            </div>
-                        </SideBarMenuItem> */}
-                        <SideBarMenuItem to={'mccs'}>
-                            <HiOfficeBuilding style={{ width: fullSize ? '100%' : '20%'}}/>
-                            <div style={{ width: fullSize ? '0%' : '80%'}} className="nav-data">
-                            {!fullSize && <><span className="text">MCCs</span></>}
-                            </div>
-                        </SideBarMenuItem>
-                        <SideBarMenuItem to={'employees'}>
-                            <RiUser2Fill style={{ width: fullSize ? '100%' : '20%'}}/>
-                            <div style={{ width: fullSize ? '0%' : '80%'}} className="nav-data">
-                            {!fullSize && <><span className="text">MCC Registers</span></>}
-                            </div>
-                        </SideBarMenuItem>
-                        <SideBarMenuItem to={'veterinaries'}>
-                            <RiUser3Fill style={{ width: fullSize ? '100%' : '20%'}}/>
-                            <div style={{ width: fullSize ? '0%' : '80%'}} className="nav-data">
-                            {!fullSize && <><span className="text">Veterinaries</span></>}
-                            </div>
-                        </SideBarMenuItem>
-                        <SideBarMenuItem to={'farmers'}>
-                            <GiFarmer style={{ width: fullSize ? '100%' : '20%'}}/>
-                            <div style={{ width: fullSize ? '0%' : '80%'}} className="nav-data">
-                            {!fullSize && <><span className="text">Farmers</span></>}
-                            </div>
-                        </SideBarMenuItem>
-                        <SideBarMenuItem to={'settings'}>
-                            <RiUser4Fill style={{ width: fullSize ? '100%' : '20%'}}/>
-                            <div style={{ width: fullSize ? '0%' : '80%'}} className="nav-data">
-                            {!fullSize && <span className="text">My account</span>}
-                            </div>
-                        </SideBarMenuItem>                    
-                    </SideBarMenueContainer>
-                </SideNavigationBar>
-                
-
-
-                <DashboardMainContainer  style={{ width: fullSize ? '95%' : '80%' }}>
+            <VerticallyFlexGapContainer style={{ position: 'relative' }}>
+                <SecondaryMenue>
+                    <NavLink to={'home'}>Home</NavLink>
+                    {/* <NavLink to={'courses'}>Courses</NavLink> */}
+                    {/* <NavLink to={'lecturers'}>Lecturers</NavLink> */}
+                    {/* <NavLink to={'claims'}>Claims</NavLink> */}
+                    <NavLink to={'settings'}>{params.name}</NavLink>
+                </SecondaryMenue>
+                <DashboardMainContainer>
                     <DashboardInnerContainer>
                         <Outlet />
                     </DashboardInnerContainer>
                 </DashboardMainContainer>
 
-            </HorizontallyFlexGapContainer>
+            </VerticallyFlexGapContainer>
         </VerticallyFlexSpaceBetweenContainer>
     )
 }
