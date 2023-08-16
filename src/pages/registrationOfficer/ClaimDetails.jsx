@@ -79,8 +79,6 @@ const ClaimDetails = () => {
     updatedClaim.registrationOfficerSignature = reg;
     delete updatedClaim._id;
     delete updatedClaim.__v;
-    
-    console.log(updatedClaim.registrationOfficerSignature);
 
     setIsProcessing(true);
 
@@ -125,7 +123,7 @@ const ClaimDetails = () => {
   return (
     <VerticallyFlexGapContainer style={{ gap: '20px' }}>
       <Helmet>
-        <title>Accountant - Claim details</title>
+        <title>Registration Officer - Claim details</title>
         <meta name="description" content={`More claim details.`} /> 
       </Helmet>
       <VerticallyFlexGapContainer style={{ gap: '20px', alignItems: 'flex-start' }}>

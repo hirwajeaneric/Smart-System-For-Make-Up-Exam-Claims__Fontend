@@ -1,9 +1,8 @@
-import { Link, useNavigate } from "react-router-dom"
-import { FormElement, HeaderOne, HeaderTwo, HorizontallyFlexGapContainer, HorizontallyFlexSpaceBetweenContainer, VerticallyFlexGapContainer, VerticallyFlexGapForm, VerticallyFlexSpaceBetweenContainer } from "../../../components/styles/GenericStyles"
+import { Link } from "react-router-dom"
+import { FormElement, HeaderTwo, HorizontallyFlexGapContainer, HorizontallyFlexSpaceBetweenContainer, VerticallyFlexGapContainer, VerticallyFlexGapForm } from "../../../components/styles/GenericStyles"
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
 const serverUrl = import.meta.env.VITE_REACT_APP_SERVERURL;
-import { useCookies } from 'react-cookie';
 import { GeneralContext } from "../../../App";
 import { Button } from "@mui/material";
 import { useContext, useState } from "react";
@@ -11,8 +10,6 @@ import { AuthenticationFormContainer } from "../../../components/styles/Authenti
 import { Helmet } from "react-helmet-async";
 
 const Signup = () => {
-  const navigate = useNavigate();
-  const [ cookies, setCookie, removeCookie ] = useCookies(null);
   const { setOpen, setResponseMessage } = useContext(GeneralContext);
     
   const [isProcessing, setIsProcessing] = useState(false);
@@ -25,22 +22,19 @@ const Signup = () => {
       return;
     } else {
 
-      data.userRole = 'rab-admin';
+      data.role = 'Examination Officer';
       setIsProcessing(true);
 
-      axios.post(serverUrl+'/api/v1/mmpas/user/signup', data)
+      axios.post(serverUrl+'/api/v1/ssmec/user/signup', data)
       .then(response => {
         setTimeout(() => {
+          setIsProcessing(false);
+          setResponseMessage({ message: response.data.message, severity:'success'})
+          setOpen(true);
           if (response.status === 201) {
-            setIsProcessing(false);
-            setCookie('AuthToken', response.data.user.token);
-            setCookie('UserData', JSON.stringify(response.data.user));
-            
-            console.log(response.data.user);
-
-            window.location.replace('/examinationoffice/complete-account/');
+            window.location.replace(`/examinationoffice/auth/signin`);
           }
-        }, 3000)
+        }, 2000)
       })
       .catch(error => {
         if (error.response && error.response.status >= 400 && error.response.status <= 500) {
@@ -55,13 +49,13 @@ const Signup = () => {
   return (
     <HorizontallyFlexSpaceBetweenContainer style={{ justifyContent: 'center', alignItems: 'center' }}>
       <Helmet>
-        <title>Examination Office - Create account</title>
-        <meta name="description" content={`Create an account as an examination officer.`} /> 
+        <title>Examination Officer - Create account</title>
+        <meta name="description" content={`Create an account as a examination officer.`} /> 
       </Helmet>
-      <AuthenticationFormContainer style={{ borderBottom: '6px solid gray',gap: '30px', position: 'relative', boxShadow: 'rgba(0, 0, 0, 0.05) 0 6px 24px, rgba(0, 0, 0, 0.08) 0 5px 12px 1px' }}>
+      <AuthenticationFormContainer style={{ borderBottom: '6px solid cyan',gap: '30px', position: 'relative', boxShadow: 'rgba(0, 0, 0, 0.05) 0 6px 24px, rgba(0, 0, 0, 0.08) 0 5px 12px 1px' }}>
         <VerticallyFlexGapContainer style={{ gap: '10px' }}>
           <img style={{ width: '90%', marginBottom: '20px' }} src="/ssmec-logo-2.png" alt=""/>
-          <span style={{ color: 'black', fontWeight: '600' }}>Examination Office</span>
+          <span style={{ color: 'black', fontWeight: '600' }}>Examination Officer</span>
           <HeaderTwo style={{ fontWeight: '600', color: '#476b6b' }}>Sign Up to the Platform </HeaderTwo>
         </VerticallyFlexGapContainer>
 
@@ -80,20 +74,36 @@ const Signup = () => {
               <p role="alert">Full name is required</p>
             )}
           </FormElement>
-          <FormElement style={{ color: 'gray' }}>
-            <label htmlFor="email">Email address</label>
-            <input 
-              type="email" 
-              id="email"
-              placeholder="email" 
-              {...register("email", 
-              {required: true})} 
-              aria-invalid={errors.email ? "true" : "false"}
-            />
-            {errors.email?.type === "required" && (
-              <p role="alert">Email is required</p>
-            )}
-          </FormElement>  
+          <HorizontallyFlexGapContainer style={{ gap: '10px' }}>
+            <FormElement style={{ color: 'gray' }}>
+              <label htmlFor="email">Email address</label>
+              <input 
+                type="email" 
+                id="email"
+                placeholder="email" 
+                {...register("email", 
+                {required: true})} 
+                aria-invalid={errors.email ? "true" : "false"}
+              />
+              {errors.email?.type === "required" && (
+                <p role="alert">Email is required</p>
+              )}
+            </FormElement>
+            <FormElement style={{ color: 'gray' }}>
+              <label htmlFor="phone">Phone number</label>
+              <input 
+                type="text" 
+                id="phone"
+                placeholder="phone" 
+                {...register("phone", 
+                {required: true})} 
+                aria-invalid={errors.phone ? "true" : "false"}
+              />
+              {errors.phone?.type === "required" && (
+                <p role="alert">Phone number is required</p>
+              )}
+            </FormElement>
+          </HorizontallyFlexGapContainer>  
           <HorizontallyFlexGapContainer style={{ gap: '10px' }}>
             <FormElement style={{ color: 'gray' }}>
               <label htmlFor="password">Password</label>

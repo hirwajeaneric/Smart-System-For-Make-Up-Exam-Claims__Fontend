@@ -125,7 +125,7 @@ const ClaimDetails = () => {
   return (
     <VerticallyFlexGapContainer style={{ gap: '20px' }}>
       <Helmet>
-        <title>Accountant - Claim details</title>
+        <title>Dean of Students - Claim details</title>
         <meta name="description" content={`More claim details.`} /> 
       </Helmet>
       <VerticallyFlexGapContainer style={{ gap: '20px', alignItems: 'flex-start' }}>
