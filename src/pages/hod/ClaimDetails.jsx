@@ -72,7 +72,7 @@ const ClaimDetails = () => {
     if (signature === 'Signed') {
       hod.signature = 'Signed';
     } else if (signature === 'Rejected') {
-      teacher.signature = 'Rejected';
+      hod.signature = 'Rejected';
     }
 
     if (comment) {
