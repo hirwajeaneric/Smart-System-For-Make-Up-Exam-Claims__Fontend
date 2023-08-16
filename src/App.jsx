@@ -371,7 +371,7 @@ function App() {
 
 
           {/* REGISTRATION OFFICER pages //////////////////////////////////////////////////////////////////////////////////////////////////////// */}
-          <Route path='/registration/auth/' element={<RegistrationAuth />}>
+          <Route path='/registration/auth' element={<RegistrationAuth />}>
             <Route path='signin' element={<RegistrationSignin />} />
             <Route path='signup' element={<RegistrationSignup />} />
             <Route path='forgot-password' element={<RegistrationForgotPassword />} />
