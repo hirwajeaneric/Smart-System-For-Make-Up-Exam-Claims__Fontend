@@ -76,11 +76,11 @@ const ClaimDetails = () => {
       reg.dateOfSignature = new Date().toUTCString();
     }
 
-    updatedClaim.deanOfStudentsSignature = reg;
+    updatedClaim.registrationOfficerSignature = reg;
     delete updatedClaim._id;
     delete updatedClaim.__v;
     
-    console.log(updatedClaim.deanOfStudentsSignature);
+    console.log(updatedClaim.registrationOfficerSignature);
 
     setIsProcessing(true);
 

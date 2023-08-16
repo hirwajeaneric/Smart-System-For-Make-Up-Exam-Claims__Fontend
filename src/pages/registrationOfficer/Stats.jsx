@@ -12,7 +12,7 @@ const Stats = () => {
     setUser(user);
   },[]);
 
-  const { isLoading, examinationOfficerClaims } = useSelector(state => state.claim);
+  const { isLoading, registrationOfficeClaims } = useSelector(state => state.claim);
  
   return (
     <VerticallyFlexGapContainer style={{ gap: '20px' }}>
@@ -25,7 +25,7 @@ const Stats = () => {
           <>
             <HeaderTwo style={{ width: '100%', textAlign: 'left' }}>{`Welcome ${user.fullName}`}</HeaderTwo>
             <h3 style={{ width: '100%', textAlign: 'left' }}>{`Claims`}</h3>
-            <RegistrationOfficersClaimsTable data={examinationOfficerClaims} />
+            <RegistrationOfficersClaimsTable data={registrationOfficeClaims} />
           </>  
         }
       </VerticallyFlexGapContainer>
