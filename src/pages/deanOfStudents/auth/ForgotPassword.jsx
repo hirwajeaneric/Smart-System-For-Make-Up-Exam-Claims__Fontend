@@ -1,9 +1,8 @@
 import { Link } from "react-router-dom"
-import { FormElement, HeaderOne, HeaderTwo, HorizontallyFlexSpaceBetweenContainer, VerticallyFlexGapContainer, VerticallyFlexGapForm, VerticallyFlexSpaceBetweenContainer } from "../../../components/styles/GenericStyles"
+import { FormElement, HeaderTwo, HorizontallyFlexSpaceBetweenContainer, VerticallyFlexGapContainer, VerticallyFlexGapForm } from "../../../components/styles/GenericStyles"
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
 const serverUrl = import.meta.env.VITE_REACT_APP_SERVERURL;
-import { useCookies } from 'react-cookie';
 import { GeneralContext } from "../../../App";
 import { Button } from "@mui/material";
 import { useContext, useState } from "react";
@@ -11,7 +10,6 @@ import { AuthenticationFormContainer } from "../../../components/styles/Authenti
 import { Helmet } from "react-helmet-async";
 
 const ForgotPassword = () => {
-  const [ cookies, setCookie, removeCookie ] = useCookies(null);
   const { setOpen, setResponseMessage } = useContext(GeneralContext);
     
   const [isProcessing, setIsProcessing] = useState(false);
@@ -21,7 +19,7 @@ const ForgotPassword = () => {
     
     
     setIsProcessing(true);
-    axios.post(serverUrl+'/api/v1/mmpas/user/requestPasswordReset', data)
+    axios.post(serverUrl+'/api/v1/ssmec/user/requestPasswordReset', data)
     .then(response => {
       setTimeout(() => {
         if (response.status === 200) {
@@ -49,7 +47,7 @@ const ForgotPassword = () => {
         <title>Dean of Students - Forgot password</title>
         <meta name="description" content={`Forgot password.`} /> 
       </Helmet>
-      <AuthenticationFormContainer style={{ borderBottom: '6px solid orange',gap: '30px', position: 'relative', boxShadow: 'rgba(0, 0, 0, 0.05) 0 6px 24px, rgba(0, 0, 0, 0.08) 0 5px 12px 1px' }}>
+      <AuthenticationFormContainer style={{ borderBottom: '6px solid cyan',gap: '30px', position: 'relative', boxShadow: 'rgba(0, 0, 0, 0.05) 0 6px 24px, rgba(0, 0, 0, 0.08) 0 5px 12px 1px' }}>
         <VerticallyFlexGapContainer style={{ gap: '10px' }}>
           <img style={{ width: '90%', marginBottom: '20px' }} src="/ssmec-logo-2.png" alt=""/>
           <span style={{ color: 'black', fontWeight: '600' }}>Dean of Students</span>

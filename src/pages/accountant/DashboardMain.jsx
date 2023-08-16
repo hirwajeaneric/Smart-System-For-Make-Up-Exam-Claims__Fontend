@@ -104,7 +104,7 @@ const DashboardMain = () => {
                         </VerticallyFlexGapContainer>
                     </MenuItem>
                     <Divider />
-                    <MenuItem onClick={() => {navigate(`/hod/${user.departmentLink}/settings`); handleClose();}}>
+                    <MenuItem onClick={() => {navigate(`/accountant/${user.departmentLink}/settings`); handleClose();}}>
                         <ListItemIcon>
                             <Settings fontSize="small" />
                         </ListItemIcon>Settings

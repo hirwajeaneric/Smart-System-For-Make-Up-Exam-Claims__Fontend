@@ -361,6 +361,7 @@ function App() {
             <Route path='reset-password/:token/:userId' element={<DOSResetPassword />} />
           </Route>
           <Route path='/dos/:name' element={localStorage.getItem('dosToken') ? <DOSDashboardMain /> : <Navigate replace to={'/dos/auth/signin'} />}>
+            <Route path='' element={<DOSStats />} />
             <Route path='home' element={<DOSStats />} />
             <Route path='claims' element={<DOSClaims />} />
             <Route path='claims/:claimId' element={<DOSClaimDetails />} />
@@ -377,6 +378,7 @@ function App() {
             <Route path='reset-password/:token/:userId' element={<RegistrationResetPassword />} />
           </Route>
           <Route path='/registration/:name' element={localStorage.getItem('regToken') ? <RegistrationDashboardMain /> : <Navigate replace to={'/registration/auth/signin'} />}>
+            <Route path='' element={<RegistrationStats />} />
             <Route path='home' element={<RegistrationStats />} />
             <Route path='claims' element={<RegistrationClaims />} />
             <Route path='claims/:claimId' element={<RegistrationClaimDetails />} />
@@ -393,6 +395,7 @@ function App() {
             <Route path='reset-password/:token/:userId' element={<ExaminationResetPassword />} />
           </Route>
           <Route path='/examinationoffice/:name' element={localStorage.getItem('exoToken') ? <ExaminationDashboardMain /> : <Navigate replace to={'/examinationoffice/auth/signin'} />}>
+            <Route path='' element={<ExaminationStats />} />
             <Route path='home' element={<ExaminationStats />} />
             <Route path='claims' element={<ExaminationClaims />} />
             <Route path='claims/:claimId' element={<ExaminationClaimDetails />} />
