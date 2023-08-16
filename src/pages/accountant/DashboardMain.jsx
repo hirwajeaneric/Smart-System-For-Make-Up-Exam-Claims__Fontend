@@ -10,7 +10,7 @@ import { Logout, Settings } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
 import { getSimpleCapitalizedChars } from "../../utils/HelperFunctions";
 import { getAllCourses } from "../../redux/features/courseSlice";
-import { getDepartmentClaims } from "../../redux/features/claimSlice";
+import { getAccountantClaims, getDepartmentClaims } from "../../redux/features/claimSlice";
 
 const DashboardMain = () => {
     const [anchorEl, setAnchorEl] = useState(null);
@@ -30,7 +30,7 @@ const DashboardMain = () => {
         let user = JSON.parse(localStorage.getItem('accData')); 
         setUser(user);
         dispatch(getAllCourses());
-        dispatch(getDepartmentClaims({ token: user.token, department: user.department }));
+        dispatch(getAccountantClaims({ token: user.token }));
     },[dispatch]);      
 
     const signout = () => {

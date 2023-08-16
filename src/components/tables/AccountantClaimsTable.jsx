@@ -1,6 +1,6 @@
 import { DataGrid, GridToolbarContainer, GridToolbarExport } from '@mui/x-data-grid';
 import { Box, IconButton, Tooltip } from '@mui/material';
-import { MoreHoriz, Preview } from '@mui/icons-material';
+import { MoreHoriz } from '@mui/icons-material';
 import { useNavigate, useParams } from 'react-router-dom';
 
 const columns = [
@@ -55,7 +55,7 @@ export const TableStyles = {
 
 var rows = [];
 
-export default function HODClaimsTable({data}) {
+export default function AccountantClaimsTable({data}) {
   rows = data;
 
   return (
@@ -84,7 +84,7 @@ const TableActions = ({parameters}) => {
       <Tooltip title='View / Edit'>
         <IconButton 
           onClick={() => {
-             navigate(`/hod/${params.department}/claims/${parameters.row.id}`);
+             navigate(`/accountant/${params.name}/claims/${parameters.row.id}`);
           }}>
           <MoreHoriz />
         </IconButton>

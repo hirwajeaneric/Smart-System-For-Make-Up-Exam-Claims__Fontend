@@ -138,6 +138,12 @@ export const getAccountantClaims = createAsyncThunk(
                 }
             }
             const response = await axios.get(serverUrl+`/api/v1/ssmec/claim/findByPaid`, config);
+            response.data.claims.forEach((element) => {
+                element.id = element._id;
+                delete element.__v;
+                element.course = element.courses[0].courseName;
+                element.submitDate = new Date(element.submitDate).toUTCString()
+            });
             return response.data.claims;
         } catch (error) {
             return thunkAPI.rejectWithValue('Something went wrong!!');
@@ -156,6 +162,12 @@ export const getDeanOfStudentsClaims = createAsyncThunk(
                 }
             }
             const response = await axios.get(serverUrl+`/api/v1/ssmec/claim/findByAccountantSignature`, config);
+            response.data.claims.forEach((element) => {
+                element.id = element._id;
+                delete element.__v;
+                element.course = element.courses[0].courseName;
+                element.submitDate = new Date(element.submitDate).toUTCString()
+            });
             return response.data.claims;
         } catch (error) {
             return thunkAPI.rejectWithValue('Something went wrong!!');
@@ -174,6 +186,12 @@ export const getRegistrationOfficeClaims = createAsyncThunk(
                 }
             }
             const response = await axios.get(serverUrl+`/api/v1/ssmec/claim/findByDeanOfStudentSignature`, config);
+            response.data.claims.forEach((element) => {
+                element.id = element._id;
+                delete element.__v;
+                element.course = element.courses[0].courseName;
+                element.submitDate = new Date(element.submitDate).toUTCString()
+            });
             return response.data.claims;
         } catch (error) {
             return thunkAPI.rejectWithValue('Something went wrong!!');
@@ -192,6 +210,12 @@ export const getExaminationOfficeClaims = createAsyncThunk(
                 }
             }
             const response = await axios.get(serverUrl+`/api/v1/ssmec/claim/findByRegistrationOfficerSignature`, config);
+            response.data.claims.forEach((element) => {
+                element.id = element._id;
+                delete element.__v;
+                element.course = element.courses[0].courseName;
+                element.submitDate = new Date(element.submitDate).toUTCString()
+            });
             return response.data.claims;
         } catch (error) {
             return thunkAPI.rejectWithValue('Something went wrong!!');

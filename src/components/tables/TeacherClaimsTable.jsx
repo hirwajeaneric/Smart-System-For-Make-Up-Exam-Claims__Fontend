@@ -2,9 +2,6 @@ import { DataGrid, GridToolbarContainer, GridToolbarExport } from '@mui/x-data-g
 import { Box, IconButton, Tooltip } from '@mui/material';
 import { MoreHoriz, Preview } from '@mui/icons-material';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { useContext } from 'react';
-import { GeneralContext } from '../../App';
 
 const columns = [
   {
@@ -81,8 +78,6 @@ export default function TeacherClaimsTable({data}) {
 const TableActions = ({parameters}) => {
   const navigate = useNavigate();
   const params = useParams();
-  // const dispatch = useDispatch();
-  // const { setSelectedCourse } = useContext(GeneralContext);
 
   return (
     <Box>

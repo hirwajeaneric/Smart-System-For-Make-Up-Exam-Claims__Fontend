@@ -344,6 +344,7 @@ function App() {
             <Route path='reset-password/:token/:userId' element={<AccountantResetPassword />} />
           </Route>
           <Route path='/accountant/:name' element={localStorage.getItem('accToken') ? <AccountantDashboardMain /> : <Navigate replace to={'/accountant/auth/signin'} />}>
+            <Route path='' element={<AccountantStats />} />
             <Route path='home' element={<AccountantStats />} />
             <Route path='claims' element={<AccountantClaims />} />
             <Route path='claims/:claimId' element={<AccountantClaimDetails />} />
