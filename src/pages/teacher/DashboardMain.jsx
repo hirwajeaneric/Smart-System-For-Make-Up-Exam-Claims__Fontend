@@ -51,6 +51,7 @@ const DashboardMain = () => {
             <TopNavigationBar>
                 <Link to={`/teacher/${user.userName}/`}><img src="/ssmec-logo-2.2.png" alt="" /></Link>  
                 <div className="right">
+                    <p>{user.role}</p>
                     <Tooltip title="Account settings">
                         <IconButton
                             onClick={handleClick}

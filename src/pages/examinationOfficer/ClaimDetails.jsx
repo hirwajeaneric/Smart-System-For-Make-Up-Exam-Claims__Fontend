@@ -61,11 +61,14 @@ const ClaimDetails = () => {
     }
 
     let examinationOfficer = {};
+    let status = '';
 
     if (signature === 'Signed') {
       examinationOfficer.signature = 'Signed';
+      status = 'Confirmed';
     } else if (signature === 'Rejected') {
       examinationOfficer.signature = 'Rejected';
+      status = 'Rejected';
     }
 
     if (comment) {
@@ -77,6 +80,7 @@ const ClaimDetails = () => {
     }
 
     updatedClaim.examinationOfficerSignature = examinationOfficer;
+    updatedClaim.status = status;
     delete updatedClaim._id;
     delete updatedClaim.__v;
     

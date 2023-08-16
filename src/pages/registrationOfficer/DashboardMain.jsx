@@ -47,6 +47,7 @@ const DashboardMain = () => {
                 <Link to={`/registration/`}><img src="/ssmec-logo-2.2.png" alt="" /></Link>  
                 <div className="right">
                     {/* <MdNotifications style={{ fontSize: '150%', color: 'gray'}} /> */}
+                    <p>{user.role}</p>
                     <Tooltip title="Account settings">
                         <IconButton
                             onClick={handleClick}
