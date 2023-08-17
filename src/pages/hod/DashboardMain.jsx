@@ -11,6 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getSimpleCapitalizedChars } from "../../utils/HelperFunctions";
 import { getAllCourses } from "../../redux/features/courseSlice";
 import { getDepartmentClaims } from "../../redux/features/claimSlice";
+import { getNotificationsForUser } from "../../redux/features/notificationSlice";
 
 const DashboardMain = () => {
     const [anchorEl, setAnchorEl] = useState(null);
@@ -31,6 +32,7 @@ const DashboardMain = () => {
         setUser(user);
         dispatch(getAllCourses());
         dispatch(getDepartmentClaims({ token: user.token, department: user.department }));
+        dispatch(getNotificationsForUser({ role: 'Head of Department', department: user.department}))
     },[dispatch]);      
 
     const signout = () => {

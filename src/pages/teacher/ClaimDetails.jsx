@@ -121,10 +121,25 @@ const ClaimDetails = () => {
     axios.put(url, updatedClaim, config)
     .then(response => {
       if (response.status === 200) {
-        setIsProcessing(false);
-        setResponseMessage({ message: response.data.message, severity: 'success'});
-        setOpen(true);
-        window.location.reload();
+        // Sending notificatino to HOD If claim is signed
+        if (signature === 'Signed') {
+          axios.post(
+            `${serverUrl}/api/v1/ssemc/notification/add`, 
+            { 
+              subject: 'New claim', 
+              text: `New claim by ${updatedClaim.fullName}`, 
+              recipient: 'Head of Department', 
+              department: updatedClaim.department
+            }
+          );
+        };
+
+        setTimeout(() => {
+          setIsProcessing(false);
+          setResponseMessage({ message: response.data.message, severity: 'success'});
+          setOpen(true);
+          window.location.reload();
+        }, 1500);
       }
     })
     .catch(error => {

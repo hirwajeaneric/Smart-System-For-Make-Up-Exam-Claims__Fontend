@@ -3,6 +3,7 @@ import userReducers  from './features/userSlice';
 import courseReducers from './features/courseSlice';
 import registrationReducers from './features/registrationSlice';
 import claimReducers from './features/claimSlice';
+import notificationReducers from './features/notificationSlice';
 
 export const store = configureStore({
     reducer: {
@@ -10,5 +11,6 @@ export const store = configureStore({
         course: courseReducers,
         registration: registrationReducers,
         claim: claimReducers,
+        notification: notificationReducers,
     }
 })

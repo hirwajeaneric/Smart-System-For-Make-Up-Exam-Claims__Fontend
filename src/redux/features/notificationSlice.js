@@ -3,7 +3,10 @@ import axios from "axios";
 const serverUrl = import.meta.env.VITE_REACT_APP_SERVERURL;
 
 const initialState = {
-    notificationsForUser: [],
+    notificationsForUser: [{
+        text: 'New claim by Mukarugwiro Agnes',
+        createdOn: new Date().toDateString()
+    }],
     numberOfNotificationsForUser: 0,
     selectedNotification: {},
     isLoading: false,

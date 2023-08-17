@@ -12,7 +12,7 @@ const Stats = () => {
     setUser(user);
   },[]);
 
-  const { coursesForSelectedTeacher } = useSelector(state => state.course);
+  const { isLoading, teacherClaims } = useSelector(state => state.claim);
  
   return (
     <VerticallyFlexGapContainer style={{ gap: '20px' }}>

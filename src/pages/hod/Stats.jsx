@@ -3,6 +3,7 @@ import { Helmet } from 'react-helmet-async'
 import { useSelector } from 'react-redux'
 import { HeaderTwo, VerticallyFlexGapContainer } from '../../components/styles/GenericStyles'
 import HODClaimsTable from '../../components/tables/HODClaimsTable';
+import NoticationContainer from '../../components/NoticationContainer';
 
 const Stats = () => {
   const [user, setUser] = useState({});
@@ -13,6 +14,7 @@ const Stats = () => {
   },[]);
 
   const { isLoading, hodClaims } = useSelector(state => state.claim);
+  const { numberOfNotificationsForUser, notificationsForUser } = useSelector(state => state.notification);
  
   return (
     <VerticallyFlexGapContainer style={{ gap: '20px' }}>
@@ -23,6 +25,12 @@ const Stats = () => {
       <VerticallyFlexGapContainer style={{ gap: '20px'}}>
         {isLoading ?  <p>Loading... </p> :
           <>
+            {/* {numberOfNotificationsForUser > 0 && notificationsForUser.map((notification, index) => {
+              return (
+                <NoticationContainer key={index} notification={notification}/>
+              )
+            })} */}
+            <NoticationContainer />
             <HeaderTwo style={{ width: '100%', textAlign: 'left' }}>{`Welcome ${user.fullName}`}</HeaderTwo>
             <h3 style={{ width: '100%', textAlign: 'left' }}>{`Claims in ${user.department}`}</h3>
             <HODClaimsTable data={hodClaims} />
