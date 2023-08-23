@@ -122,7 +122,7 @@ const DashboardMain = () => {
             <VerticallyFlexGapContainer style={{ position: 'relative' }}>
                 <SecondaryMenue>
                     <NavLink to={'home'}>Home</NavLink>
-                    <NavLink to={'declare'}>Declare absence</NavLink>
+                    <NavLink to={'declare'}>New claim</NavLink>
                     {/* <NavLink to={'settings'}>{user.fullName}</NavLink> */}
                 </SecondaryMenue>
                 <DashboardMainContainer>

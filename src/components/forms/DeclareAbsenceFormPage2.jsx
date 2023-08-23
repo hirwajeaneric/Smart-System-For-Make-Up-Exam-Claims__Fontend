@@ -5,32 +5,9 @@ import { FormElement, HeaderTwo, HorizontallyFlexGapContainer, HorizontallyFlexS
 const serverUrl = import.meta.env.VITE_REACT_APP_SERVERURL;
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { getStudentClaims } from "../../redux/features/claimSlice";
 import { getAllCourses } from "../../redux/features/courseSlice";
-
-// FUNCTION TO CHECK IF A STUDENT CLAIMED INSIDE THE DESIGNATED CLAIMING PERIOD. *************************************
-function isWithinTimeRange(givenDate, designatedDate) {
-    // Parse the given dates into JavaScript Date objects
-    const givenDateTime = new Date(givenDate);
-    const designatedDateTime = new Date(designatedDate);
-  
-    // Check if the given date is after the designated date
-    if (givenDateTime > designatedDateTime) {
-      return false;
-    }
-  
-    // Calculate the time difference in milliseconds
-    const timeDifferenceMs = designatedDateTime - givenDateTime;
-  
-    // Calculate the time difference in hours
-    const timeDifferenceHours = timeDifferenceMs / (1000 * 60 * 60);
-  
-    // Check if the time difference is within the specified range (24 hours to 20 minutes)
-    return timeDifferenceHours >= 20 / 60 && timeDifferenceHours <= 24;
-}
-
-
 
 
 export default function DeclareAbsenceFormPage2() {
@@ -43,16 +20,9 @@ export default function DeclareAbsenceFormPage2() {
         setDeclarationFormErrors, 
         proofOfTuitionPayment, 
         setProofOfTuitionPayment, 
-        numberOfCourses, 
-        setNumberOfCourses,
         courseOne,
         setCourseOne,
-        courseTwo,
-        setCourseTwo,
-        courseThree,
-        setCourseThree
     } = useContext(GeneralContext);
-    const navigate = useNavigate();
     const dispatch = useDispatch();
     const [isProcessing, setIsProcessing] = useState(false);
     const [user, setUser] = useState({});
@@ -76,14 +46,8 @@ export default function DeclareAbsenceFormPage2() {
         setDeclarationFormErrors({});
     }
 
-    const handleNumberOfCourses = ({ target: input}) => {
-        setNumberOfCourses(input.value);
-    }
-
     // COURSE DATA HANDLERS //////////////////////////////////////////////////////////////////////////////////////////////////////
-
     const handleCourseOne = ({ target: input}) => {
-        
         if (input.name === 'courseCode') {
             dispatch({ type: 'course/getSelectedCourse', payload: input.value });
         }
@@ -93,8 +57,13 @@ export default function DeclareAbsenceFormPage2() {
         }
     }
 
+    // File upload handlers
     const handleFormFileInput = (e) => {
         setProofOfTuitionPayment(e.target.files[0]);
+    }
+
+    const handleFormJustificationFileInput = (e) => {
+        setAbsenceJustification(e.target.files[0])
     } 
 
     const nextStep = () => {
@@ -129,6 +98,13 @@ export default function DeclareAbsenceFormPage2() {
             return;
         }
 
+        // Check if the absene justification document was provided
+        if (declarationFormData.reason === 'Sick / Hospitalized' || declarationFormData.reason === 'Work mission' && !absenceJustification) {
+            setDeclarationFormErrors({...declarationFormErrors, absenceJustification: 'Required'});
+            setClaimBlocked(true);
+            return;
+        }
+
         // Check whether the course has an allocation that corresponds to this semester
         if (selectedCourse.allocations[currentAllocationIndex].academicYear === declarationFormData.academicYear && selectedCourse.allocations[currentAllocationIndex].semester !== declarationFormData.semester) {
             setResponseMessage({ message: 'Selected course is not being tought in this semester', severity: 'error' });
@@ -144,42 +120,6 @@ export default function DeclareAbsenceFormPage2() {
             return;
         } 
 
-        // Checking the period of claiming to see if it near the examination date.
-        if (declarationFormData.period === 'mid-semester') {
-            let designatedDate = new Date(selectedCourse.allocations[currentAllocationIndex].midSemesterExams);
-            if (!selectedCourse.allocations[currentAllocationIndex].midSemesterExams) {
-                setResponseMessage({ message: `Sory, The date of mid-semester exam for this course is not yet set.`, severity: 'error' });
-                setOpen(true);
-                setClaimBlocked(true);
-                return;
-            }
-            var rightClaimingPeriod = isWithinTimeRange(new Date(), designatedDate);
-            if (!rightClaimingPeriod) {
-                setResponseMessage({ message: 'Trying to declare absence out of the claining period range. The declaration range is between 24 hours and 20 minutes before the scheduled examination time.', severity: 'error' });
-                setOpen(true);
-                setClaimBlocked(true);
-                return;
-            }
-        } 
-        
-        if (declarationFormData.period === 'final') {
-            let designatedDate = new Date(selectedCourse.allocations[currentAllocationIndex].finalExams);
-            if (!selectedCourse.allocations[currentAllocationIndex].finalExams) {
-                setResponseMessage({ message: `Sory, The date of final exam of this course is not yet set.`, severity: 'error' });
-                setOpen(true);
-                setClaimBlocked(true);
-                return;
-            }
-
-            var rightClaimingPeriod = isWithinTimeRange(new Date(), designatedDate);
-            if (!rightClaimingPeriod) {
-                setResponseMessage({ message: `Trying to declare absence out of the claining period range. The declaration range is between 24 hours and 20 minutes before the scheduled examination time. The final exam is scheduled on ${selectedCourse.allocations[currentAllocationIndex].finalExams}`, severity: 'error' });
-                setOpen(true);
-                setClaimBlocked(true);
-                return;
-            }
-        }
-
         setClaimBlocked(false);
             
         courseOne.courseName = selectedCourse.name;
@@ -194,7 +134,8 @@ export default function DeclareAbsenceFormPage2() {
 
         declarationFormData.courses = courses;
         declarationFormData.proofOfTuitionPayment = proofOfTuitionPayment;
-
+        declarationFormData.absenceJustification = absenceJustification;
+ 
         console.log(declarationFormData);
 
         setIsProcessing(true);
@@ -222,24 +163,13 @@ export default function DeclareAbsenceFormPage2() {
             
             <VerticallyFlexGapContainer style={{ gap: '10px', borderBottom: '1px solid #b3d9ff', paddingBottom: '15px', width: '100%', alignItems: 'flex-start'}}>
                 <HeaderTwo style={{ fontWeight: '600' }}>Step 2</HeaderTwo>
-                <p style={{ textAlign:'left' }}>More details and course.</p>
+                <p style={{ textAlign:'left' }}>Reason for absence and course info.</p>
             </VerticallyFlexGapContainer>
             
 
             <HorizontallyFlexGapContainer style={{ alignItems: 'flex-start', gap: '15px' }}>
                 {/* Left side  */}
                 <VerticallyFlexGapContainer style={{ gap: '20px' }}>
-                    <FormElement style={{ color: 'gray' }}>
-                        <label htmlFor="proofOfTuitionPayment">Registration form *</label>
-                        <input 
-                            style={{padding: '7px'}}
-                            type="file" 
-                            id="proofOfTuitionPayment"
-                            name='proofOfTuitionPayment'
-                            onChange={handleFormFileInput}
-                        />
-                        {declarationFormErrors.proofOfTuitionPayment && (<p>Required</p>)}
-                    </FormElement>
                     <FormElement style={{ color: 'gray' }}>
                         <label htmlFor="period">Examination period *</label>
                         <select id='period' name='period' onChange={handleFormInput}>
@@ -251,20 +181,28 @@ export default function DeclareAbsenceFormPage2() {
                     </FormElement>
                     <FormElement style={{ color: 'gray' }}>
                         <label htmlFor="reason">Reason of absense *</label>
-                        <textarea 
-                            type="text" 
-                            id="reason"
-                            rows={3}
-                            placeholder="Reason of absense" 
-                            value={declarationFormData.reason || ''}
-                            name='reason'
-                            onChange={handleFormInput}
-                        >
-                        </textarea>
+                        <select id='reason' name='reason' onChange={handleFormInput}>
+                            <option value="">Choose reason</option>
+                            <option value="Sick / Hospitalized">Sick / Hospitalized</option>
+                            <option value="Death of relative">Death of relative</option>
+                            <option value="Work mission">Work mission</option>
+                        </select>
                         {declarationFormErrors.reason && (
                             <p>Required</p>
                         )}
                     </FormElement>
+                    <FormElement style={{ color: 'gray' }}>
+                        <label htmlFor="absenceJustification">Justification for absence attachment *</label>
+                        <input 
+                            style={{padding: '7px'}}
+                            type="file" 
+                            id="absenceJustification"
+                            name='absenceJustification'
+                            onChange={handleFormJustificationFileInput}
+                        />
+                        {declarationFormErrors.absenceJustification && (<p>Required</p>)}
+                    </FormElement>
+                    
                 </VerticallyFlexGapContainer>
 
                 <VerticallyFlexGapContainer style={{ gap: '20px' }}>
@@ -292,6 +230,18 @@ export default function DeclareAbsenceFormPage2() {
                         </select>
                         {declarationFormErrors.group && <p>{declarationFormErrors.group}</p>}
                     </FormElement>
+                    <FormElement style={{ color: 'gray' }}>
+                        <label htmlFor="proofOfTuitionPayment">Registration form *</label>
+                        <input 
+                            style={{padding: '7px'}}
+                            type="file" 
+                            id="proofOfTuitionPayment"
+                            name='proofOfTuitionPayment'
+                            onChange={handleFormFileInput}
+                        />
+                        {declarationFormErrors.proofOfTuitionPayment && (<p>Required</p>)}
+                    </FormElement>
+                    
                 </VerticallyFlexGapContainer>
             </HorizontallyFlexGapContainer>
 
@@ -305,225 +255,3 @@ export default function DeclareAbsenceFormPage2() {
         </VerticallyFlexGapForm>
     )
 }
-
-
-
-
-// const handleCourseTwo = ({ target: input}) => {
-
-//     if (input.name === 'courseCode') {
-//         dispatch({ type: 'course/getSelectedCourse', payload: input.value });
-        
-//         // Getting the index of the most recent added course allocation
-//         const currentAllocationIndex = selectedCourse.allocations.length-1;
-
-//         // Check whether the course has an allocation that corresponds to this semester
-//         if (selectedCourse.allocations[currentAllocationIndex].academicYear === declarationFormData.academicYear && selectedCourse.allocations[currentAllocationIndex].semester !== declarationFormData.semester) {
-//             setResponseMessage({ message: 'Selected course is not being tought in this semester', severity: 'error' });
-//             setOpen(true);
-//             setClaimBlocked(true);
-//             return;
-//         } 
-        
-//         if (selectedCourse.allocations[currentAllocationIndex].academicYear !== declarationFormData.academicYear && selectedCourse.allocations[currentAllocationIndex].semester !== declarationFormData.semester) {
-//             setResponseMessage({ message: 'The selected academic year and semester do not correspond to the claiming period.', severity: 'error' });
-//             setOpen(true);
-//             setClaimBlocked(true);
-//             return;
-//         }
-        
-//         // Checking the period of claiming to see if it near the examination date.
-//         if (declarationFormData.period === 'mid-semester') {
-//             let designatedDate = new Date(selectedCourse.allocations[currentAllocationIndex].midSemesterExams);
-//             var rightClaimingPeriod = isWithinTimeRange(new Date(), designatedDate);
-//             if (!rightClaimingPeriod) {
-//                 setResponseMessage({ message: 'Trying to declare absence out of the claining period range. The declaration range is between 24 hours and 20 minutes before the scheduled examination time.', severity: 'error' });
-//                 setOpen(true);
-//                 setClaimBlocked(true);
-//                 return;
-//             }
-//         } 
-        
-//         if (declarationFormData.period === 'final') {
-//             let designatedDate = new Date(selectedCourse.allocations[currentAllocationIndex].finalExams);
-//             var rightClaimingPeriod = isWithinTimeRange(new Date(), designatedDate);
-//             if (!rightClaimingPeriod) {
-//                 setResponseMessage({ message: 'Trying to declare absence out of the claining period range. The declaration range is between 24 hours and 20 minutes before the scheduled examination time.', severity: 'error' });
-//                 setOpen(true);
-//                 setClaimBlocked(true);
-//                 return;
-//             }
-//         }
-
-//         if (selectedCourse.allocations[currentAllocationIndex].semester === declarationFormData.semester && selectedCourse.allocations[currentAllocationIndex].academicYear === declarationFormData.academicYear) {
-//             setClaimBlocked(false);
-//             setCourseTwo({
-//                 ...courseTwo, 
-//                 courseName: selectedCourse.name,
-//                 courseCode: selectedCourse.code,
-//                 credits: selectedCourse.credits,
-//                 semester: selectedCourse.allocations[currentAllocationIndex].semester,
-//                 academicYear: selectedCourse.allocations[currentAllocationIndex].academicYear
-//             })
-//         }
-//     }
-
-//     if (input.name === 'group') {
-//         setCourseTwo({ ...courseTwo, group: input.value })
-//     }
-// }
-
-// const handleCourseThree = ({ target: input}) => {
-//     setCourseThree({...courseThree, [input.name]:input.value});
-//     if (input.name === 'courseCode') {
-//         dispatch({ type: 'course/getSelectedCourse', payload: input.value });
-     
-//         // Getting the index of the most recent added course allocation
-//         const currentAllocationIndex = selectedCourse.allocations.length-1;
-
-//         // Check whether the course has an allocation that corresponds to this semester
-//         if (selectedCourse.allocations[currentAllocationIndex].academicYear === declarationFormData.academicYear && selectedCourse.allocations[currentAllocationIndex].semester !== declarationFormData.semester) {
-//             setResponseMessage({ message: 'Selected course is not being tought in this semester', severity: 'error' });
-//             setOpen(true);
-//             setClaimBlocked(true);
-//             return;
-//         }
-        
-//         if (selectedCourse.allocations[currentAllocationIndex].academicYear !== declarationFormData.academicYear && selectedCourse.allocations[currentAllocationIndex].semester !== declarationFormData.semester) {
-//             setResponseMessage({ message: 'The selected academic year and semester do not correspond to the claiming period.', severity: 'error' });
-//             setOpen(true);
-//             setClaimBlocked(true);
-//             return;
-//         } 
-        
-//         // Checking the period of claiming to see if it near the examination date.
-//         if (declarationFormData.period === 'mid-semester') {
-//             let designatedDate = new Date(selectedCourse.allocations[currentAllocationIndex].midSemesterExams);
-//             var rightClaimingPeriod = isWithinTimeRange(new Date(), designatedDate);
-//             if (!rightClaimingPeriod) {
-//                 setResponseMessage({ message: 'Trying to declare absence out of the claining period range. The declaration range is between 24 hours and 20 minutes before the scheduled examination time.', severity: 'error' });
-//                 setOpen(true);
-//                 setClaimBlocked(true);
-//                 return;
-//             }
-//         } 
-        
-//         if (declarationFormData.period === 'final') {
-//             let designatedDate = new Date(selectedCourse.allocations[currentAllocationIndex].finalExams);
-//             var rightClaimingPeriod = isWithinTimeRange(new Date(), designatedDate);
-//             if (!rightClaimingPeriod) {
-//                 setResponseMessage({ message: 'Trying to declare absence out of the claining period range. The declaration range is between 24 hours and 20 minutes before the scheduled examination time.', severity: 'error' });
-//                 setOpen(true);
-//                 setClaimBlocked(true);
-//                 return;
-//             }
-//         }
-
-//         if (selectedCourse.allocations[currentAllocationIndex].semester === declarationFormData.semester && selectedCourse.allocations[currentAllocationIndex].academicYear === declarationFormData.academicYear) {
-//             setClaimBlocked(true);
-//             setCourseThree({
-//                 ...courseThree, 
-//                 courseName: selectedCourse.name,
-//                 courseCode: selectedCourse.code,
-//                 credits: selectedCourse.credits,
-//                 semester: selectedCourse.allocations[currentAllocationIndex].semester,
-//                 academicYear: selectedCourse.allocations[currentAllocationIndex].academicYear
-//             })
-//         }
-//     }
-
-//     if (input.name === 'group') {
-//         setCourseThree({ ...courseThree, group: input.value })
-//     }
-// }
-
-
-{/* <h3 style={{ width: '100%', textAlign: 'left', color: 'gray' }}>Course 1</h3> */}
-
-// THIS WILL BE USED IN CASE WE HAVE MANY COURSES TO SELECT FROM 
-// if (numberOfCourses === '1') {
-//     courseOne.reason = declarationFormData.reason;
-//     courses.push(courseOne);
-// } else if (numberOfCourses === '2') {
-//     courseOne.reason = declarationFormData.reason;
-//     courseTwo.reason = declarationFormData.reason;
-//     courses.push(courseOne);
-//     courses.push(courseTwo);
-// } else {
-//     courses.push(courseOne);
-//     courses.push(courseTwo);
-//     courses.push(courseThree);
-// }
-{/* <FormElement style={{ color: 'gray' }}>
-    <label htmlFor="numberOfCourses">Number of courses *</label>
-    <select 
-        id='numberOfCourses'
-        name='numberOfCourses'
-        onChange={handleNumberOfCourses}
-    >
-        <option value={0}>Choose number</option>
-        <option value={1}>One</option>
-        <option value={2}>Two</option>
-        <option value={3}>Three</option>
-    </select>
-    {declarationFormErrors.numberOfCourses && (<p>{declarationFormErrors.numberOfCourses}</p>)}
-</FormElement> */}
-
-
-{/* Second course  */}
-// {(numberOfCourses === '2' || numberOfCourses === '3') && <VerticallyFlexGapContainer style={{ gap: '20px' }}>
-// <h3 style={{ width: '100%', textAlign: 'left', color: 'gray' }}>Course 2</h3>
-// <FormElement style={{ color: 'gray' }}>
-//     <label htmlFor="courseCode">Name *</label>
-//     <select id='courseCode' name='courseCode' onChange={handleCourseTwo}>
-//         <option value="">Select course</option>
-//         {listOfCourses.map((course, index) => {
-//             return (
-//                 <option key={index} value={course.code}>{course.name}</option>     
-//             )
-//         })}
-//     </select>
-//     {declarationFormErrors.courseCode && (<p>Required</p>)}
-// </FormElement>
-// <FormElement style={{ color: 'gray' }}>
-//     <label htmlFor="group">Group *</label>
-//     <select id='group' name='group' onChange={handleCourseTwo}>
-//         <option value="">Select group</option>
-//         <option value="A">A</option>
-//         <option value="B">B</option>
-//         <option value="C">C</option>
-//         <option value="D">D</option>
-//         <option value="E">E</option>
-//     </select>
-//     {declarationFormErrors.group && <p>{declarationFormErrors.group}</p>}
-// </FormElement>
-// </VerticallyFlexGapContainer>}
-
-// {/* Third course  */}
-// {(numberOfCourses === '3') && <VerticallyFlexGapContainer style={{ gap: '20px' }}>
-// <h3 style={{ width: '100%', textAlign: 'left', color: 'gray' }}>Course 3</h3>
-// <FormElement style={{ color: 'gray' }}>
-//     <label htmlFor="courseCode">Name *</label>
-//     <select id='courseCode' name='courseCode' onChange={handleCourseThree}>
-//         <option value="">Select course</option>
-//         {listOfCourses.map((course, index) => {
-//             return (
-//                 <option key={index} value={course.code}>{course.name}</option>     
-//             )
-//         })}
-//     </select>
-//     {declarationFormErrors.courseCode && (<p>Required</p>)}
-// </FormElement>
-// <FormElement style={{ color: 'gray' }}>
-//     <label htmlFor="group">Group *</label>
-//     <select id='group' name='group' onChange={handleCourseThree}>
-//         <option value="">Select group</option>
-//         <option value="A">A</option>
-//         <option value="B">B</option>
-//         <option value="C">C</option>
-//         <option value="D">D</option>
-//         <option value="E">E</option>
-//     </select>
-//     {declarationFormErrors.group && <p>{declarationFormErrors.group}</p>}
-// </FormElement>
-// </VerticallyFlexGapContainer>}

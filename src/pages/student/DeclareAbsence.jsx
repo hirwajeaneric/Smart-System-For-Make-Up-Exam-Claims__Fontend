@@ -11,7 +11,7 @@ const DeclareAbsence = () => {
         <meta name="description" content={`Declare absence in exam.`} /> 
       </Helmet>
       <VerticallyFlexGapContainer style={{ gap: '20px' }}>
-        <HeaderTwo style={{ width: '100%', textAlign: 'left' }}>Declare absense</HeaderTwo>
+        <HeaderTwo style={{ width: '100%', textAlign: 'left' }}>New claim</HeaderTwo>
         <Outlet />
       </VerticallyFlexGapContainer>
     </VerticallyFlexGapContainer>
