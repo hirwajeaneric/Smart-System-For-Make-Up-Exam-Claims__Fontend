@@ -168,6 +168,7 @@ function App() {
   const [isFormVisible, setIsFormVisible] = useState(false);
   const [declarationFormData, setDeclarationFormData] = useState({});
   const [proofOfTuitionPayment, setProofOfTuitionPayment] = useState('');
+  const [absenceJustification, setAbsenceJustification] = useState('');
   const [numberOfCourses, setNumberOfCourses] = useState(0);
   const [declarationFormErrors, setDeclarationFormErrors] = useState({});
   const [courseOne, setCourseOne] = useState({});
@@ -265,7 +266,9 @@ function App() {
         selectedCourse,
         setSelectedCourse,
         selectedCourseAllocation,
-        setSelectedCourseAllocation
+        setSelectedCourseAllocation,
+        absenceJustification,
+        setAbsenceJustification,
       }}>
       <BrowserRouter>
         <Routes>

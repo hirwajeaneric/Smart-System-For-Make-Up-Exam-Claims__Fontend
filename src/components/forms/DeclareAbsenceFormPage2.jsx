@@ -5,7 +5,7 @@ import { FormElement, HeaderTwo, HorizontallyFlexGapContainer, HorizontallyFlexS
 const serverUrl = import.meta.env.VITE_REACT_APP_SERVERURL;
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { getStudentClaims } from "../../redux/features/claimSlice";
 import { getAllCourses } from "../../redux/features/courseSlice";
 
@@ -19,11 +19,14 @@ export default function DeclareAbsenceFormPage2() {
         declarationFormErrors, 
         setDeclarationFormErrors, 
         proofOfTuitionPayment, 
-        setProofOfTuitionPayment, 
+        setProofOfTuitionPayment,
+        absenceJustification,
+        setAbsenceJustification, 
         courseOne,
         setCourseOne,
     } = useContext(GeneralContext);
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const [isProcessing, setIsProcessing] = useState(false);
     const [user, setUser] = useState({});
     const params = useParams();
@@ -60,10 +63,12 @@ export default function DeclareAbsenceFormPage2() {
     // File upload handlers
     const handleFormFileInput = (e) => {
         setProofOfTuitionPayment(e.target.files[0]);
+        console.log(e.target.files)
     }
 
     const handleFormJustificationFileInput = (e) => {
         setAbsenceJustification(e.target.files[0])
+        console.log(e.target.files)
     } 
 
     const nextStep = () => {
@@ -75,6 +80,9 @@ export default function DeclareAbsenceFormPage2() {
     // SUBMITTION OF DECLARATION FORM ****************************************************************
     const submitDeclaration = (e) => {
         e.preventDefault();
+
+        console.log(proofOfTuitionPayment);
+        console.log(absenceJustification);
 
         const config = {
             headers: { "Content-Type":"multipart/form-data" }
@@ -99,6 +107,8 @@ export default function DeclareAbsenceFormPage2() {
         }
 
         // Check if the absene justification document was provided
+        
+        console.log(declarationFormData.reason === 'Sick / Hospitalized' || declarationFormData.reason === 'Work mission' && !absenceJustification);
         if (declarationFormData.reason === 'Sick / Hospitalized' || declarationFormData.reason === 'Work mission' && !absenceJustification) {
             setDeclarationFormErrors({...declarationFormErrors, absenceJustification: 'Required'});
             setClaimBlocked(true);
@@ -134,14 +144,36 @@ export default function DeclareAbsenceFormPage2() {
 
         declarationFormData.courses = courses;
         declarationFormData.proofOfTuitionPayment = proofOfTuitionPayment;
-        declarationFormData.absenceJustification = absenceJustification;
  
         console.log(declarationFormData);
 
         setIsProcessing(true);
-        axios.post(serverUrl+'/api/v1/ssmec/claim/add', declarationFormData, config)
+        
+        axios.post(
+            `${serverUrl}/api/v1/ssmec/claim/add`, 
+            declarationFormData, 
+            config
+        )
         .then(response => {
             if (response.status === 201) {
+                if (absenceJustification) {
+                    axios.put(
+                        `${serverUrl}/api/v1/ssmec/claim/updateWithAbsenceJustification?id=${response.data.claim._id}`, 
+                        { absenceJustification: absenceJustification },
+                        config
+                    )
+                    .then(response => {
+                        console.log(response.data.message);
+                    })
+                    .catch(error => {
+                        if (error.response && error.response.status >= 400 && error.response.status <= 500) {
+                            setIsProcessing(false);
+                            setResponseMessage({ message: error.response.data.msg, severity:'error'})
+                            setOpen(true);
+                        }}
+                    )
+                }
+
                 setIsProcessing(false);
                 dispatch(getStudentClaims({ registrationNumber: response.data.claim.registrationNumber }));
                 setTimeout(() => {
