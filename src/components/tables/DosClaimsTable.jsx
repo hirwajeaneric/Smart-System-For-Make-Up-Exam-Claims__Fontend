@@ -67,6 +67,7 @@ export default function DosClaimsTable({data}) {
         rowsPerPageOptions={[20]}
         disableSelectionOnClick
         experimentalFeatures={{newEditingApi: true}}
+        components={{Toolbar: CustomToolbar}}
       />
     </Box>
   );

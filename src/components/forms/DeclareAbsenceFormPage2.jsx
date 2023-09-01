@@ -75,8 +75,7 @@ export default function DeclareAbsenceFormPage2() {
         navigate(`/student/${params.registrationNumber}/declare/step1`);
     };
 
-
-
+    
     // SUBMITTION OF DECLARATION FORM ****************************************************************
     const submitDeclaration = (e) => {
         e.preventDefault();

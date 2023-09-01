@@ -68,7 +68,7 @@ export default function HODClaimsTable({data}) {
         rowsPerPageOptions={[20]}
         disableSelectionOnClick
         experimentalFeatures={{newEditingApi: true}}
-        // components={{Toolbar: CustomToolbar}}
+        components={{Toolbar: CustomToolbar}}
       />
     </Box>
   );

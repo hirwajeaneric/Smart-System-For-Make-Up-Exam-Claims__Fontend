@@ -250,6 +250,13 @@ const ClaimDetails = () => {
                   <a href={`${serverUrl}/api/v1/ssmec/uploads/${selectedClaim.examPermit}`}>Examination permit card</a>
                 </AttachmentFile>
             </ClaimDetailsItem>}
+            {selectedClaim.absenceJustification && <ClaimDetailsItem>
+              <label>Absence justification:</label>
+              <AttachmentFile>
+                <GrAttachment />
+                <a href={`${serverUrl}/api/v1/ssmec/uploads/${selectedClaim.absenceJustification}`}>Absence justification</a>
+              </AttachmentFile>
+            </ClaimDetailsItem>}
             {selectedClaim.proofOfTuitionPayment && <ClaimDetailsItem>
               <label>Registration form:</label>
               <AttachmentFile>
