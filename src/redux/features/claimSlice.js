@@ -106,13 +106,17 @@ export const getTeacherClaims = createAsyncThunk(
 export const getDepartmentClaims = createAsyncThunk(
     'claim/getDepartmentClaims',
     async (filter, thunkAPI) => {
-        const { token, department } = filter;
+        const { token, department, academicYear, semester } = filter;
         try {
             const config = {
                 headers: {
                     'Authorization' : `Bearer ${token}`
                 }
             }
+
+            console.log('Triggered');
+            console.log(filter);
+
             const response = await axios.get(serverUrl+`/api/v1/ssmec/claim/findByLecturerSignature?department=${department}`, config);
             response.data.claims.forEach((element) => {
                 element.id = element._id;
@@ -120,6 +124,19 @@ export const getDepartmentClaims = createAsyncThunk(
                 element.course = element.courses[0].courseName;
                 element.submitDate = new Date(element.submitDate).toUTCString()
             });
+            // Return claims according to provided filter values
+            if (academicYear) {
+                response.data.claims.filter(element => element.academicYear === academicYear);
+            }
+
+            if (semester) {
+                response.data.claims.filter(element => element.semester === semester);
+            }
+
+            if (academicYear && semester) {
+                response.data.claims.filter(element => element.semester === semester && element.academicYear === academicYear);
+            }
+
             return response.data.claims;
         } catch (error) {
             return thunkAPI.rejectWithValue('Something went wrong!!');

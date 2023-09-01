@@ -7,7 +7,7 @@ import NoticationContainer from '../../components/NoticationContainer';
 
 const Stats = () => {
   const [user, setUser] = useState({});
-  
+
   useEffect(() => {
     var user = JSON.parse(localStorage.getItem('hodData'));
     setUser(user);
@@ -34,8 +34,14 @@ const Stats = () => {
               )
             })}
             <HeaderTwo style={{ width: '100%', textAlign: 'left' }}>{`Welcome ${user.fullName}`}</HeaderTwo>
+
             <h3 style={{ width: '100%', textAlign: 'left' }}>{`Claims in ${user.department}`}</h3>
+                  
             <HODClaimsTable data={hodClaims} />
+
+            {/* Report preview container */}
+            
+
           </>  
         }
       </VerticallyFlexGapContainer>

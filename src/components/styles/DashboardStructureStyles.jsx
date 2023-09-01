@@ -183,6 +183,38 @@ export const SecondaryMenue = styled.div`
     }
 `;
 
+export const SecondaryMenue2 = styled.div`
+    display: flex;
+    flex-direction: row;
+    z-index: 999;
+    align-items: center;
+    justify-content: space-between;
+    
+    a {
+        color: white;
+        text-decoration: none;
+        padding: 10px 20px;
+    }
+
+    a:hover {
+        color: gold;
+    }
+
+    a.active {
+        background: #66b3ff;
+        // color: gold;
+    }
+    
+
+    @media (max-width: 768px) {
+        padding: 10px 40px;
+    }
+
+    @media (max-width: 480px) {
+        padding: 10px 20px;
+    }
+`;
+
 export const DashboardMainContainer = styled.div`
     display: flex;
     flex-direction: column;

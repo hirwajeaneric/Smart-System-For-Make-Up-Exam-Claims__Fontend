@@ -1,10 +1,10 @@
 import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
-import { DashboardInnerContainer, DashboardMainContainer, TopNavigationBar, SecondaryMenue } from "../../components/styles/DashboardStructureStyles"
-import { VerticallyFlexGapContainer, VerticallyFlexSpaceBetweenContainer } from "../../components/styles/GenericStyles"
+import { DashboardInnerContainer, DashboardMainContainer, TopNavigationBar, SecondaryMenue, SecondaryMenue2 } from "../../components/styles/DashboardStructureStyles"
+import { FormElement, VerticallyFlexGapContainer, VerticallyFlexSpaceBetweenContainer } from "../../components/styles/GenericStyles"
 import Avatar from "@mui/material/Avatar"; 
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import { Divider, IconButton, ListItemIcon, Tooltip } from "@mui/material";
+import { Button, Divider, IconButton, ListItemIcon, Tooltip } from "@mui/material";
 import { useEffect, useState } from "react";
 import { Logout, Settings } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
@@ -25,6 +25,7 @@ const DashboardMain = () => {
         setAnchorEl(null);
     };
     const [user, setUser] = useState({});
+    const [filter, setFilter] = useState({});
 
     useEffect(() => {
         let user = JSON.parse(localStorage.getItem('hodData'));
@@ -34,6 +35,39 @@ const DashboardMain = () => {
         dispatch(getDepartmentClaims({ token: user.token, department: user.department }));
         dispatch(getNotificationsForUser({ role: 'Head of Department', department: user.department}))
     },[dispatch]);      
+
+    const filterChoiceHandler = (e) => { 
+        setFilter({ ...filter, [e.target.name]: e.target.value });
+    }
+
+    const filterResults = (e) => {
+        e.preventDefault();
+
+        if (filter.academicYear) {
+          dispatch(getDepartmentClaims({
+            token: localStorage.getItem('hodToken'),
+            department: user.department,
+            academicYear: filter.academicYear
+          }));
+        } else if (filter.semester) {
+          dispatch(getDepartmentClaims({
+            token: localStorage.getItem('hodToken'),
+            department: user.department,
+            semester: filter.semester
+          }));
+        } else if (filter.academicYear && filter.semester) {
+          dispatch(getDepartmentClaims({
+            token: localStorage.getItem('hodToken'),
+            department: user.department,
+            academicYear: filter.academicYear,
+            semester: filter.semester
+          }));
+        }
+
+        console.log(filter);
+    
+    } 
+
 
     const signout = () => {
         localStorage.removeItem('hodToken');
@@ -122,13 +156,34 @@ const DashboardMain = () => {
 
 
             <VerticallyFlexGapContainer style={{ position: 'relative' }}>
-                <SecondaryMenue>
-                    <NavLink to={'home'}>Home</NavLink>
-                    <NavLink to={'courses'}>Courses</NavLink>
-                    {/* <NavLink to={'lecturers'}>Lecturers</NavLink> */}
-                    {/* <NavLink to={'claims'}>Claims</NavLink> */}
-                    <NavLink to={'settings'}>{user.fullName}</NavLink>
-                </SecondaryMenue>
+                <div style={{ gap: '40px', padding: '0px 100px', backgroundColor: '#0063ab', width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                    <SecondaryMenue2 style={{ padding: '0px' }}>
+                        <NavLink to={'home'}>Home</NavLink>
+                        <NavLink to={'courses'}>Courses</NavLink>
+                        <NavLink to={'settings'}>{user.fullName}</NavLink>
+                    </SecondaryMenue2>
+
+                    <div style={{ gap: '10px', display: 'flex', alignItems: 'center' }}>
+                        <FormElement>
+                        <select style={{ padding: '6px 10px', background: 'white', borderRadius: "0px", border: 'none' }} name='academicYear' id='academicYear' onChange={filterChoiceHandler}>
+                            <option>Select academic year</option>
+                            <option value='2023'>2023</option>
+                            <option value='2024'>2024</option>
+                        </select>
+                        </FormElement>
+                        <FormElement>
+                        <select name='semester' id='semester' style={{ padding: '6px 10px', background: 'white', borderRadius: "0px", border: 'none' }} onChange={filterChoiceHandler}>
+                            <option>Choose semester</option>
+                            <option value='1'>1</option>
+                            <option value='2'>2</option>
+                            <option value='3'>3</option>
+                        </select>
+                        </FormElement>
+                        <Button variant='contained' size='small' color='secondary' onClick={filterResults}>Filter</Button>
+                        <Button variant='contained' size='small' color='info'>Print</Button>
+                        <Button variant='contained' size='small' color='inherit'>Reset</Button>
+                    </div>
+                </div>
                 <DashboardMainContainer>
                     <DashboardInnerContainer>
                         <Outlet />
