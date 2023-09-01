@@ -7,21 +7,26 @@ const columns = [
   {
     field: 'semester',
     headerName: 'Semester',
-    width: 100,
+    width: 80,
   },
   {
     field: 'academicYear',
     headerName: 'Academic year',
-    width: 150,
+    width: 120,
+  },
+  {
+    field: 'fullName',
+    headerName: 'Student',
+    width: 200,
   },
   {
     field: 'course',
     headerName: 'Course',
-    width: 300,
+    width: 250,
   },  
   {
     field: 'submitDate',
-    headerName: 'Declared on',
+    headerName: 'Submited on',
     width: 250,
   },  
   {

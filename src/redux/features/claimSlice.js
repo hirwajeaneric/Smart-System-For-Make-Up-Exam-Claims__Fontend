@@ -13,6 +13,7 @@ const initialState = {
     selectedClaimDeanOfStudentsSignature: {},
     selectedClaimAccountantSignature: {},
     selectedClaimExaminationOfficerSignature: {},
+    filterPeriod: {},
 
     courseClaims: [],
     teacherClaims: [],
@@ -138,7 +139,7 @@ export const getDepartmentClaims = createAsyncThunk(
             if (!academicYear && !semester) {
                 claims = response.data.claims;
             }
-            return claims;
+            return { claims: claims, academicYear: academicYear, semester: semester};
         } catch (error) {
             return thunkAPI.rejectWithValue('Something went wrong!!');
         }
@@ -292,7 +293,9 @@ const claimSlice = createSlice({
         },
         [getDepartmentClaims.fulfilled] : (state, action) => {
             state.isLoading = false;
-            state.hodClaims = action.payload.filter(element => element.attachment);
+            const { claims, academicYear, semester } = action.payload;
+            state.hodClaims = claims.filter(element => element.attachment);
+            state.filterPeriod = { academicYear: academicYear, semester: semester }
         },
         [getDepartmentClaims.rejected] : (state) => {
             state.isLoading = false;

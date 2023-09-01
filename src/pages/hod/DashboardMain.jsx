@@ -181,17 +181,31 @@ const DashboardMain = () => {
                             <option value='3'>3</option>
                         </select>
                         </FormElement>
-                        <Button 
-                            variant='contained' 
-                            size='small' 
-                            color='secondary' 
+                        <button
+                            style={{
+                                fontSize: '100%',
+                                background: 'transparent',
+                                border: '1px solid white',
+                                color: 'white',
+                                padding: '5px 9px'
+                            }}  
                             onClick={(e) => { 
                                 e.preventDefault(); 
                                 filterResults(user);
                             }}>Filter
-                        </Button>
-                        <Button variant='contained' size='small' color='info'>Print</Button>
-                        <Button variant='contained' size='small' color='inherit' onClick={() => window.location.reload()}>Reset</Button>
+                        </button>
+                        <button 
+                            style={{
+                                fontSize: '100%',
+                                background: 'white-smoke',
+                                border: '1px solid blue',
+                                color: 'blue',
+                                padding: '5px 9px'
+                            }}  
+                            onClick={() => {
+                                window.location.reload()
+                            }}>Reset
+                        </button>
                     </div>
                 </div>
                 <DashboardMainContainer>
