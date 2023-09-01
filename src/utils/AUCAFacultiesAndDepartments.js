@@ -1,7 +1,7 @@
 export const AUCAFacultiesAndDepartments = {
     "Information Technology": [
         "Information Management",
-        "Network and Communication Systems",
+        "Networks and Communication Systems",
         "Software Engineering"
     ],
     "Business Administration": [

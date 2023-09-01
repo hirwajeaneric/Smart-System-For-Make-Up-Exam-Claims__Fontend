@@ -105,15 +105,6 @@ export default function DeclareAbsenceFormPage2() {
             return;
         }
 
-        // Check if the absene justification document was provided
-        
-        console.log(declarationFormData.reason === 'Sick / Hospitalized' || declarationFormData.reason === 'Work mission' && !absenceJustification);
-        if (declarationFormData.reason === 'Sick / Hospitalized' || declarationFormData.reason === 'Work mission' && !absenceJustification) {
-            setDeclarationFormErrors({...declarationFormErrors, absenceJustification: 'Required'});
-            setClaimBlocked(true);
-            return;
-        }
-
         // Check whether the course has an allocation that corresponds to this semester
         if (selectedCourse.allocations[currentAllocationIndex].academicYear === declarationFormData.academicYear && selectedCourse.allocations[currentAllocationIndex].semester !== declarationFormData.semester) {
             setResponseMessage({ message: 'Selected course is not being tought in this semester', severity: 'error' });

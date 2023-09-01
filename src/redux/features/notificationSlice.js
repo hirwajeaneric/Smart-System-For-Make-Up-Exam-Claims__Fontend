@@ -35,7 +35,7 @@ export const getNotificationsForUser = createAsyncThunk(
     async (filter, thunkAPI) => {
         try {
             const { role, department } = filter;
-            const response = await axios.get(serverUrl+`/api/v1/ssmec/notification/findByRecipient?recipient=${role}&department=${department}`);
+            const response = await axios.get(`${serverUrl}/api/v1/ssmec/notification/findByRecipient?recipient=${role}&department=${department}`);
             response.data.notifications.forEach(element => {
                 element.id = element._id;
                 delete element._id;

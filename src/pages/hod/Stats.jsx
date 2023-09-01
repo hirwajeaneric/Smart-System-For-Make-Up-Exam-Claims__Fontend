@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { Fragment, useEffect, useState } from 'react'
 import { Helmet } from 'react-helmet-async'
 import { useSelector } from 'react-redux'
 import { HeaderTwo, VerticallyFlexGapContainer } from '../../components/styles/GenericStyles'
@@ -25,12 +25,14 @@ const Stats = () => {
       <VerticallyFlexGapContainer style={{ gap: '20px'}}>
         {isLoading ?  <p>Loading... </p> :
           <>
-            {/* {numberOfNotificationsForUser > 0 && notificationsForUser.map((notification, index) => {
+            {numberOfNotificationsForUser > 0 && notificationsForUser.map((notification, index) => {
+              if (notification.status === 'Seen') {
+                return (<Fragment key={index}></Fragment>)
+              }
               return (
                 <NoticationContainer key={index} notification={notification}/>
               )
-            })} */}
-            <NoticationContainer />
+            })}
             <HeaderTwo style={{ width: '100%', textAlign: 'left' }}>{`Welcome ${user.fullName}`}</HeaderTwo>
             <h3 style={{ width: '100%', textAlign: 'left' }}>{`Claims in ${user.department}`}</h3>
             <HODClaimsTable data={hodClaims} />

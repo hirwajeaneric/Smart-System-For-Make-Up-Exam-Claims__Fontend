@@ -19,7 +19,9 @@ export default function DeclareAbsenceFormPage1() {
             fullName: localUser.fullName,
             registrationNumber: localUser.registrationNumber,
             email: localUser.email,
-            phone: localUser.phone
+            phone: localUser.phone,
+            faculty: localUser.faculty,
+            department: localUser.department
         })
     },[]);  
 
@@ -114,6 +116,9 @@ export default function DeclareAbsenceFormPage1() {
                         />
                         {declarationFormErrors.email && <p>{declarationFormErrors.email}</p>}
                     </FormElement>
+                </HorizontallyFlexGapContainer>
+
+                <HorizontallyFlexGapContainer style={{ gap: '20px' }}>
                     <FormElement style={{ color: 'gray' }}>
                         <label htmlFor="phone">Phone number *</label>
                         <input 
@@ -128,10 +133,7 @@ export default function DeclareAbsenceFormPage1() {
                         />
                         {declarationFormErrors.phone && (<p>{declarationFormErrors.phone}</p>)}
                     </FormElement>
-                </HorizontallyFlexGapContainer>
-
-                <HorizontallyFlexGapContainer style={{ gap: '20px' }}>
-                    <FormElement style={{ color: 'gray' }}>
+                    {/* <FormElement style={{ color: 'gray' }}>
                         <label htmlFor="faculty">Faculty *</label>
                         <select id='faculty' name='faculty' onChange={handleFormInput}>
                             <option value="">Select faculty</option>
@@ -179,7 +181,7 @@ export default function DeclareAbsenceFormPage1() {
                             }
                         </select>
                         {declarationFormErrors.department && <p>{declarationFormErrors.department}</p>}
-                    </FormElement>
+                    </FormElement> */}
                     <FormElement style={{ color: 'gray' }}>
                         <label htmlFor="academicYear">Academic year *</label>
                         <input 
