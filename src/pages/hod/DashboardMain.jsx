@@ -5,18 +5,21 @@ import Avatar from "@mui/material/Avatar";
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { Button, Divider, IconButton, ListItemIcon, Tooltip } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Logout, Settings } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
 import { getSimpleCapitalizedChars } from "../../utils/HelperFunctions";
 import { getAllCourses } from "../../redux/features/courseSlice";
 import { getDepartmentClaims } from "../../redux/features/claimSlice";
 import { getNotificationsForUser } from "../../redux/features/notificationSlice";
+import { GeneralContext } from "../../App";
 
 const DashboardMain = () => {
     const [anchorEl, setAnchorEl] = useState(null);
     const navigate = useNavigate();
     const dispatch = useDispatch();
+    const { setOpen, setResponseMessage } = useContext(GeneralContext);
+    const [isProcessing, setIsProcessing] = useState(false);
     const open = Boolean(anchorEl);
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
@@ -28,44 +31,43 @@ const DashboardMain = () => {
     const [filter, setFilter] = useState({});
 
     useEffect(() => {
-        let user = JSON.parse(localStorage.getItem('hodData'));
-        user.departmentLink = user.department.split(" ").join(""); 
-        setUser(user);
+        let loggedUser = JSON.parse(localStorage.getItem('hodData'));
+        loggedUser.departmentLink = loggedUser.department.split(" ").join(""); 
+        setUser(loggedUser);
+
         dispatch(getAllCourses());
-        dispatch(getDepartmentClaims({ token: user.token, department: user.department }));
+        filterResults(loggedUser);
         dispatch(getNotificationsForUser({ role: 'Head of Department', department: user.department}))
+    
     },[dispatch]);      
 
     const filterChoiceHandler = (e) => { 
         setFilter({ ...filter, [e.target.name]: e.target.value });
     }
 
-    const filterResults = (e) => {
-        e.preventDefault();
-
-        if (filter.academicYear) {
-          dispatch(getDepartmentClaims({
-            token: localStorage.getItem('hodToken'),
-            department: user.department,
-            academicYear: filter.academicYear
-          }));
-        } else if (filter.semester) {
-          dispatch(getDepartmentClaims({
-            token: localStorage.getItem('hodToken'),
-            department: user.department,
-            semester: filter.semester
-          }));
-        } else if (filter.academicYear && filter.semester) {
-          dispatch(getDepartmentClaims({
-            token: localStorage.getItem('hodToken'),
-            department: user.department,
-            academicYear: filter.academicYear,
-            semester: filter.semester
-          }));
-        }
-
-        console.log(filter);
-    
+    const filterResults = (loggedUser) => {
+        if (filter.academicYear && !filter.semester) {
+            dispatch(getDepartmentClaims({
+                token: localStorage.getItem('hodToken'),
+                department: loggedUser.department,
+                academicYear: filter.academicYear
+            }));
+        } else if (filter.semester && !filter.academicYear) {
+            setResponseMessage({ message: 'Please provide the academic year first', severity:'error'})
+            setOpen(true);
+        } else if (filter.academicYear !== '' && filter.semester !== '') {
+            dispatch(getDepartmentClaims({
+                token: localStorage.getItem('hodToken'),
+                department: loggedUser.department,
+                academicYear: filter.academicYear,
+                semester: filter.semester
+            }));
+        } else {
+            dispatch(getDepartmentClaims({
+                token: localStorage.getItem('hodToken'),
+                department: loggedUser.department
+            }));
+        }    
     } 
 
 
@@ -75,7 +77,7 @@ const DashboardMain = () => {
         navigate('/hod/auth/signin');
     }
 
-    const { } = useSelector(state => state.course)
+    const {} = useSelector(state => state.course)
 
     return (
         <VerticallyFlexSpaceBetweenContainer>
@@ -160,7 +162,7 @@ const DashboardMain = () => {
                     <SecondaryMenue2 style={{ padding: '0px' }}>
                         <NavLink to={'home'}>Home</NavLink>
                         <NavLink to={'courses'}>Courses</NavLink>
-                        <NavLink to={'settings'}>{user.fullName}</NavLink>
+                        <NavLink to={'settings'}>Settings</NavLink>
                     </SecondaryMenue2>
 
                     <div style={{ gap: '10px', display: 'flex', alignItems: 'center' }}>
@@ -179,9 +181,17 @@ const DashboardMain = () => {
                             <option value='3'>3</option>
                         </select>
                         </FormElement>
-                        <Button variant='contained' size='small' color='secondary' onClick={filterResults}>Filter</Button>
+                        <Button 
+                            variant='contained' 
+                            size='small' 
+                            color='secondary' 
+                            onClick={(e) => { 
+                                e.preventDefault(); 
+                                filterResults(user);
+                            }}>Filter
+                        </Button>
                         <Button variant='contained' size='small' color='info'>Print</Button>
-                        <Button variant='contained' size='small' color='inherit'>Reset</Button>
+                        <Button variant='contained' size='small' color='inherit' onClick={() => window.location.reload()}>Reset</Button>
                     </div>
                 </div>
                 <DashboardMainContainer>
