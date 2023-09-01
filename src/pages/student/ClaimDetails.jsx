@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useContext } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import React, { useState, useEffect, useContext, useRef } from 'react'
+import { useParams } from 'react-router-dom'
 import { FormElement, HeaderTwo, TopPageTitle, VerticallyFlexGapContainer } from '../../components/styles/GenericStyles'
 import { Helmet } from 'react-helmet-async'
 import { AttachmentFile, ClaimDetailsContainer, ClaimDetailsItem } from '../../components/styles/PagesStyles';
@@ -8,12 +8,17 @@ import axios from 'axios';
 import { Button, FormControl, FormControlLabel, Radio, RadioGroup } from '@mui/material';
 import { GeneralContext } from '../../App';
 import { GrAttachment } from 'react-icons/gr';
+import { useReactToPrint } from 'react-to-print';
+import { ComponentToPrintTwo } from '../../components/ComponentToPrintTwo';
 const serverUrl = import.meta.env.VITE_REACT_APP_SERVERURL;
 
 const ClaimDetails = () => {
   const dispatch = useDispatch();
   const params = useParams();
-  const navigate = useNavigate();
+  const componentRef = useRef();
+  const handlePrint = useReactToPrint({
+      content: () => componentRef.current
+  });
 
   const [isProcessing, setIsProcessing] = useState(false);
   const [isProcessing2, setIsProcessing2] = useState(false);
@@ -159,7 +164,10 @@ const ClaimDetails = () => {
       </Helmet>
       <VerticallyFlexGapContainer style={{ gap: '20px', alignItems: 'flex-start' }}>
         <TopPageTitle>
+          <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <HeaderTwo style={{ width: '100%', fontWeight: '700', textAlign: 'left', fontSize: '150%' }}>Claim</HeaderTwo>
+            <Button variant='text' color='inherit' onClick={handlePrint}>Print</Button>
+          </div>
           {selectedClaim.status === 'Pending' && 
             <>{isProcessing2 
               ? <Button disabled variant="contained" color="primary" size="small">PROCESSING...</Button> 
@@ -226,6 +234,10 @@ const ClaimDetails = () => {
             <ClaimDetailsItem>
               <label>Semester:</label>
               <p>{selectedClaimCourse.semester}</p> 
+            </ClaimDetailsItem>
+            <ClaimDetailsItem>
+              <label>Period:</label>
+              <p>{selectedClaimCourse.period}</p> 
             </ClaimDetailsItem>
             <ClaimDetailsItem>
               <label>Number of credits:</label>
@@ -357,7 +369,11 @@ const ClaimDetails = () => {
             }
           </form>
         </ClaimDetailsContainer>
-      
+            
+        {/* Report preview container */}
+        <VerticallyFlexGapContainer style={{ gap: '20px', alignItems: 'flex-start', alignItems: 'center' }}>
+          <ComponentToPrintTwo ref={componentRef} />      
+        </VerticallyFlexGapContainer>
 
       </VerticallyFlexGapContainer>
     </VerticallyFlexGapContainer>

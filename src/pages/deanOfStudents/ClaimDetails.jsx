@@ -193,6 +193,10 @@ const ClaimDetails = () => {
               <p>{selectedClaimCourse.semester}</p> 
             </ClaimDetailsItem>
             <ClaimDetailsItem>
+              <label>Period:</label>
+              <p>{selectedClaimCourse.period}</p> 
+            </ClaimDetailsItem>
+            <ClaimDetailsItem>
               <label>Number of credits:</label>
               <p>{selectedClaimCourse.credits}</p> 
             </ClaimDetailsItem>

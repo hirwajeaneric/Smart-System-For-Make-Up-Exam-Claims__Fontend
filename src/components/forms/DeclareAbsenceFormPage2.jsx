@@ -63,12 +63,10 @@ export default function DeclareAbsenceFormPage2() {
     // File upload handlers
     const handleFormFileInput = (e) => {
         setProofOfTuitionPayment(e.target.files[0]);
-        console.log(e.target.files)
     }
 
     const handleFormJustificationFileInput = (e) => {
         setAbsenceJustification(e.target.files[0])
-        console.log(e.target.files)
     } 
 
     const nextStep = () => {
@@ -79,9 +77,6 @@ export default function DeclareAbsenceFormPage2() {
     // SUBMITTION OF DECLARATION FORM ****************************************************************
     const submitDeclaration = (e) => {
         e.preventDefault();
-
-        console.log(proofOfTuitionPayment);
-        console.log(absenceJustification);
 
         const config = {
             headers: { "Content-Type":"multipart/form-data" }
@@ -125,6 +120,7 @@ export default function DeclareAbsenceFormPage2() {
         courseOne.courseName = selectedCourse.name;
         courseOne.courseCode = selectedCourse.code;
         courseOne.credits = selectedCourse.credits;
+        courseOne.period = selectedCourse.period;
         courseOne.semester = selectedCourse.allocations[currentAllocationIndex].semester;
         courseOne.academicYear = selectedCourse.allocations[currentAllocationIndex].academicYear;
         
@@ -196,8 +192,8 @@ export default function DeclareAbsenceFormPage2() {
                         <label htmlFor="period">Examination period *</label>
                         <select id='period' name='period' onChange={handleFormInput}>
                             <option value="">Choose exam period</option>
-                            <option value="mid-semester">Mid-semester</option>
-                            <option value="final">Final</option>
+                            <option value="mid-semester exam">Mid-semester</option>
+                            <option value="final exam">Final</option>
                         </select>
                         {declarationFormErrors.period && <p>{declarationFormErrors.period}</p>}
                     </FormElement>
