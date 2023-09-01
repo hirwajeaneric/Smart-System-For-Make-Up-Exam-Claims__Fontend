@@ -161,7 +161,7 @@ export const getDeanOfStudentsClaims = createAsyncThunk(
                     'Authorization' : `Bearer ${token}`
                 }
             }
-            const response = await axios.get(serverUrl+`/api/v1/ssmec/claim/findByAccountantSignature`, config);
+            const response = await axios.get(serverUrl+`/api/v1/ssmec/claim/findByDepartmentSignature`, config);
             response.data.claims.forEach((element) => {
                 element.id = element._id;
                 delete element.__v;
@@ -185,7 +185,7 @@ export const getRegistrationOfficeClaims = createAsyncThunk(
                     'Authorization' : `Bearer ${token}`
                 }
             }
-            const response = await axios.get(serverUrl+`/api/v1/ssmec/claim/findByDeanOfStudentSignature`, config);
+            const response = await axios.get(serverUrl+`/api/v1/ssmec/claim/findByDepartmentSignature`, config);
             response.data.claims.forEach((element) => {
                 element.id = element._id;
                 delete element.__v;
@@ -209,7 +209,7 @@ export const getExaminationOfficeClaims = createAsyncThunk(
                     'Authorization' : `Bearer ${token}`
                 }
             }
-            const response = await axios.get(serverUrl+`/api/v1/ssmec/claim/findByRegistrationOfficerSignature`, config);
+            const response = await axios.get(serverUrl+`/api/v1/ssmec/claim/findByDepartmentSignature`, config);
             response.data.claims.forEach((element) => {
                 element.id = element._id;
                 delete element.__v;
@@ -275,7 +275,6 @@ const claimSlice = createSlice({
         [getDepartmentClaims.fulfilled] : (state, action) => {
             state.isLoading = false;
             state.hodClaims = action.payload.filter(element => element.attachment);
-
         },
         [getDepartmentClaims.rejected] : (state) => {
             state.isLoading = false;
