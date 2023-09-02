@@ -65,7 +65,7 @@ export const ComponentToPrintTwo = React.forwardRef((props, ref) => {
                                 <td>{selectedClaimCourse.courseName}</td>
                                 <td>{selectedClaimCourseLecturer.signature}</td>
                                 <td>{selectedClaimCourse.credits}</td>
-                                <td>{(Number(selectedClaimCourse.credits)*18000)*0.25}</td>
+                                <td>{selectedClaim.totalClaimCost}</td>
                             </tr>
                         </tbody>
                     </TableList>

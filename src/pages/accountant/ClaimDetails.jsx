@@ -194,11 +194,15 @@ const ClaimDetails = () => {
             </ClaimDetailsItem>
             <ClaimDetailsItem>
               <label>Period:</label>
-              <p>{selectedClaimCourse.period}</p> 
+              <p>{selectedClaim.period}</p> 
             </ClaimDetailsItem>
             <ClaimDetailsItem>
               <label>Number of credits:</label>
               <p>{selectedClaimCourse.credits}</p> 
+            </ClaimDetailsItem>
+            <ClaimDetailsItem>
+              <label>Claim cost:</label>
+              <p>{Math.round(selectedClaim.totalClaimCost * 10) / 10}</p> 
             </ClaimDetailsItem>
             <ClaimDetailsItem>
               <label>Group:</label>

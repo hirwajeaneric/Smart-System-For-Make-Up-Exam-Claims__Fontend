@@ -232,7 +232,7 @@ const ClaimDetails = () => {
             </ClaimDetailsItem>
             <ClaimDetailsItem>
               <label>Period:</label>
-              <p>{selectedClaimCourse.period}</p> 
+              <p>{selectedClaim.period}</p> 
             </ClaimDetailsItem>
             <ClaimDetailsItem>
               <label>Number of credits:</label>
