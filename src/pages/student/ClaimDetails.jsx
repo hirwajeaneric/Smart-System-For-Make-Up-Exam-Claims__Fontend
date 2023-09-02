@@ -371,7 +371,7 @@ const ClaimDetails = () => {
         </ClaimDetailsContainer>
             
         {/* Report preview container */}
-        <VerticallyFlexGapContainer style={{ gap: '20px', alignItems: 'flex-start', alignItems: 'center' }}>
+        <VerticallyFlexGapContainer style={{ display: 'none', gap: '20px', alignItems: 'flex-start', alignItems: 'center' }}>
           <ComponentToPrintTwo ref={componentRef} />      
         </VerticallyFlexGapContainer>
 
