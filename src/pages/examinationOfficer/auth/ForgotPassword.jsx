@@ -16,8 +16,6 @@ const ForgotPassword = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
 
   const onSubmit = data => {
-    
-    
     setIsProcessing(true);
     axios.post(serverUrl+'/api/v1/ssmec/user/requestPasswordReset', data)
     .then(response => {

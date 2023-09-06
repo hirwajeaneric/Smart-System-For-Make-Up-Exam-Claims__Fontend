@@ -137,7 +137,7 @@ const DashboardMain = () => {
                     <NavLink to={'home'}>Home</NavLink>
                     {/* <NavLink to={'claims'}>Claims</NavLink> */}
                     <NavLink to={'courses'}>Courses</NavLink>
-                    <NavLink to={'settings'}>{user.userName}</NavLink>
+                    <NavLink to={'settings'}>Account settings</NavLink>
                 </SecondaryMenue>
                 <DashboardMainContainer>
                     <DashboardInnerContainer>

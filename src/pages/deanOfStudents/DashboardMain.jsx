@@ -125,7 +125,7 @@ const DashboardMain = () => {
                     {/* <NavLink to={'courses'}>Courses</NavLink> */}
                     {/* <NavLink to={'lecturers'}>Lecturers</NavLink> */}
                     {/* <NavLink to={'claims'}>Claims</NavLink> */}
-                    <NavLink to={'settings'}>{params.name}</NavLink>
+                    <NavLink to={'settings'}>Account settings</NavLink>
                 </SecondaryMenue>
                 <DashboardMainContainer>
                     <DashboardInnerContainer>

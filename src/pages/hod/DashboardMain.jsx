@@ -162,7 +162,7 @@ const DashboardMain = () => {
                     <SecondaryMenue2 style={{ padding: '0px' }}>
                         <NavLink to={'home'}>Home</NavLink>
                         <NavLink to={'courses'}>Courses</NavLink>
-                        <NavLink to={'settings'}>Settings</NavLink>
+                        <NavLink to={'settings'}>Account settings</NavLink>
                     </SecondaryMenue2>
 
                     <div style={{ gap: '10px', display: 'flex', alignItems: 'center' }}>
