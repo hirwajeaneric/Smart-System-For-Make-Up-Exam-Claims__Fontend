@@ -23,12 +23,11 @@ const HomePage = () => {
                             <Link style={{ color: 'blue', textDecoration: 'none', fontSize:'90%' }} target='_blank' to={'/student/auth/signin'}>Student</Link>
                             <Link style={{ color: 'blue', textDecoration: 'none', fontSize:'90%' }} target='_blank' to={'/teacher/auth/signin'}>Teacher</Link>
                             <Link style={{ color: 'blue', textDecoration: 'none', fontSize:'90%' }} target='_blank' to={'/hod/auth/signin'}>Head of Department</Link>
-                            <Link style={{ color: 'blue', textDecoration: 'none', fontSize:'90%' }} target='_blank' to={'/accountant/auth/signin'}>Accountant</Link>
                             <Link style={{ color: 'blue', textDecoration: 'none', fontSize:'90%' }} target='_blank' to={'/dos/auth/signin'}>Dean of students</Link>
                             <Link style={{ color: 'blue', textDecoration: 'none', fontSize:'90%' }} target='_blank' to={'/examinationoffice/auth/signin'}>Examination office</Link>
                             <Link style={{ color: 'blue', textDecoration: 'none', fontSize:'90%' }} target='_blank' to={'/registration/auth/signin'}>Registration office</Link>
+                            <Link style={{ color: 'blue', textDecoration: 'none', fontSize:'90%' }} target='_blank' to={'/accountant/auth/signin'}>Accountant</Link>
                         </VerticallyFlexGapContainer>
-
                     </VerticallyFlexGapContainer>
                 </AuthenticationFormContainer>
             </HorizontallyFlexSpaceBetweenContainer>
