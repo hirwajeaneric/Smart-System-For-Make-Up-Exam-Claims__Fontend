@@ -19,6 +19,24 @@ export const HeaderTwo = styled.h2`
     font-size: 1.3rem;
 `;
 
+export const InformationDetails = styled.div`
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    margin-bottom: 10px;
+
+    p.left {
+        width: 50%;
+        color: gray;
+    }
+
+    p.right {
+        width: 50%;
+        color: black;
+    }
+`;
 
 export const VerticallyFlexSpaceBetweenContainer = styled.div`
     width: 100%;  

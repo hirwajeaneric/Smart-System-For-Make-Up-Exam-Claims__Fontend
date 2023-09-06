@@ -6,6 +6,7 @@ const initialState = {
     teachers: [],
     students: [],
     allUsers: [],
+    selectedUser: {},
     numberOfTeachers: 0,
     numberOfStudents: 0, 
     isLoading: false,
@@ -28,6 +29,19 @@ export const getAllUsers = createAsyncThunk(
     }
 );
 
+export const getSelectedUser = createAsyncThunk(
+    'milk/getSelectedUser',
+    async (filter, thunkAPI) => {
+        const { userId } = filter;
+        try {
+            const response = await axios.get(serverUrl+`/api/v1/ssmec/user/findById?id=${userId}`);
+            return response.data.user;
+        } catch (error) {
+            return thunkAPI.rejectWithValue('Something went wrong!!');
+        }
+    }
+);
+
 const userSlice = createSlice({
     name: 'user',
     initialState,
@@ -42,6 +56,16 @@ const userSlice = createSlice({
             state.allUsers = action.payload;
         },
         [getAllUsers.rejected] : (state) => {
+            state.isLoading = false;
+        },
+        [getSelectedUser.pending] : (state) => {
+            state.isLoading = true;
+        },
+        [getSelectedUser.fulfilled] : (state, action) => {
+            state.isLoading = false;
+            state.selectedUser = action.payload;
+        },
+        [getSelectedUser.rejected] : (state) => {
             state.isLoading = false;
         },
     }
