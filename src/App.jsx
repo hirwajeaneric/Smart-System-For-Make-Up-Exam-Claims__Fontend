@@ -111,6 +111,11 @@ import ExaminationSettings from './pages/examinationOfficer/Settings';
 import ExaminationClaimDetails from './pages/examinationOfficer/ClaimDetails';
 import ExaminationClaims from './pages/examinationOfficer/Claims';
 import ExaminationReportPreview from './pages/examinationOfficer/ReportPreview';
+import ExaminationUsers from './pages/examinationOfficer/Users';
+import ExaminationUserList from './pages/examinationOfficer/UserList';
+import ExaminationUserDetails from './pages/examinationOfficer/UserDetails';
+import ExaminationAddUser from './pages/examinationOfficer/AddUser';
+import ExaminationUpdateUser from './pages/examinationOfficer/UpdateUser';
 
 
 // REDUX REDUCERS ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -400,6 +405,13 @@ function App() {
           <Route path='/examinationoffice/:name' element={localStorage.getItem('exoToken') ? <ExaminationDashboardMain /> : <Navigate replace to={'/examinationoffice/auth/signin'} />}>
             <Route path='' element={<ExaminationStats />} />
             <Route path='home' element={<ExaminationStats />} />
+            <Route path='user' element={<ExaminationUsers />}>
+              <Route path='' element={<ExaminationUserList />} />
+              <Route path='list' element={<ExaminationUserList />} />
+              <Route path='new' element={<ExaminationAddUser />} />
+              <Route path=':id' element={<ExaminationUserDetails />} />
+              <Route path='edit/:id' element={<ExaminationUpdateUser />} />
+            </Route>
             <Route path='claims' element={<ExaminationClaims />} />
             <Route path='claims/:claimId' element={<ExaminationClaimDetails />} />
             <Route path='report-preview' element={<ExaminationReportPreview />} />

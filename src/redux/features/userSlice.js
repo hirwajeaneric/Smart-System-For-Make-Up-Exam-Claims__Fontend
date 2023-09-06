@@ -5,6 +5,7 @@ const serverUrl = import.meta.env.VITE_REACT_APP_SERVERURL;
 const initialState = {
     teachers: [],
     students: [],
+    allUsers: [],
     numberOfTeachers: 0,
     numberOfStudents: 0, 
     isLoading: false,
@@ -37,7 +38,8 @@ const userSlice = createSlice({
         [getAllUsers.fulfilled] : (state, action) => {
             state.isLoading = false;
             state.teachers = action.payload.filter(user => user.role === 'Teacher');
-            state.numberOfTeachers = state.teachers.length
+            state.numberOfTeachers = state.teachers.length;
+            state.allUsers = action.payload;
         },
         [getAllUsers.rejected] : (state) => {
             state.isLoading = false;

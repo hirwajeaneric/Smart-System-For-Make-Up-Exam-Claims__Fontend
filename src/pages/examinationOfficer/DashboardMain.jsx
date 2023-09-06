@@ -11,6 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getSimpleCapitalizedChars } from "../../utils/HelperFunctions";
 import { getAllCourses } from "../../redux/features/courseSlice";
 import { getExaminationOfficeClaims } from "../../redux/features/claimSlice";
+import { getAllUsers } from "../../redux/features/userSlice";
 
 const DashboardMain = () => {
     const [anchorEl, setAnchorEl] = useState(null);
@@ -31,6 +32,7 @@ const DashboardMain = () => {
         setUser(user);
         dispatch(getAllCourses());
         dispatch(getExaminationOfficeClaims({ token: user.token }));
+        dispatch(getAllUsers());
     },[dispatch]);      
 
     const signout = () => {
@@ -105,7 +107,7 @@ const DashboardMain = () => {
                         </VerticallyFlexGapContainer>
                     </MenuItem>
                     <Divider />
-                    <MenuItem onClick={() => {navigate(`/reg/${user.departmentLink}/settings`); handleClose();}}>
+                    <MenuItem onClick={() => {navigate(`/examinationoffice/${params.name}/settings`); handleClose();}}>
                         <ListItemIcon>
                             <Settings fontSize="small" />
                         </ListItemIcon>Settings
@@ -122,10 +124,10 @@ const DashboardMain = () => {
             <VerticallyFlexGapContainer style={{ position: 'relative' }}>
                 <SecondaryMenue>
                     <NavLink to={'home'}>Home</NavLink>
-                    {/* <NavLink to={'courses'}>Courses</NavLink> */}
+                    <NavLink to={'user'}>Users</NavLink>
                     {/* <NavLink to={'lecturers'}>Lecturers</NavLink> */}
                     {/* <NavLink to={'claims'}>Claims</NavLink> */}
-                    <NavLink to={'settings'}>{params.name}</NavLink>
+                    <NavLink to={'settings'}>Account settings</NavLink>
                 </SecondaryMenue>
                 <DashboardMainContainer>
                     <DashboardInnerContainer>
