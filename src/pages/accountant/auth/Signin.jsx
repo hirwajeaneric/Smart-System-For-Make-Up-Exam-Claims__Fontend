@@ -85,7 +85,7 @@ const Signin = () => {
             }
           </FormElement>
           <HorizontallyFlexSpaceBetweenContainer>
-            <Link style={{ color: 'blue', textDecoration: 'none', fontSize:'90%', }} to={'/accountant/auth/signup'}>Create account</Link>
+            {/* <Link style={{ color: 'blue', textDecoration: 'none', fontSize:'90%', }} to={'/accountant/auth/signup'}>Create account</Link> */}
             <Link style={{ textDecoration: 'none', fontSize:'90%', color: 'gray' }} to={'/accountant/auth/forgot-password'}>Forgot Password?</Link>
           </HorizontallyFlexSpaceBetweenContainer>
         </VerticallyFlexGapForm>
